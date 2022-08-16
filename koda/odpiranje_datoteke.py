@@ -1,1 +1,0 @@
-open(piodatki_z_merjenj.txt)
