@@ -13,7 +13,6 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     
     # odvrževa brezvezne meritve
     loceno_besedilo_discardane_prazne = [i.replace("\n"," ") for i in loceno_besedilo if i.count("prazno") == 0]
-    print(len(loceno_besedilo_discardane_prazne))
     
     matrika_vseh_merjenj = [posamezna_meritev.split(", ") for posamezna_meritev in loceno_besedilo_discardane_prazne]
 
@@ -76,6 +75,7 @@ class Meritev():
         return self.najdi_element('Meja(dU):')
     
     # to ni popolno, saj ne odstrani Page
+    # tole je treba malo popraviti
     def najdi_pot(self):
         return ["P" + self.najdi_element('Pot:')[0]]
     
@@ -84,37 +84,37 @@ mnozica_vseh_objektov_meritev = [Meritev(i) for i in loceno_besedilo_discardane_
 #print(mnozica_vseh_objektov_meritev[10].besedilo_po_elementih)
 
 
-with open("poenostavljeni_podatki.txt", "w", encoding="utf-8") as f:
-    for j,i in enumerate(mnozica_vseh_objektov_meritev):
-    #print(i.besedilo_po_elementih)
-        f.write("Številka meritve"+ " " + str(j + 1))
-        f.write("\n")
-        f.write(str(i.najdi_tip_varovalke()))
-        f.write("\n")
-        f.write(str(i.najdi_I_varovalke()))
-        f.write("\n")
-        f.write(str(i.najdi_t_varovalke()))
-        f.write("\n")
-        f.write(str(i.najdi_Isc_faktor()))
-        f.write("\n")
-        f.write(str(i.najdi_dU()))
-        f.write("\n")
-        f.write(str(i.najdi_Z_LPE()))
-        f.write("\n")
-        f.write(str(i.najdi_I_preizkusa()))
-        f.write("\n")
-        f.write(str(i.najdi_Ipsc_LPE()))
-        f.write("\n")
-        f.write(str(i.najdi_Uln()))
-        f.write("\n")
-        f.write(str(i.najdi_R()))
-        f.write("\n")
-        f.write(str(i.najdi_Zref()))
-        f.write("\n")
-        f.write(str(i.najdi_meja_dU()))
-        f.write("\n")
-        f.write(str(i.najdi_pot()))
-        f.write("\n----------------------------------------------------------------------------------------------------\n")
+# with open("poenostavljeni_podatki.txt", "w", encoding="utf-8") as f:
+#     for j,i in enumerate(mnozica_vseh_objektov_meritev):
+#     #print(i.besedilo_po_elementih)
+#         f.write("Številka meritve"+ " " + str(j + 1))
+#         f.write("\n")
+#         f.write(str(i.najdi_tip_varovalke()))
+#         f.write("\n")
+#         f.write(str(i.najdi_I_varovalke()))
+#         f.write("\n")
+#         f.write(str(i.najdi_t_varovalke()))
+#         f.write("\n")
+#         f.write(str(i.najdi_Isc_faktor()))
+#         f.write("\n")
+#         f.write(str(i.najdi_dU()))
+#         f.write("\n")
+#         f.write(str(i.najdi_Z_LPE()))
+#         f.write("\n")
+#         f.write(str(i.najdi_I_preizkusa()))
+#         f.write("\n")
+#         f.write(str(i.najdi_Ipsc_LPE()))
+#         f.write("\n")
+#         f.write(str(i.najdi_Uln()))
+#         f.write("\n")
+#         f.write(str(i.najdi_R()))
+#         f.write("\n")
+#         f.write(str(i.najdi_Zref()))
+#         f.write("\n")
+#         f.write(str(i.najdi_meja_dU()))
+#         f.write("\n")
+#         f.write(str(i.najdi_pot()))
+#         f.write("\n----------------------------------------------------------------------------------------------------\n")
 
 for j,i in enumerate(mnozica_vseh_objektov_meritev):
     #print(i.besedilo_po_elementih)
@@ -136,6 +136,6 @@ for j,i in enumerate(mnozica_vseh_objektov_meritev):
 
     
 
-najin_objekt = mnozica_vseh_objektov_meritev[85]
-print(najin_objekt.besedilo)
-print(najin_objekt.besedilo_po_elementih)
+najin_objekt = mnozica_vseh_objektov_meritev[10]
+print(najin_objekt.najdi_Isc_faktor())
+# print(najin_objekt.besedilo_po_elementih)
