@@ -39,6 +39,7 @@ class Meritev():
             return "/"
 
     #spodnji elementi so za meritve, ki se začnejo z AUTO TN
+    #to bo treba še bolje definirati
         
     def najdi_tip_varovalke(self):
         return self.najdi_element('Tip varov.:')
@@ -80,6 +81,7 @@ class Meritev():
         return self.najdi_element('Meja(dU):')
 
     #spodnje meritve so za meritve, ki se začnejo z Zloop in Z LINE
+    #to bo treba še bolje definirati
 
     def najdi_Merilno_breme(self):
         return self.najdi_element('Merilno breme:')
@@ -109,6 +111,7 @@ class Meritev():
         return self.najdi_element('Ia(Ipsc):')
 
     #spodnji lelementi so za meritve ki se začnejo z RCD Auto
+    #to bo treba še bolje definirati
 
     def najdi_Uporaba(self):
         return self.najdi_element('Uporaba:')
@@ -120,13 +123,13 @@ class Meritev():
         return self.najdi_element('I dN:')
 
     def najdi_Preizkus(self):
-        return self.najdi_element('Preizkus):')
+        return self.najdi_element('Preizkus:')
 
     def najdi_RCD_standard(self):
-        return self.najdi_element('RCD standard):')
+        return self.najdi_element('RCD standard:')
 
     def najdi_Ozemljitveni_sistem(self):
-        return self.najdi_element('Ozemljitveni sistem):')
+        return self.najdi_element('Ozemljitveni sistem:')
 
     def najdi_t_IΔN_x1_plus(self):
         return self.najdi_element('t IΔN x1, (+):') # pri tej meritvi pogledaš za isto meritev samo da je - namesto + in pogledaš katera vrednost je večja, tista vrednost je pomembna
@@ -171,58 +174,58 @@ mnozica_vseh_objektov_meritev = [Meritev(i) for i in loceno_besedilo_discardane_
 #print(mnozica_vseh_objektov_meritev[10].besedilo_po_elementih)
 
 
-with open("poenostavljeni_podatki.txt", "w", encoding="utf-8") as f:
-    for j,i in enumerate(mnozica_vseh_objektov_meritev):
-    #print(i.besedilo_po_elementih)
-        f.write("Številka meritve"+ " " + str(j + 1))
-        f.write("\n")
-        # spodnji elementi veljajop za meritve, ki se začnejo z AUTO TN
-        f.write(str(i.najdi_tip_varovalke()))
-        f.write("\n")
-        f.write(str(i.najdi_I_varovalke()))
-        f.write("\n")
-        f.write(str(i.najdi_t_varovalke()))
-        f.write("\n")
-        f.write(str(i.najdi_Isc_faktor()))
-        f.write("\n")
-        f.write(str(i.najdi_dU()))
-        f.write("\n")
-        f.write(str(i.najdi_Z_LPE()))
-        f.write("\n")
-        f.write(str(i.najdi_I_preizkusa()))
-        f.write("\n")
-        f.write(str(i.najdi_Ipsc_LPE()))
-        f.write("\n")
-        f.write(str(i.najdi_Uln()))
-        f.write("\n")
-        f.write(str(i.najdi_R()))
-        f.write("\n")
-        f.write(str(i.najdi_Zref()))
-        f.write("\n")
-        f.write(str(i.najdi_meja_dU()))
-        f.write("\n")
-        f.write(str(i.najdi_pot()))
-        # spodnje meritve so za meritve ki se začnejo z Zloop in Z LINE 
-        f.write("\n")
-        f.write(str(i.najdi_Merilno_breme()))
-        f.write("\n")
-        f.write(str(i.najdi_Povprečje()))
-        f.write("\n")
-        f.write(str(i.najdi_Toleranca()))
-        f.write("\n")
-        f.write(str(i.najdi_Ipsc()))
-        f.write("\n")
-        f.write(str(i.najdi_Z()))
-        f.write("\n")
-        f.write(str(i.najdi_XL()))
-        f.write("\n")
-        f.write(str(i.najdi_IscMax()))
-        f.write("\n")
-        f.write(str(i.najdi_IscMin()))
-        f.write("\n")
-        f.write(str(i.najdi_Ia_Ipsc()))
-        f.write("\n")
-        f.write("\n----------------------------------------------------------------------------------------------------\n")
+# with open("poenostavljeni_podatki.txt", "w", encoding="utf-8") as f:
+#     for j,i in enumerate(mnozica_vseh_objektov_meritev):
+#     #print(i.besedilo_po_elementih)
+#         f.write("Številka meritve"+ " " + str(j + 1))
+#         f.write("\n")
+#         # spodnji elementi veljajop za meritve, ki se začnejo z AUTO TN
+#         f.write(str(i.najdi_tip_varovalke()))
+#         f.write("\n")
+#         f.write(str(i.najdi_I_varovalke()))
+#         f.write("\n")
+#         f.write(str(i.najdi_t_varovalke()))
+#         f.write("\n")
+#         f.write(str(i.najdi_Isc_faktor()))
+#         f.write("\n")
+#         f.write(str(i.najdi_dU()))
+#         f.write("\n")
+#         f.write(str(i.najdi_Z_LPE()))
+#         f.write("\n")
+#         f.write(str(i.najdi_I_preizkusa()))
+#         f.write("\n")
+#         f.write(str(i.najdi_Ipsc_LPE()))
+#         f.write("\n")
+#         f.write(str(i.najdi_Uln()))
+#         f.write("\n")
+#         f.write(str(i.najdi_R()))
+#         f.write("\n")
+#         f.write(str(i.najdi_Zref()))
+#         f.write("\n")
+#         f.write(str(i.najdi_meja_dU()))
+#         f.write("\n")
+#         f.write(str(i.najdi_pot()))
+#         # spodnje meritve so za meritve ki se začnejo z Zloop in Z LINE 
+#         f.write("\n")
+#         f.write(str(i.najdi_Merilno_breme()))
+#         f.write("\n")
+#         f.write(str(i.najdi_Povprečje()))
+#         f.write("\n")
+#         f.write(str(i.najdi_Toleranca()))
+#         f.write("\n")
+#         f.write(str(i.najdi_Ipsc()))
+#         f.write("\n")
+#         f.write(str(i.najdi_Z()))
+#         f.write("\n")
+#         f.write(str(i.najdi_XL()))
+#         f.write("\n")
+#         f.write(str(i.najdi_IscMax()))
+#         f.write("\n")
+#         f.write(str(i.najdi_IscMin()))
+#         f.write("\n")
+#         f.write(str(i.najdi_Ia_Ipsc()))
+#         f.write("\n")
+#         f.write("\n----------------------------------------------------------------------------------------------------\n")
 
 for j,i in enumerate(mnozica_vseh_objektov_meritev):
     #print(i.besedilo_po_elementih)
@@ -278,6 +281,7 @@ for j,i in enumerate(mnozica_vseh_objektov_meritev):
 
 najin_objekt = mnozica_vseh_objektov_meritev[10]
 print(najin_objekt.najdi_Isc_faktor())
+print(najin_objekt.najdi_Ozemljitveni_sistem())
 # print(najin_objekt.besedilo_po_elementih)
 
 #P-Ustrezno F-Neustrezno, E-Prazno, N-Ne obstaja
