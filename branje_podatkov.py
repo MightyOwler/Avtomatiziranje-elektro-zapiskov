@@ -162,6 +162,74 @@ class Meritev():
 
     def najdi_Meja_Uc_Uc_(self):
         return self.najdi_element('Meja(Uc)(Uc):')
+        
+        # vsi spodnji elementi so za meritve, ki se začnejo z R low 4
+
+    def najdi_Povezava(self):
+        return self.najdi_element('Povezava:')
+
+    def najdi_R_pozitivno(self):
+        return self.najdi_element('R+:')
+
+    def najdi_R_negativno(self):
+        return self.najdi_element('R-:')
+
+    def najdi_Meja_R(self):
+        return self.najdi_element('Meja(R):')
+
+        #vsi spodnji elementi so za meritve, ki se začnejo z Varistor
+
+    def najdi_I_lim(self):
+        return self.najdi_element('I lim:')
+
+    def najdi_Sistem(self):
+        return self.najdi_element('Sistem:')
+
+    def najdi_Območje(self):
+        return self.najdi_element('Območje:')
+
+    def najdi_Uac(self):
+        return self.najdi_element('Uac:')
+
+    def najdi_Udc(self):
+        return self.najdi_element('Udc:')
+
+    def najdi_Spodnja_meja_Uac(self):
+        return self.najdi_element('Spodnja meja(Uac):')
+
+    def najdi_Zgornja_meja_Uac(self):
+        return self.najdi_element('Zgornja meja(Uac):')
+
+        #vsi spodnji elementi so za meritve ki se začnejo z R iso
+
+    def najdi_Uizo(self):
+        return self.najdi_element('Uizo:')
+
+    def najdi_Rln(self):
+        return self.najdi_element('Rln:')
+
+    def najdi_Rlpe(self):
+        return self.najdi_element('Rlpe:')
+
+    def najdi_Rnpe(self):
+        return self.najdi_element('Rnpe:')
+
+    def najdi_Umln(self):
+        return self.najdi_element('Umln:')
+
+    def najdi_Umlpe(self):
+        return self.najdi_element('Umlpe:')
+
+    def najdi_Umnpe(self):
+        return self.najdi_element('Umnpe:')
+
+    def najdi_MejaRln_Rlpe_Rnpe(self):
+        return self.najdi_element('Meja(Rln, Rlpe, Rnpe):')
+
+
+
+
+
 
 
     
@@ -229,6 +297,8 @@ mnozica_vseh_objektov_meritev = [Meritev(i) for i in loceno_besedilo_discardane_
 #         f.write("\n")
 #         f.write("\n----------------------------------------------------------------------------------------------------\n")
 
+
+# tam kjer je napisano, da so spodnji elementi za x vrsto meritve pomeni da so te meritve take, da se pojavijo samo pri teh meritvah, ni pa naštetih tistih meritev, ki se ponovijo!!!!
 for j,i in enumerate(mnozica_vseh_objektov_meritev):
     #print(i.besedilo_po_elementih)
     print("Številka meritve", j+1)
@@ -275,6 +345,29 @@ for j,i in enumerate(mnozica_vseh_objektov_meritev):
     print(i.najdi_IΔ_minus())
     print(i.najdi_Uc())
     print(i.najdi_Meja_Uc_Uc_())
+# spodnji veljajo za meritve, ki se začnejo z R low 4
+    print(i.najdi_Povezava())
+    print(i.najdi_R_pozitivno())
+    print(i.najdi_R_negativno())
+    print(i.najdi_Meja_R())
+# spodnji veljajo za elemente, ki se začnjejo z Varistor
+    print(i.najdi_I_lim())
+    print(i.najdi_Sistem())
+    print(i.najdi_Območje())
+    print(i.najdi_Uac())
+    print(i.najdi_Udc())
+    print(i.najdi_Spodnja_meja_Uac())
+    print(i.najdi_Zgornja_meja_Uac())
+# spodnji veljajo za meritve, ki se začnjejo z R iso
+    print(i.najdi_Uizo())
+    print(i.najdi_Rln())
+    print(i.najdi_Rlpe())
+    print(i.najdi_Rnpe())
+    print(i.najdi_Umln())
+    print(i.najdi_Umlpe())
+    print(i.najdi_Umnpe())
+    print(i.najdi_MejaRln_Rlpe_Rnpe())
+
     print("------------------")
     
     # pod potjo se sedaj napišejo se ostali elementi ( niso pa še vsi)

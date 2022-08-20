@@ -1,0 +1,35 @@
+Št. stranke:                                                                                                                                                      		Št. pregleda:		                      	Št. naročila:	
+DEMONSTRACIJSKO POROČILO
+Preizkus v skladu z:                                                                                                                                              		[-]          		[-]                   	             	                            	[-]	
+Instrument: MI 3155                                                                                                                                               		Uporabnik:   		Serijska št.: 18050532	             	Datum kalibracije: 19.5.2020
+Pot:OS ZIRI//INSTALACIJE//Dist. Board1//Prostor 111 FONOLAB//Local bonding 111                                                                                    		             		                      	             	Serijsko:18050532
+Posamezne meritve//23.08.2021 14:08:52 //Neustrezno //R low 4W , Povezava: Rpe, 1. komentar: SPD, R: >1999 Ω, R+: >1999 Ω, R-: >1999 Ω, Meja(R): 0,3 Ω, 
+N//R low 4W , Povezava: Rpe, 1. komentar: SPD, R: >1999 Ω, R+: >1999 Ω, R-: >1999 Ω, Meja(R): 0,3 Ω, N//R low 4W , Povezava: Rpe, 1. komentar: SPD, R: 
+>1999 Ω, R+: >1999 Ω, R-: >1999 Ω, Meja(R): 0,3 Ω, N//R low 4W , Povezava: Rpe, 1. komentar: SPD, R: >1999 Ω, R+: >1999 Ω, R-: >1999 Ω, Meja(R): 0,3 Ω, N//R 
+low 4W , Povezava: Rpe, 1. komentar: SPD, R: >1999 Ω, R+: >1999 Ω, R-: >1999 Ω, Meja(R): 0,3 Ω, N//R low 4W , Povezava: Rpe, 1. komentar: SPD, R: >1999 Ω, 
+R+: >1999 Ω, R-: >1999 Ω, Meja(R): 0,3 Ω, N//R low 4W , Povezava: Rpe, 1. komentar: SPD, R: >1999 Ω, R+: >1999 Ω, R-: >1999 Ω, Meja(R): 0,3 Ω, N//R low 4W , 
+Povezava: Rpe, 1. komentar: SPD, R: >1999 Ω, R+: >1999 Ω, R-: >1999 Ω, Meja(R): 0,3 Ω, N//R low 4W , Povezava: Rpe, 1. komentar: SPD, R: >1999 Ω, R+: >1999 
+Ω, R-: >1999 Ω, Meja(R): 0,3 Ω, N//R low 4W , Povezava: Rpe, 1. komentar: SPD, Meja(R): 0,3 Ω, p//R low 4W , Povezava: Rpe, 1. komentar: SPD, R: 0,58 Ω, R+: 
+0,6 Ω, R-: 0,6 Ω, Meja(R): 0,3 Ω, N//R low 4W , Povezava: Rpe, 1. komentar: SPD, R: 0,58 Ω, R+: 0,6 Ω, R-: 0,6 Ω, Meja(R): 0,3 Ω, N//R low 4W , Povezava: Rpe, 1. 
+komentar: SPD, R: 0,57 Ω, R+: 0,6 Ω, R-: 0,6 Ω, Meja(R): 0,3 Ω, N//R low 4W , Povezava: Rpe, 1. komentar: SPD, R: 0,57 Ω, R+: 0,6 Ω, R-: 0,6 Ω, Meja(R): 0,3 Ω, 
+N//R low 4W , Povezava: Rpe, 1. komentar: SPD, R: 0,57 Ω, R+: 0,6 Ω, R-: 0,6 Ω, Meja(R): 0,3 Ω, N//R low 4W , Povezava: Rpe, 1. komentar: SPD, R: 0,57 Ω, R+: 
+0,6 Ω, R-: 0,6 Ω, Meja(R): 0,3 Ω, N//R low 4W , Povezava: Rpe, 1. komentar: SPD, R: 0,56 Ω, R+: 0,6 Ω, R-: 0,6 Ω, Meja(R): 0,3 Ω, N//R low 4W , Povezava: Rpe, 1. 
+komentar: SPD, Meja(R): 0,3 Ω, p//R low 4W , Povezava: Rpe, 1. komentar: SPD, Meja(R): 0,3 Ω, p//R low 4W , Povezava: Rpe, 1. komentar: SPD, Meja(R): 0,3 
+Ω, p//R low 4W , Povezava: Rpe, 1. komentar: SPD, Meja(R): 0,3 Ω, p//R low 4W , Povezava: Rpe, 1. komentar: SPD, Meja(R): 0,3 Ω, p//R low 4W , Povezava: 
+Rpe, 1. komentar: SPD, Meja(R): 0,3 Ω, p// 
+
+
+
+
+Pot:STRELOVODNA ZASCITA                                                                                                                                                 	Serijsko:18050532
+Posamezne meritve//21.05.2021 10:25:24 //Neustrezno //Varistor , I lim: 1,0 mA, Sistem: -, Območje: 1000 V, Uac: 258 V, Udc: 413 V, Spodnja meja(Uac): 230 
+V, Zgornja meja(Uac): izključeno, U//Varistor , I lim: 1,0 mA, Sistem: -, Območje: 1000 V, Uac: 266 V, Udc: 425 V, Spodnja meja(Uac): 230 V, Zgornja meja(Uac): 
+izključeno, U//Varistor , I lim: 1,0 mA, Sistem: -, Območje: 1000 V, Uac: 264 V, Udc: 423 V, Spodnja meja(Uac): 230 V, Zgornja meja(Uac): izključeno, U//
+
+
+
+
+Pot:R RN2//Object3MA HALA//R-RM//DOVOD -RM//1F11 VT. CISTLNE V14                                                                                                          	Serijsko:18050532
+Posamezne meritve//24.09.2021 12:19:02 //Neustrezno //R iso - vse , Uizo: 500 V, Rln: >999 MΩ, Rlpe: >999 MΩ, Rnpe: 0,00 MΩ, Umln: 525 
+V, Umlpe: 525 V, Umnpe: 1 V, Meja(Rln, Rlpe, Rnpe): 1 MΩ, N// 
+
