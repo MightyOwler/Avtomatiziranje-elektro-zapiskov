@@ -24,6 +24,8 @@ class Meritev():
     def __init__(self, besedilo_meritve):
         self.besedilo = besedilo_meritve
         self.besedilo_po_elementih = besedilo_meritve.split(", ")
+        
+        #self.vrsta_meritve = ...
     
     def najdi_element(self, ime_elementa):
         element = []
