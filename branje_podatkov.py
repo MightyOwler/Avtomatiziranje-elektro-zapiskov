@@ -33,16 +33,14 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     loceno_besedilo_brez_poti_na_koncu = []
     dolzine = []
     
-    """
-    !!! Problem: zdaj ne najde Nustreznih in praznih vnosov !!!
-    """
-    
     def ustvari_seznam_vseh_meritev():
         loceno_besedilo = []
         
         for kocka_teksta in loceno_besedilo_na_kocke_teksta:
             slovar_meritev = {i:0 for i in seznam_vrst_meritev}
             pot_do_druzine_meritev = model.najdi_pot_izven_razreda_Meritev(kocka_teksta)
+            idx = kocka_teksta.find("Pot:")
+            kocka_teksta = kocka_teksta[:idx]
             #print(pot_do_druzine_meritev)
             for vrsta_meritve in seznam_vrst_meritev:
                 if vrsta_meritve in kocka_teksta:
@@ -53,7 +51,7 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
             dolzine.append(vsota_meritev)
             if vsota_meritev == 1:
                 # v tem primeru ni problemov, saj je meritev itak ustrezna
-                loceno_besedilo.append(kocka_teksta.replace("\n", " "))
+                loceno_besedilo.append(kocka_teksta.replace("\n", " ").strip())
             else:
                 # v tem primeru pa se moramo še malo potruditi
                 seznam_indeksov = []
@@ -64,10 +62,7 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
                 loceno_besedilo_brez_poti_na_koncu += [kocka_teksta[i:j] for i,j in zip(seznam_indeksov, seznam_indeksov[1:]+[None])]
                 loceno_besedilo_zacasno = []
                 for meritev in loceno_besedilo_brez_poti_na_koncu:
-                    if "Pot:" not in meritev:
-                        loceno_besedilo_zacasno.append(meritev.replace("\n", " ") + " " + pot_do_druzine_meritev)
-                    else:
-                        loceno_besedilo_zacasno.append(meritev.replace("\n", " "))
+                    loceno_besedilo_zacasno.append(meritev.replace("\n", " ").strip() + " " + pot_do_druzine_meritev)
                 loceno_besedilo += loceno_besedilo_zacasno
                 # print(seznam_indeksov)
                 # print(slovar_meritev)
