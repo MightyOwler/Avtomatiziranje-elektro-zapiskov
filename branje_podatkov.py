@@ -3,6 +3,13 @@
 import re
 from datetime import datetime
 
+
+"""
+Morala bova šteti vrste meritev v celem blocku razen med potjo in serijsko!!
+"""
+
+#problem je v tem, da ne loči še med AUTO TN in AUTO TN (RCD)
+#to ni velik problem: AUTO TN (RCD) --> Auto Tn (RCD) bo rešilo problem
 #obstaja 7 vrst meritev: AUTO TN, Zloop mΩ, Z LINE, RCD Auto, R low 4, Varistor, R iso
 seznam_vrst_meritev = ["AUTO TN", "Zloop mΩ", "Z LINE", "RCD Auto", "R low 4", "Varistor", "R iso"]
 
@@ -13,17 +20,12 @@ def find_nth(haystack, needle, n):
         n -= 1
     return start
 
-
-
-
 with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     vse_besedilo =  podatki.read()
     loceno_besedilo_na_kocke_teksta = vse_besedilo.split("Posamezne meritve")
     
     
-    """
-    Tukaj moramo pogledati vse datume iz datoteke, dobimo jih lahko tako, da pogledamo .2021
-    """
+
     
     def najdi_seznam_datumov():
         loceno_besedilo_po_presledkih = vse_besedilo.split()
@@ -44,6 +46,7 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     # vsaka meritev je spodnje oblike 
     # Posamezne meritve ___________ Serijsko
     # (ni res, ker se vmes lahko skriva več posameznih meritev. Morala bova bolje ločiti med njimi)
+    #(največ meritev v enem bloku: 12, št blokov: 482, št posameznih meritev: 986)
     
     # beseda prazno se lahko pojavi največ 1-krat na posamezno meritev // ni res
     # če se pojavi 'prazno', je meritev zavržena // to bo treba še popraviti
@@ -86,6 +89,14 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     # vprašanje, če je to v redu, ker dejansko so v tabelicah skupaj zlepljene posamezne meritve...
     # verjentno bo treba v razredu Meritev ločiti med seboj posamezne meritve...
     # je pa spodnja koda kar uporabna za to
+    
+    
+    """
+    !!! Problem: zdaj ne najde Nustreznih in praznih vnosov !!!
+    """
+    
+    loceno_besedilo = []
+    
     for kocka_teksta in loceno_besedilo_na_kocke_teksta:
         slovar_meritev = {i:0 for i in seznam_vrst_meritev}
         pot_do_druzine_meritev = najdi_pot_izven_razreda_Meritev(kocka_teksta)
@@ -93,24 +104,29 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
         for vrsta_meritve in seznam_vrst_meritev:
             if vrsta_meritve in kocka_teksta:
                 slovar_meritev[vrsta_meritve] = kocka_teksta.count(vrsta_meritve)
-                vsota_meritev = sum(slovar_meritev.values())
-                dolzine.append(vsota_meritev)
-                if vsota_meritev == 1:
-                    # v tem primeru ni problemov, saj je meritev itak ustrezna
-                    loceno_besedilo_brez_poti_na_koncu.append(vrsta_meritve)
+                
+        vsota_meritev = sum(slovar_meritev.values())
+        #to je zato, da lahko preverimo, koliko meritev obstaja 
+        #(največ meritev v enem bloku: 12, št blokov: 482, št posameznih meritev: 986)
+        dolzine.append(vsota_meritev)
+        if vsota_meritev == 1:
+            # v tem primeru ni problemov, saj je meritev itak ustrezna
+            loceno_besedilo.append(kocka_teksta.replace("\n", " "))
+        else:
+            # v tem primeru pa se moramo še malo potruditi
+            seznam_indeksov = []
+            loceno_besedilo_brez_poti_na_koncu = []
+            for key in slovar_meritev:
+                seznam_indeksov += [m.start() for m in re.finditer(key, kocka_teksta)]
+            seznam_indeksov.sort()    
+            loceno_besedilo_brez_poti_na_koncu += [kocka_teksta[i:j] for i,j in zip(seznam_indeksov, seznam_indeksov[1:]+[None])]
+            loceno_besedilo_zacasno = []
+            for meritev in loceno_besedilo_brez_poti_na_koncu:
+                if "Pot:" not in meritev:
+                    loceno_besedilo_zacasno.append(meritev.replace("\n", " ") + " " + pot_do_druzine_meritev)
                 else:
-                    # v tem primeru pa se moramo še malo potruditi
-                    seznam_indeksov = []
-                    for key in slovar_meritev:
-                        seznam_indeksov += [m.start() for m in re.finditer(key, kocka_teksta)]
-                    seznam_indeksov.sort()
-                    loceno_besedilo_brez_poti_na_koncu += [kocka_teksta[i:j] for i,j in zip(seznam_indeksov, seznam_indeksov[1:]+[None])]
-                    loceno_besedilo = []
-                    for meritev in loceno_besedilo_brez_poti_na_koncu:
-                        if "Pot:" not in meritev:
-                            loceno_besedilo.append(meritev + " " + pot_do_druzine_meritev)
-                        else:
-                            loceno_besedilo.append(meritev)
+                    loceno_besedilo_zacasno.append(meritev.replace("\n", " "))
+            loceno_besedilo += loceno_besedilo_zacasno
                         
                     # print(seznam_indeksov)
                     # print(slovar_meritev)
@@ -120,12 +136,21 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     # Treba je še dodati pot in datum vse meritvam, ki niso na sredini (poglej, če imajo vse datum!)
     
     # print(len(loceno_besedilo))
-    # print(max(dolzine), len(dolzine), sum(dolzine))
-    for i in range(20):
-        print(loceno_besedilo[i] + "\n\n")
+    print(max(dolzine), len(dolzine), sum(dolzine))
     
-    loceno_besedilo_discardane_prazne = [i.replace("\n"," ") for i in loceno_besedilo_na_kocke_teksta if i.count("prazno") == 0]
+        #print(loceno_besedilo[i] + "\n\n")
+            
+    loceno_besedilo_discardane_prazne = [i.replace("\n"," ") for i in loceno_besedilo if i.count("p//") == 0]
+    print("Dolzina locenega besedila brez praznih:", len(loceno_besedilo_discardane_prazne), len(loceno_besedilo))
     
+    with open("poenostavljeni_podatki2.txt", "w", encoding="utf-8") as f:
+        for i in loceno_besedilo_discardane_prazne:
+            f.write(i)
+            f.write("\n\n")
+        f.write("\n\n-----------------------------------------------------------------\n\n")
+        # for i in loceno_besedilo:
+        #     f.write(i)
+        #     f.write("\n\n")
     matrika_vseh_merjenj = [posamezna_meritev.split(", ") for posamezna_meritev in loceno_besedilo_discardane_prazne]
 
 
@@ -347,6 +372,8 @@ class Meritev():
         return self.najdi_element('Meja(Rln, Rlpe, Rnpe):')
 
 
+    # tole bi znalo biti nekoliko moteče, ker ne vem, ali moram meritve z iste poti obravnavati skupaj
+    # če ja, potem bo sicer to ok, vendar bo treba biti precej previden
     def zapisi_meritev_v_latex(self):
         """
         Zapiše meritev v latex datoteko
