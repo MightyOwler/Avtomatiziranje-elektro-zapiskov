@@ -1,11 +1,21 @@
 # datoteka za branje podatkov z datoteke
 
+import re
+
+#obstaja 7 vrst meritev: AUTO TN, Zloop mΩ, Z LINE, RCD Auto, R low 4, Varistor, R iso
 seznam_vrst_meritev = ["AUTO TN", "Zloop mΩ", "Z LINE", "RCD Auto", "R low 4", "Varistor", "R iso"]
+
+def find_nth(haystack, needle, n):
+    start = haystack.find(needle)
+    while start >= 0 and n > 1:
+        start = haystack.find(needle, start+len(needle))
+        n -= 1
+    return start
 
 
 with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     vse_besedilo =  podatki.read()
-    loceno_besedilo = vse_besedilo.split("Posamezne meritve")
+    loceno_besedilo_na_kocke_teksta = vse_besedilo.split("Posamezne meritve")
 
     
     # vsaka meritev je spodnje oblike 
@@ -16,7 +26,7 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     # če se pojavi 'prazno', je meritev zavržena // to bo treba še popraviti
     
     
-    #obstaja 7 vrst meritev: AUTO TN, Zloop mΩ, Z LINE, RCD Auto, R low 4, Varistor, R iso
+    
     
     # od Page dalje do serijskega lahko vse discardamo
     # odvrževa brezvezne meritve
@@ -25,9 +35,37 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     Tukaj moramo narediti nekaj, kar bolje najde meritve
     """
     
+    loceno_besedilo = []
+    dolzine = []
     
+    for kocka_teksta in loceno_besedilo_na_kocke_teksta:
+        slovar_meritev = {i:0 for i in seznam_vrst_meritev}
+        for vrsta_meritve in seznam_vrst_meritev:
+            if vrsta_meritve in kocka_teksta:
+                slovar_meritev[vrsta_meritve] = kocka_teksta.count(vrsta_meritve)
+                vsota_meritev = sum(slovar_meritev.values())
+                dolzine.append(vsota_meritev)
+                if vsota_meritev == 1:
+                    # v tem primeru ni problemov, saj je meritev itak ustrezna
+                    loceno_besedilo.append(vrsta_meritve)
+                else:
+                    # v tem primeru pa se moramo še malo potruditi
+                    seznam_indeksov = []
+                    for key in slovar_meritev:
+                        seznam_indeksov += [m.start() for m in re.finditer(key, kocka_teksta)]
+                    seznam_indeksov.sort()
+                    loceno_besedilo += [kocka_teksta[i:j] for i,j in zip(seznam_indeksov, seznam_indeksov[1:]+[None])]
+                    # print(seznam_indeksov)
+                    # print(slovar_meritev)
     
-    loceno_besedilo_discardane_prazne = [i.replace("\n"," ") for i in loceno_besedilo if i.count("prazno") == 0]
+    # Treba je še dodati pot in datum vse meritvam, ki niso na sredini (poglej, če imajo vse datum!)
+    
+    print(len(loceno_besedilo))
+    print(max(dolzine), len(dolzine), sum(dolzine))
+    for i in range(20):
+        print(loceno_besedilo[i] + "\n\n")
+    
+    loceno_besedilo_discardane_prazne = [i.replace("\n"," ") for i in loceno_besedilo_na_kocke_teksta if i.count("prazno") == 0]
     
     matrika_vseh_merjenj = [posamezna_meritev.split(", ") for posamezna_meritev in loceno_besedilo_discardane_prazne]
 
@@ -412,10 +450,11 @@ mnozica_vseh_objektov_meritev = [Meritev(i) for i in loceno_besedilo_discardane_
     
 
 najin_objekt = mnozica_vseh_objektov_meritev[35]
-print(najin_objekt.najdi_Isc_faktor())
-print(najin_objekt.najdi_Ozemljitveni_sistem())
-print(najin_objekt.doloci_vrsto_meritve())
-print(najin_objekt.najdi_pot())
+# print(najin_objekt.najdi_Isc_faktor())
+# print(najin_objekt.najdi_Ozemljitveni_sistem())
+# print(najin_objekt.doloci_vrsto_meritve())
+# print(najin_objekt.najdi_pot())
+print("-----------------------------------------------------------------")
 # print(najin_objekt.besedilo_po_elementih)
 
 #P-Ustrezno F-Neustrezno, E-Prazno, N-Ne obstaja
