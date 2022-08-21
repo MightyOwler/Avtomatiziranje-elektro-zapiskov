@@ -541,3 +541,21 @@ print("-----------------------------------------------------------------")
 
 #P-Ustrezno F-Neustrezno, E-Prazno, N-Ne obstaja
 # to ubistu pomeni isto kot ustrezno, prazno, narobe ki je pojavi na začetku vsakega sklopa meritev samo da tukaj se pojavi za vsako meritvijo, kar pomeni da lahko na ta način ločiva meritve eno od druge
+
+
+
+# vsi elementi v posameznih vrstah meritev
+
+#AUTO TN----Tip varov, I varovalke, t varovalke, Isc faktor, Uln, dU, R, Z (LPE), Z (LN), Ipsc (LN), Ipsc (LPE), Zref, Meja(dU), Meja(R), Ia(Ipsc (LN), Ipsc (LPE))
+
+#Zloop-----Tip varov, I varovalke, t varovalke, Preizkus, Un, Merilno breme, Povprečje, Isc faktor, Toleranca, Ipsc, Z, XL, R, IscMax, IscMin, Ia(Ipsc)
+
+#Z LINE-----Tip varov, I varovalke, t varovalke, Preizkus, Un, Merilno breme, Povprečje, Isc faktor, Toleranca, Ipsc, Z, XL, R, IscMax, IscMin, Ia(Ipsc)
+
+#RCD AUTO---Uporaba, Tip, I dN, Preizkus, RCD standard, Ozemljitveni sistem, t IΔN x1, (+), t IΔN x1, (-), t IΔN x5, (+), t IΔN x5, (-), t IΔN x0.5, (+), t IΔN x0.5, (-), IΔ, (+), IΔ, (-), Uc, Meja(Uc)(Uc)
+
+#R low 4W---Povezava, R, R+, R-, Meja(R)
+
+#Varistor---I lim, Sistem, Območje, Uac, Udc, Spodnja meja(Uac), Zgornja meja(Uac), 
+
+#R iso------Uizo, Rln, Rlpe, Rnpe, Umln, Umlpe, Umnpe, Meja(Rln, Rlpe, Rnpe)
