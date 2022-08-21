@@ -23,19 +23,20 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     Tukaj moramo pogledati vse datume iz datoteke, dobimo jih lahko tako, da pogledamo .2021
     """
     
-    loceno_besedilo_po_presledkih = vse_besedilo.split()
-    seznam_stringov_z_datumi = []
-    for i in loceno_besedilo_po_presledkih:
-        # \d\d\.\d\d\.\d\d\d\d je pravi regex expression
-        if re.search(r"\d{2}\.\d{2}\.\d{4}", i): #".2021" in i or ".2022" in i:
-            # vsi datumi so pravilne oblike, zato je upravičeno tole
-            string_datuma = i[9:]
-            #print(string_datuma)
-            datum = datetime.strptime(string_datuma, '%d.%m.%Y')
-            # tukaj je treba ustrezno pretvoriti datum v datetime obliko
-            seznam_stringov_z_datumi.append(datum)
-    seznam_stringov_z_datumi = sorted(seznam_stringov_z_datumi)
-    print("Meritve so bile opravljene od:", seznam_stringov_z_datumi[0], "do:", seznam_stringov_z_datumi[-1])
+    def najdi_seznam_datumov():
+        loceno_besedilo_po_presledkih = vse_besedilo.split()
+        seznam_stringov_z_datumi = []
+        for i in loceno_besedilo_po_presledkih:
+            # \d\d\.\d\d\.\d\d\d\d je pravi regex expression
+            if re.search(r"\d{2}\.\d{2}\.\d{4}", i): #".2021" in i or ".2022" in i:
+                # vsi datumi so pravilne oblike, zato je upravičeno tole
+                string_datuma = i[9:]
+                datum = datetime.strptime(string_datuma, '%d.%m.%Y')
+                seznam_stringov_z_datumi.append(datum)
+                return sorted(seznam_stringov_z_datumi)
+    
+    seznam_datumov_po_vrstnem_redu = najdi_seznam_datumov()
+    print("Meritve so bile opravljene od:", seznam_datumov_po_vrstnem_redu[0], "do:", seznam_datumov_po_vrstnem_redu[-1])
     
     # vsaka meritev je spodnje oblike 
     # Posamezne meritve ___________ Serijsko
