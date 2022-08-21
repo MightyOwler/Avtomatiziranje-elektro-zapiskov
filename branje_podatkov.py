@@ -24,6 +24,8 @@ class Meritev():
     def __init__(self, besedilo_meritve):
         self.besedilo = besedilo_meritve
         self.besedilo_po_elementih = besedilo_meritve.split(", ")
+        
+        #self.vrsta_meritve = ...
     
     def najdi_element(self, ime_elementa):
         element = []
@@ -39,6 +41,7 @@ class Meritev():
             return "/"
 
     #spodnji elementi so za meritve, ki se začnejo z AUTO TN
+    #to bo treba še bolje definirati
         
     def najdi_tip_varovalke(self):
         return self.najdi_element('Tip varov.:')
@@ -80,6 +83,7 @@ class Meritev():
         return self.najdi_element('Meja(dU):')
 
     #spodnje meritve so za meritve, ki se začnejo z Zloop in Z LINE
+    #to bo treba še bolje definirati
 
     def najdi_Merilno_breme(self):
         return self.najdi_element('Merilno breme:')
@@ -109,6 +113,7 @@ class Meritev():
         return self.najdi_element('Ia(Ipsc):')
 
     #spodnji lelementi so za meritve ki se začnejo z RCD Auto
+    #to bo treba še bolje definirati
 
     def najdi_Uporaba(self):
         return self.najdi_element('Uporaba:')
@@ -120,13 +125,13 @@ class Meritev():
         return self.najdi_element('I dN:')
 
     def najdi_Preizkus(self):
-        return self.najdi_element('Preizkus):')
+        return self.najdi_element('Preizkus:')
 
     def najdi_RCD_standard(self):
-        return self.najdi_element('RCD standard):')
+        return self.najdi_element('RCD standard:')
 
     def najdi_Ozemljitveni_sistem(self):
-        return self.najdi_element('Ozemljitveni sistem):')
+        return self.najdi_element('Ozemljitveni sistem:')
 
     def najdi_t_IΔN_x1_plus(self):
         return self.najdi_element('t IΔN x1, (+):') # pri tej meritvi pogledaš za isto meritev samo da je - namesto + in pogledaš katera vrednost je večja, tista vrednost je pomembna
@@ -293,9 +298,6 @@ mnozica_vseh_objektov_meritev = [Meritev(i) for i in loceno_besedilo_discardane_
 #         f.write("\n----------------------------------------------------------------------------------------------------\n")
 
 
-
-
-
 # tam kjer je napisano, da so spodnji elementi za x vrsto meritve pomeni da so te meritve take, da se pojavijo samo pri teh meritvah, ni pa naštetih tistih meritev, ki se ponovijo!!!!
 for j,i in enumerate(mnozica_vseh_objektov_meritev):
     #print(i.besedilo_po_elementih)
@@ -374,6 +376,7 @@ for j,i in enumerate(mnozica_vseh_objektov_meritev):
 
 najin_objekt = mnozica_vseh_objektov_meritev[10]
 print(najin_objekt.najdi_Isc_faktor())
+print(najin_objekt.najdi_Ozemljitveni_sistem())
 # print(najin_objekt.besedilo_po_elementih)
 
 #P-Ustrezno F-Neustrezno, E-Prazno, N-Ne obstaja
