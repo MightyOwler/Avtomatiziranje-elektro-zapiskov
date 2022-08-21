@@ -1,6 +1,7 @@
 # datoteka za branje podatkov z datoteke
 
 import re
+import datetime
 
 #obstaja 7 vrst meritev: AUTO TN, Zloop mΩ, Z LINE, RCD Auto, R low 4, Varistor, R iso
 seznam_vrst_meritev = ["AUTO TN", "Zloop mΩ", "Z LINE", "RCD Auto", "R low 4", "Varistor", "R iso"]
@@ -16,7 +17,22 @@ def find_nth(haystack, needle, n):
 with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     vse_besedilo =  podatki.read()
     loceno_besedilo_na_kocke_teksta = vse_besedilo.split("Posamezne meritve")
-
+    
+    
+    """
+    Tukaj moramo pogledati vse datume iz datoteke, dobimo jih lahko tako, da pogledamo .2021
+    """
+    
+    loceno_besedilo_po_presledkih = vse_besedilo.split()
+    seznam_stringov_z_datumi = []
+    for i in loceno_besedilo_po_presledkih:
+        if ".2021" in i or ".2022" in i:
+            # vsi datumi so pravilne oblike, zato je upravičeno tole
+            string_datuma = i[9:]
+            datum = string_datuma
+            # tukaj je treba ustrezno pretvoriti datum v datetime obliko
+            seznam_stringov_z_datumi.append(datum)
+    print(seznam_stringov_z_datumi)
     
     # vsaka meritev je spodnje oblike 
     # Posamezne meritve ___________ Serijsko
@@ -31,9 +47,7 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     # od Page dalje do serijskega lahko vse discardamo
     # odvrževa brezvezne meritve
     
-    """
-    Tukaj moramo narediti nekaj, kar bolje najde meritve
-    """
+
     
     loceno_besedilo = []
     dolzine = []
@@ -58,12 +72,13 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
                     # print(seznam_indeksov)
                     # print(slovar_meritev)
     
+    
     # Treba je še dodati pot in datum vse meritvam, ki niso na sredini (poglej, če imajo vse datum!)
     
-    print(len(loceno_besedilo))
-    print(max(dolzine), len(dolzine), sum(dolzine))
-    for i in range(20):
-        print(loceno_besedilo[i] + "\n\n")
+    # print(len(loceno_besedilo))
+    # print(max(dolzine), len(dolzine), sum(dolzine))
+    # for i in range(20):
+    #     print(loceno_besedilo[i] + "\n\n")
     
     loceno_besedilo_discardane_prazne = [i.replace("\n"," ") for i in loceno_besedilo_na_kocke_teksta if i.count("prazno") == 0]
     
