@@ -62,7 +62,8 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
                 loceno_besedilo_brez_poti_na_koncu += [kocka_teksta[i:j] for i,j in zip(seznam_indeksov, seznam_indeksov[1:]+[None])]
                 loceno_besedilo_zacasno = []
                 for meritev in loceno_besedilo_brez_poti_na_koncu:
-                    loceno_besedilo_zacasno.append(meritev.replace("\n", " ").strip() + " " + pot_do_druzine_meritev)
+                    loceno_besedilo_zacasno.append(meritev.replace("\n", " ").strip())
+                    #loceno_besedilo_zacasno.append(meritev.replace("\n", " ").strip() + " " + pot_do_druzine_meritev)
                 loceno_besedilo += loceno_besedilo_zacasno
                 # print(seznam_indeksov)
                 # print(slovar_meritev)

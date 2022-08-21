@@ -1,6 +1,8 @@
 import re
 from datetime import datetime
 
+seznam_vrst_meritev = ["AUTO TN", "Zloop mΩ", "Z LINE", "RCD Auto", "R low 4", "Varistor", "R iso"]
+
 
 class Meritev():
     def __init__(self, besedilo_meritve):
@@ -10,10 +12,14 @@ class Meritev():
         self.vrsta_meritve = self.doloci_vrsto_meritve
         
     def doloci_vrsto_meritve(self):
-        if "AUTO TN" in self.besedilo:
-            return True
-        else:
-            return False
+        #seznam_vrst = [] ## če bo vse v redu, bi to moralo biti povsod 1
+        for vrsta_meritve in seznam_vrst_meritev:
+            if vrsta_meritve in self.besedilo:
+                #seznam_vrst.append(vrsta_meritve)
+                return vrsta_meritve
+        #return seznam_vrst
+                
+            
     
     # ta definicija v resnici ni najboljša, saj vedno gleda samo posamezno meritev
     # če nama uspe pravilno razdeliti že prej, potem bo pa ok
