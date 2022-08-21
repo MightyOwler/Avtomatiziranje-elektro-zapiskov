@@ -1,7 +1,7 @@
 # datoteka za branje podatkov z datoteke
 
 import re
-import datetime
+from datetime import datetime
 
 #obstaja 7 vrst meritev: AUTO TN, Zloop mΩ, Z LINE, RCD Auto, R low 4, Varistor, R iso
 seznam_vrst_meritev = ["AUTO TN", "Zloop mΩ", "Z LINE", "RCD Auto", "R low 4", "Varistor", "R iso"]
@@ -26,13 +26,16 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     loceno_besedilo_po_presledkih = vse_besedilo.split()
     seznam_stringov_z_datumi = []
     for i in loceno_besedilo_po_presledkih:
-        if ".2021" in i or ".2022" in i:
+        # \d\d\.\d\d\.\d\d\d\d je pravi regex expression
+        if re.search(r"\d{2}\.\d{2}\.\d{4}", i): #".2021" in i or ".2022" in i:
             # vsi datumi so pravilne oblike, zato je upravičeno tole
             string_datuma = i[9:]
-            datum = string_datuma
+            #print(string_datuma)
+            datum = datetime.strptime(string_datuma, '%d.%m.%Y')
             # tukaj je treba ustrezno pretvoriti datum v datetime obliko
             seznam_stringov_z_datumi.append(datum)
-    print(seznam_stringov_z_datumi)
+    seznam_stringov_z_datumi = sorted(seznam_stringov_z_datumi)
+    print("Meritve so bile opravljene od:", seznam_stringov_z_datumi[0], "do:", seznam_stringov_z_datumi[-1])
     
     # vsaka meritev je spodnje oblike 
     # Posamezne meritve ___________ Serijsko
@@ -52,6 +55,10 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     loceno_besedilo = []
     dolzine = []
     
+    
+    # vprašanje, če je to v redu, ker dejansko so v tabelicah skupaj zlepljene posamezne meritve...
+    # verjentno bo treba v razredu Meritev ločiti med seboj posamezne meritve...
+    # je pa spodnja koda kar uporabna za to
     for kocka_teksta in loceno_besedilo_na_kocke_teksta:
         slovar_meritev = {i:0 for i in seznam_vrst_meritev}
         for vrsta_meritve in seznam_vrst_meritev:
@@ -71,6 +78,7 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
                     loceno_besedilo += [kocka_teksta[i:j] for i,j in zip(seznam_indeksov, seznam_indeksov[1:]+[None])]
                     # print(seznam_indeksov)
                     # print(slovar_meritev)
+                    
     
     
     # Treba je še dodati pot in datum vse meritvam, ki niso na sredini (poglej, če imajo vse datum!)
