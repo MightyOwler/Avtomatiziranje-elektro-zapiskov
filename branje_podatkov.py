@@ -14,6 +14,8 @@ def find_nth(haystack, needle, n):
     return start
 
 
+
+
 with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     vse_besedilo =  podatki.read()
     loceno_besedilo_na_kocke_teksta = vse_besedilo.split("Posamezne meritve")
@@ -33,9 +35,10 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
                 string_datuma = i[9:]
                 datum = datetime.strptime(string_datuma, '%d.%m.%Y')
                 seznam_stringov_z_datumi.append(datum)
-                return sorted(seznam_stringov_z_datumi)
+        return sorted(seznam_stringov_z_datumi)
     
     seznam_datumov_po_vrstnem_redu = najdi_seznam_datumov()
+    #tukaj se da še popraviti
     print("Meritve so bile opravljene od:", seznam_datumov_po_vrstnem_redu[0], "do:", seznam_datumov_po_vrstnem_redu[-1])
     
     # vsaka meritev je spodnje oblike 
@@ -46,14 +49,37 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     # če se pojavi 'prazno', je meritev zavržena // to bo treba še popraviti
     
     
-    
-    
     # od Page dalje do serijskega lahko vse discardamo
     # odvrževa brezvezne meritve
     
+        
+    # def najdi_element_izven_razreda_Meritev(besedilo, ime_elementa):
+    #     element = []
+    #     for i in besedilo:
+    #         if ime_elementa in i:
+    #             element.append(i[len(ime_elementa) + 1:])
+        
+    #     if element:
+    #         return element
+    #     else:
+    #         return "/"
+        
+    
+    def najdi_pot_izven_razreda_Meritev(besedilo):
+        idx = besedilo.find("Pot:")
+        string_ki_ga_obdelujemo = besedilo[idx:]
+        if "Page" in string_ki_ga_obdelujemo:
+            idx = string_ki_ga_obdelujemo.find("Page")
+            # poanta je v temu, da so spredaj odvečne črke
+            string_ki_ga_obdelujemo = string_ki_ga_obdelujemo[:idx]
+        if "Serijsko" in string_ki_ga_obdelujemo:
+            idx = string_ki_ga_obdelujemo.find("Serijsko")
+            # poanta je v temu, da so spredaj odvečne črke
+            string_ki_ga_obdelujemo = string_ki_ga_obdelujemo[:idx]
+        return string_ki_ga_obdelujemo
 
     
-    loceno_besedilo = []
+    loceno_besedilo_brez_poti_na_koncu = []
     dolzine = []
     
     
@@ -62,6 +88,8 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     # je pa spodnja koda kar uporabna za to
     for kocka_teksta in loceno_besedilo_na_kocke_teksta:
         slovar_meritev = {i:0 for i in seznam_vrst_meritev}
+        pot_do_druzine_meritev = najdi_pot_izven_razreda_Meritev(kocka_teksta)
+        #print(pot_do_druzine_meritev)
         for vrsta_meritve in seznam_vrst_meritev:
             if vrsta_meritve in kocka_teksta:
                 slovar_meritev[vrsta_meritve] = kocka_teksta.count(vrsta_meritve)
@@ -69,25 +97,32 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
                 dolzine.append(vsota_meritev)
                 if vsota_meritev == 1:
                     # v tem primeru ni problemov, saj je meritev itak ustrezna
-                    loceno_besedilo.append(vrsta_meritve)
+                    loceno_besedilo_brez_poti_na_koncu.append(vrsta_meritve)
                 else:
                     # v tem primeru pa se moramo še malo potruditi
                     seznam_indeksov = []
                     for key in slovar_meritev:
                         seznam_indeksov += [m.start() for m in re.finditer(key, kocka_teksta)]
                     seznam_indeksov.sort()
-                    loceno_besedilo += [kocka_teksta[i:j] for i,j in zip(seznam_indeksov, seznam_indeksov[1:]+[None])]
+                    loceno_besedilo_brez_poti_na_koncu += [kocka_teksta[i:j] for i,j in zip(seznam_indeksov, seznam_indeksov[1:]+[None])]
+                    loceno_besedilo = []
+                    for meritev in loceno_besedilo_brez_poti_na_koncu:
+                        if "Pot:" not in meritev:
+                            loceno_besedilo.append(meritev + " " + pot_do_druzine_meritev)
+                        else:
+                            loceno_besedilo.append(meritev)
+                        
                     # print(seznam_indeksov)
                     # print(slovar_meritev)
                     
-    
+
     
     # Treba je še dodati pot in datum vse meritvam, ki niso na sredini (poglej, če imajo vse datum!)
     
     # print(len(loceno_besedilo))
     # print(max(dolzine), len(dolzine), sum(dolzine))
-    # for i in range(20):
-    #     print(loceno_besedilo[i] + "\n\n")
+    for i in range(20):
+        print(loceno_besedilo[i] + "\n\n")
     
     loceno_besedilo_discardane_prazne = [i.replace("\n"," ") for i in loceno_besedilo_na_kocke_teksta if i.count("prazno") == 0]
     
@@ -124,6 +159,9 @@ class Meritev():
 
     #spodnji elementi so za meritve, ki se začnejo z AUTO TN
     #to bo treba še bolje definirati
+    
+    def najdi_pot(self):
+        return self.najdi_element('Pot:')
         
     def najdi_tip_varovalke(self):
         return self.najdi_element('Tip varov.:')
@@ -327,14 +365,7 @@ class Meritev():
     
     
     # to ni popolno, saj v primeru, da obstaja comment, ne deluje kot bi moralo
-    def najdi_pot(self):
-        string_skupaj_s_page = self.najdi_element('Pot:')[0]
-        if "Page" in string_skupaj_s_page:
-            idx = string_skupaj_s_page.find("Page")
-            # poanta je v temu, da so spredaj odvečne črke
-            return [string_skupaj_s_page[4:idx]]
-        else:
-            return [string_skupaj_s_page[4:]]
+    
         
         
     
@@ -373,7 +404,7 @@ mnozica_vseh_objektov_meritev = [Meritev(i) for i in loceno_besedilo_discardane_
 #         f.write("\n")
 #         f.write(str(i.najdi_meja_dU()))
 #         f.write("\n")
-#         f.write(str(i.najdi_pot()))
+#         #f.write(str(i.najdi_pot()))
 #         # spodnje meritve so za meritve ki se začnejo z Zloop in Z LINE 
 #         f.write("\n")
 #         f.write(str(i.najdi_Merilno_breme()))
@@ -416,7 +447,7 @@ mnozica_vseh_objektov_meritev = [Meritev(i) for i in loceno_besedilo_discardane_
 #     print(i.najdi_R())
 #     print(i.najdi_Zref())
 #     print(i.najdi_meja_dU())
-#     print(i.najdi_pot())
+#     #print(i.najdi_pot())
 #     #spodnji veljajo za meritve, ki se začnejo z Zloop in Z LINE
 #     print(i.najdi_Merilno_breme())
 #     print(i.najdi_Povprečje())
@@ -477,7 +508,7 @@ najin_objekt = mnozica_vseh_objektov_meritev[35]
 # print(najin_objekt.najdi_Isc_faktor())
 # print(najin_objekt.najdi_Ozemljitveni_sistem())
 # print(najin_objekt.doloci_vrsto_meritve())
-# print(najin_objekt.najdi_pot())
+# #print(najin_objekt.najdi_pot())
 print("-----------------------------------------------------------------")
 # print(najin_objekt.besedilo_po_elementih)
 
