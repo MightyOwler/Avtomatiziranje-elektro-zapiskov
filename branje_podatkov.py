@@ -1,11 +1,12 @@
 # datoteka za branje podatkov z datoteke
 
-from ast import Return
+seznam_vrst_meritev = ["AUTO TN", "Zloop mΩ", "Z LINE", "RCD Auto", "R low 4", "Varistor", "R iso"]
 
 
 with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     vse_besedilo =  podatki.read()
     loceno_besedilo = vse_besedilo.split("Posamezne meritve")
+
     
     # vsaka meritev je spodnje oblike 
     # Posamezne meritve ___________ Serijsko
@@ -19,6 +20,13 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     
     # od Page dalje do serijskega lahko vse discardamo
     # odvrževa brezvezne meritve
+    
+    """
+    Tukaj moramo narediti nekaj, kar bolje najde meritve
+    """
+    
+    
+    
     loceno_besedilo_discardane_prazne = [i.replace("\n"," ") for i in loceno_besedilo if i.count("prazno") == 0]
     
     matrika_vseh_merjenj = [posamezna_meritev.split(", ") for posamezna_meritev in loceno_besedilo_discardane_prazne]
