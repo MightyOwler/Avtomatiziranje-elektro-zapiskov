@@ -6,6 +6,15 @@ import re
 Morala bova šteti vrste meritev v celem blocku razen med potjo in serijsko!!
 """
 
+# neprazne meritve
+# AUTO TN: 434
+# Zloop mΩ: 66
+# Z LINE: 106
+# RCD Auto: 33
+# R low 4: 0
+# Varistor: 0
+# R iso: 0
+
 #problem je v tem, da ne loči še med AUTO TN in AUTO TN (RCD)
 #to ni velik problem: AUTO TN (RCD) --> Auto Tn (RCD) bo rešilo problem
 #obstaja 7 vrst meritev: AUTO TN, Zloop mΩ, Z LINE, RCD Auto, R low 4, Varistor, R iso
@@ -38,9 +47,10 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
         
         for kocka_teksta in loceno_besedilo_na_kocke_teksta:
             slovar_meritev = {i:0 for i in seznam_vrst_meritev}
-            pot_do_druzine_meritev = model.najdi_pot_izven_razreda_Meritev(kocka_teksta)
-            idx = kocka_teksta.find("Pot:")
-            kocka_teksta = kocka_teksta[:idx]
+            #pot_do_druzine_meritev = model.najdi_pot_izven_razreda_Meritev(kocka_teksta)
+            idx_poti = kocka_teksta.find("Pot:")
+            kocka_teksta = kocka_teksta[:idx_poti]
+
             #print(pot_do_druzine_meritev)
             for vrsta_meritve in seznam_vrst_meritev:
                 if vrsta_meritve in kocka_teksta:
@@ -77,18 +87,28 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     loceno_besedilo_discardane_prazne = [i.replace("\n"," ") for i in loceno_besedilo if i.count("p//") == 0]
     print("Dolzina locenega besedila brez praznih:", len(loceno_besedilo_discardane_prazne), len(loceno_besedilo))
     
-    with open("poenostavljeni_podatki2.txt", "w", encoding="utf-8") as f:
-        for i in loceno_besedilo_discardane_prazne:
-            f.write(i)
-            f.write("\n\n")
-        f.write("\n\n-----------------------------------------------------------------\n\n")
-        # for i in loceno_besedilo:
-        #     f.write(i)
-        #     f.write("\n\n")
+    # with open("poenostavljeni_podatki2.txt", "w", encoding="utf-8") as f:
+    #     for i in loceno_besedilo_discardane_prazne:
+    #         f.write(i)
+    #         f.write("\n\n")
+    #     f.write("\n\n-----------------------------------------------------------------\n\n")
+    #     # for i in loceno_besedilo:
+    #     #     f.write(i)
+    #     #     f.write("\n\n")
         
+
+    #matrika_vseh_merjenj = [posamezna_meritev.split(", ") for posamezna_meritev in loceno_besedilo_discardane_prazne]
+    mnozica_vseh_objektov_meritev = [model.Meritev(i) for i in loceno_besedilo_discardane_prazne]
+    
+    
+    slovar_vrst = {i:0 for i in seznam_vrst_meritev}
+    for meritev in mnozica_vseh_objektov_meritev:
+        slovar_vrst[meritev.doloci_vrsto_meritve()] += 1
         
-    matrika_vseh_merjenj = [posamezna_meritev.split(", ") for posamezna_meritev in loceno_besedilo_discardane_prazne]
-    mnozica_vseh_objektov_meritev = [model.Meritev(i) for i in loceno_besedilo_discardane_prazne]   
+    print("Lastnosti slovarja:", sum(slovar_vrst.values()))
+    for i in slovar_vrst:
+        print(i+":", slovar_vrst[i])
+        
 
 
 

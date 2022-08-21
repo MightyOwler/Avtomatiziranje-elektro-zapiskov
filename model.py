@@ -3,6 +3,12 @@ from datetime import datetime
 
 seznam_vrst_meritev = ["AUTO TN", "Zloop mΩ", "Z LINE", "RCD Auto", "R low 4", "Varistor", "R iso"]
 
+def find_nth(haystack, needle, n):
+    start = haystack.find(needle)
+    while start >= 0 and n > 1:
+        start = haystack.find(needle, start+len(needle))
+        n -= 1
+    return start
 
 class Meritev():
     def __init__(self, besedilo_meritve):
@@ -18,7 +24,15 @@ class Meritev():
                 #seznam_vrst.append(vrsta_meritve)
                 return vrsta_meritve
         #return seznam_vrst
-                
+        
+    def najdi_komentar(self):
+        if "Comment:" in self.besedilo:
+            st_pojavitev = self.besedilo.count("Comment:")
+            idx_komentarja = find_nth(self.besedilo, "Comment:", st_pojavitev)
+            komentar = self.besedilo[idx_komentarja:]
+            return komentar.replace("Comment:","").replace("//","").strip()
+        else:
+            return ""
             
     
     # ta definicija v resnici ni najboljša, saj vedno gleda samo posamezno meritev
@@ -408,9 +422,3 @@ def ustvari_datoteko_s_poenostavljenimi_podatki(mnozica_vseh_objektov_meritev):
     
     
     
-# def find_nth(haystack, needle, n):
-#     start = haystack.find(needle)
-#     while start >= 0 and n > 1:
-#         start = haystack.find(needle, start+len(needle))
-#         n -= 1
-#     return start
