@@ -13,12 +13,12 @@ Morala bova šteti vrste meritev v celem blocku razen med potjo in serijsko!!
 # RCD Auto: 33
 # R low 4: 0
 # Varistor: 0
-# R iso: 0
+# R iso: 0doloci_vrsto_meritve
 
 #problem je v tem, da ne loči še med AUTO TN in AUTO TN (RCD)
 #to ni velik problem: AUTO TN (RCD) --> Auto Tn (RCD) bo rešilo problem
 #obstaja 7 vrst meritev: AUTO TN, Zloop mΩ, Z LINE, RCD Auto, R low 4, Varistor, R iso
-seznam_vrst_meritev = ["AUTO TN", "Zloop mΩ", "Z LINE", "RCD Auto", "R low 4", "Varistor", "R iso"]
+seznam_vrst_meritev = ["AUTO TN", "Zloop", "Z LINE", "RCD Auto", "R low 4", "Varistor", "R iso"]
 
 
 with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
@@ -98,8 +98,10 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
         
 
     #matrika_vseh_merjenj = [posamezna_meritev.split(", ") for posamezna_meritev in loceno_besedilo_discardane_prazne]
-    mnozica_vseh_objektov_meritev = [model.Meritev(i) for i in loceno_besedilo_discardane_prazne]
     
+    mnozica_vseh_objektov_meritev = [model.Meritev(i) for i in loceno_besedilo_discardane_prazne]
+    model.ustvari_latex_datoteko(mnozica_vseh_objektov_meritev, seznam_datumov_po_vrstnem_redu)
+
     
     slovar_vrst = {i:0 for i in seznam_vrst_meritev}
     for meritev in mnozica_vseh_objektov_meritev:
@@ -109,8 +111,6 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     for i in slovar_vrst:
         print(i+":", slovar_vrst[i])
         
-
-
 
 
 print("-----------------------------------------------------------------")
