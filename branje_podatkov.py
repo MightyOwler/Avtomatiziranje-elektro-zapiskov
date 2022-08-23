@@ -1,21 +1,130 @@
 # datoteka za branje podatkov z datoteke
 
-from ast import Return
+import re
+from datetime import datetime
+
+#obstaja 7 vrst meritev: AUTO TN, Zloop mΩ, Z LINE, RCD Auto, R low 4, Varistor, R iso
+seznam_vrst_meritev = ["AUTO TN", "Zloop mΩ", "Z LINE", "RCD Auto", "R low 4", "Varistor", "R iso"]
+
+def find_nth(haystack, needle, n):
+    start = haystack.find(needle)
+    while start >= 0 and n > 1:
+        start = haystack.find(needle, start+len(needle))
+        n -= 1
+    return start
+
+
 
 
 with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     vse_besedilo =  podatki.read()
-    loceno_besedilo = vse_besedilo.split("Posamezne meritve")
+    loceno_besedilo_na_kocke_teksta = vse_besedilo.split("Posamezne meritve")
     
-    # pot je točno tolikokrat kot posamezne meritve kot serijsko!!!
-    # vsaka meritev je spodnje oblike
+    
+    """
+    Tukaj moramo pogledati vse datume iz datoteke, dobimo jih lahko tako, da pogledamo .2021
+    """
+    
+    def najdi_seznam_datumov():
+        loceno_besedilo_po_presledkih = vse_besedilo.split()
+        seznam_stringov_z_datumi = []
+        for i in loceno_besedilo_po_presledkih:
+            # \d\d\.\d\d\.\d\d\d\d je pravi regex expression
+            if re.search(r"\d{2}\.\d{2}\.\d{4}", i): #".2021" in i or ".2022" in i:
+                # vsi datumi so pravilne oblike, zato je upravičeno tole
+                string_datuma = i[9:]
+                datum = datetime.strptime(string_datuma, '%d.%m.%Y')
+                seznam_stringov_z_datumi.append(datum)
+        return sorted(seznam_stringov_z_datumi)
+    
+    seznam_datumov_po_vrstnem_redu = najdi_seznam_datumov()
+    #tukaj se da še popraviti
+    print("Meritve so bile opravljene od:", seznam_datumov_po_vrstnem_redu[0], "do:", seznam_datumov_po_vrstnem_redu[-1])
+    
+    # vsaka meritev je spodnje oblike 
     # Posamezne meritve ___________ Serijsko
-    # beseda prazno se lahko pojavi največ 1-krat na posamezno meritev
-    # če se pojavi 'prazno', je meritev zavržena
-    # od Page dalje do serijskega lahko vse discardamo
+    # (ni res, ker se vmes lahko skriva več posameznih meritev. Morala bova bolje ločiti med njimi)
     
+    # beseda prazno se lahko pojavi največ 1-krat na posamezno meritev // ni res
+    # če se pojavi 'prazno', je meritev zavržena // to bo treba še popraviti
+    
+    
+    # od Page dalje do serijskega lahko vse discardamo
     # odvrževa brezvezne meritve
-    loceno_besedilo_discardane_prazne = [i.replace("\n"," ") for i in loceno_besedilo if i.count("prazno") == 0]
+    
+        
+    # def najdi_element_izven_razreda_Meritev(besedilo, ime_elementa):
+    #     element = []
+    #     for i in besedilo:
+    #         if ime_elementa in i:
+    #             element.append(i[len(ime_elementa) + 1:])
+        
+    #     if element:
+    #         return element
+    #     else:
+    #         return "/"
+        
+    
+    def najdi_pot_izven_razreda_Meritev(besedilo):
+        idx = besedilo.find("Pot:")
+        string_ki_ga_obdelujemo = besedilo[idx:]
+        if "Page" in string_ki_ga_obdelujemo:
+            idx = string_ki_ga_obdelujemo.find("Page")
+            # poanta je v temu, da so spredaj odvečne črke
+            string_ki_ga_obdelujemo = string_ki_ga_obdelujemo[:idx]
+        if "Serijsko" in string_ki_ga_obdelujemo:
+            idx = string_ki_ga_obdelujemo.find("Serijsko")
+            # poanta je v temu, da so spredaj odvečne črke
+            string_ki_ga_obdelujemo = string_ki_ga_obdelujemo[:idx]
+        return string_ki_ga_obdelujemo
+
+    
+    loceno_besedilo_brez_poti_na_koncu = []
+    dolzine = []
+    
+    
+    # vprašanje, če je to v redu, ker dejansko so v tabelicah skupaj zlepljene posamezne meritve...
+    # verjentno bo treba v razredu Meritev ločiti med seboj posamezne meritve...
+    # je pa spodnja koda kar uporabna za to
+    for kocka_teksta in loceno_besedilo_na_kocke_teksta:
+        slovar_meritev = {i:0 for i in seznam_vrst_meritev}
+        pot_do_druzine_meritev = najdi_pot_izven_razreda_Meritev(kocka_teksta)
+        #print(pot_do_druzine_meritev)
+        for vrsta_meritve in seznam_vrst_meritev:
+            if vrsta_meritve in kocka_teksta:
+                slovar_meritev[vrsta_meritve] = kocka_teksta.count(vrsta_meritve)
+                vsota_meritev = sum(slovar_meritev.values())
+                dolzine.append(vsota_meritev)
+                if vsota_meritev == 1:
+                    # v tem primeru ni problemov, saj je meritev itak ustrezna
+                    loceno_besedilo_brez_poti_na_koncu.append(vrsta_meritve)
+                else:
+                    # v tem primeru pa se moramo še malo potruditi
+                    seznam_indeksov = []
+                    for key in slovar_meritev:
+                        seznam_indeksov += [m.start() for m in re.finditer(key, kocka_teksta)]
+                    seznam_indeksov.sort()
+                    loceno_besedilo_brez_poti_na_koncu += [kocka_teksta[i:j] for i,j in zip(seznam_indeksov, seznam_indeksov[1:]+[None])]
+                    loceno_besedilo = []
+                    for meritev in loceno_besedilo_brez_poti_na_koncu:
+                        if "Pot:" not in meritev:
+                            loceno_besedilo.append(meritev + " " + pot_do_druzine_meritev)
+                        else:
+                            loceno_besedilo.append(meritev)
+                        
+                    # print(seznam_indeksov)
+                    # print(slovar_meritev)
+                    
+
+    
+    # Treba je še dodati pot in datum vse meritvam, ki niso na sredini (poglej, če imajo vse datum!)
+    
+    # print(len(loceno_besedilo))
+    # print(max(dolzine), len(dolzine), sum(dolzine))
+    for i in range(20):
+        print(loceno_besedilo[i] + "\n\n")
+    
+    loceno_besedilo_discardane_prazne = [i.replace("\n"," ") for i in loceno_besedilo_na_kocke_teksta if i.count("prazno") == 0]
     
     matrika_vseh_merjenj = [posamezna_meritev.split(", ") for posamezna_meritev in loceno_besedilo_discardane_prazne]
 
@@ -23,10 +132,18 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
 class Meritev():
     def __init__(self, besedilo_meritve):
         self.besedilo = besedilo_meritve
-        self.besedilo_po_elementih = besedilo_meritve.split(", ")
+        self.besedilo_po_elementih = [i.replace("Pot:", "Pot: ").strip() for i in besedilo_meritve.split(", ")]
         
-        #self.vrsta_meritve = ...
+        self.vrsta_meritve = self.doloci_vrsto_meritve
+        
+    def doloci_vrsto_meritve(self):
+        if "AUTO TN" in self.besedilo:
+            return True
+        else:
+            return False
     
+    # ta definicija v resnici ni najboljša, saj vedno gleda samo posamezno meritev
+    # če nama uspe pravilno razdeliti že prej, potem bo pa ok
     def najdi_element(self, ime_elementa):
         element = []
         for i in self.besedilo_po_elementih:
@@ -42,6 +159,9 @@ class Meritev():
 
     #spodnji elementi so za meritve, ki se začnejo z AUTO TN
     #to bo treba še bolje definirati
+    
+    def najdi_pot(self):
+        return self.najdi_element('Pot:')
         
     def najdi_tip_varovalke(self):
         return self.najdi_element('Tip varov.:')
@@ -112,7 +232,7 @@ class Meritev():
     def najdi_Ia_Ipsc(self):
         return self.najdi_element('Ia(Ipsc):')
 
-    #spodnji lelementi so za meritve ki se začnejo z RCD Auto
+    #spodnji elementi so za meritve ki se začnejo z RCD Auto
     #to bo treba še bolje definirati
 
     def najdi_Uporaba(self):
@@ -185,7 +305,7 @@ class Meritev():
     def najdi_Sistem(self):
         return self.najdi_element('Sistem:')
 
-    def najdi_Območje(self):
+    def najdi_Obmocje(self):
         return self.najdi_element('Območje:')
 
     def najdi_Uac(self):
@@ -227,17 +347,27 @@ class Meritev():
         return self.najdi_element('Meja(Rln, Rlpe, Rnpe):')
 
 
-
+    def zapisi_meritev_v_latex(self):
+        """
+        Zapiše meritev v latex datoteko
+        """
+        pass
+    
+    def zapisi_meritev_v_excel(self):
+        """
+        Zapiše meritev v excel datoteko
+        """
+        pass
 
 
 
 
     
     
-    # to ni popolno, saj ne odstrani Page
-    # tole je treba malo popraviti
-    def najdi_pot(self):
-        return ["P" + self.najdi_element('Pot:')[0]]
+    # to ni popolno, saj v primeru, da obstaja comment, ne deluje kot bi moralo
+    
+        
+        
     
     
 mnozica_vseh_objektov_meritev = [Meritev(i) for i in loceno_besedilo_discardane_prazne]   
@@ -274,7 +404,7 @@ mnozica_vseh_objektov_meritev = [Meritev(i) for i in loceno_besedilo_discardane_
 #         f.write("\n")
 #         f.write(str(i.najdi_meja_dU()))
 #         f.write("\n")
-#         f.write(str(i.najdi_pot()))
+#         #f.write(str(i.najdi_pot()))
 #         # spodnje meritve so za meritve ki se začnejo z Zloop in Z LINE 
 #         f.write("\n")
 #         f.write(str(i.najdi_Merilno_breme()))
@@ -299,84 +429,87 @@ mnozica_vseh_objektov_meritev = [Meritev(i) for i in loceno_besedilo_discardane_
 
 
 # tam kjer je napisano, da so spodnji elementi za x vrsto meritve pomeni da so te meritve take, da se pojavijo samo pri teh meritvah, ni pa naštetih tistih meritev, ki se ponovijo!!!!
-for j,i in enumerate(mnozica_vseh_objektov_meritev):
-    #print(i.besedilo_po_elementih)
-    print("Številka meritve", j+1)
-    # print(i.AUTO_TN())
-    # print(i.Zloop())
-    # print(i.Z_LINE)
-    print(i.najdi_tip_varovalke())
-    print(i.najdi_I_varovalke())
-    print(i.najdi_t_varovalke())
-    print(i.najdi_Isc_faktor())
-    print(i.najdi_dU())
-    print(i.najdi_Z_LPE())
-    print(i.najdi_I_preizkusa())
-    print(i.najdi_Ipsc_LPE())
-    print(i.najdi_Uln())
-    print(i.najdi_R())
-    print(i.najdi_Zref())
-    print(i.najdi_meja_dU())
-    print(i.najdi_pot())
-    #spodnji veljajo za meritve, ki se začnejo z Zloop in Z LINE
-    print(i.najdi_Merilno_breme())
-    print(i.najdi_Povprečje())
-    print(i.najdi_Toleranca())
-    print(i.najdi_Ipsc())
-    print(i.najdi_Z())
-    print(i.najdi_XL())
-    print(i.najdi_IscMax())
-    print(i.najdi_IscMin())
-    print(i.najdi_Ia_Ipsc())
-    #spodnje veljajo za meritve ki se začnejo z RCD Auto
-    print(i.najdi_Uporaba())
-    print(i.najdi_Tip())
-    print(i.najdi_I_dN())
-    print(i.najdi_Preizkus())
-    print(i.najdi_RCD_standard())
-    print(i.najdi_Ozemljitveni_sistem())
-    print(i.najdi_t_IΔN_x1_plus())
-    print(i.najdi_t_IΔN_x1_minus())
-    print(i.najdi_t_IΔN_x5_plus())
-    print(i.najdi_t_IΔN_x5_minus())
-    print(i.najdi_t_IΔN_x05_plus())
-    print(i.najdi_t_IΔN_x05_minus())
-    print(i.najdi_IΔ_plus())
-    print(i.najdi_IΔ_minus())
-    print(i.najdi_Uc())
-    print(i.najdi_Meja_Uc_Uc_())
-# spodnji veljajo za meritve, ki se začnejo z R low 4
-    print(i.najdi_Povezava())
-    print(i.najdi_R_pozitivno())
-    print(i.najdi_R_negativno())
-    print(i.najdi_Meja_R())
-# spodnji veljajo za elemente, ki se začnjejo z Varistor
-    print(i.najdi_I_lim())
-    print(i.najdi_Sistem())
-    print(i.najdi_Območje())
-    print(i.najdi_Uac())
-    print(i.najdi_Udc())
-    print(i.najdi_Spodnja_meja_Uac())
-    print(i.najdi_Zgornja_meja_Uac())
-# spodnji veljajo za meritve, ki se začnjejo z R iso
-    print(i.najdi_Uizo())
-    print(i.najdi_Rln())
-    print(i.najdi_Rlpe())
-    print(i.najdi_Rnpe())
-    print(i.najdi_Umln())
-    print(i.najdi_Umlpe())
-    print(i.najdi_Umnpe())
-    print(i.najdi_MejaRln_Rlpe_Rnpe())
+# for j,i in enumerate(mnozica_vseh_objektov_meritev):
+#     #print(i.besedilo_po_elementih)
+#     print("Številka meritve", j+1)
+#     # print(i.AUTO_TN())
+#     # print(i.Zloop())
+#     # print(i.Z_LINE)
+#     print(i.najdi_tip_varovalke())
+#     print(i.najdi_I_varovalke())
+#     print(i.najdi_t_varovalke())
+#     print(i.najdi_Isc_faktor())
+#     print(i.najdi_dU())
+#     print(i.najdi_Z_LPE())
+#     print(i.najdi_I_preizkusa())
+#     print(i.najdi_Ipsc_LPE())
+#     print(i.najdi_Uln())
+#     print(i.najdi_R())
+#     print(i.najdi_Zref())
+#     print(i.najdi_meja_dU())
+#     #print(i.najdi_pot())
+#     #spodnji veljajo za meritve, ki se začnejo z Zloop in Z LINE
+#     print(i.najdi_Merilno_breme())
+#     print(i.najdi_Povprečje())
+#     print(i.najdi_Toleranca())
+#     print(i.najdi_Ipsc())
+#     print(i.najdi_Z())
+#     print(i.najdi_XL())
+#     print(i.najdi_IscMax())
+#     print(i.najdi_IscMin())
+#     print(i.najdi_Ia_Ipsc())
+#     #spodnje veljajo za meritve ki se začnejo z RCD Auto
+#     print(i.najdi_Uporaba())
+#     print(i.najdi_Tip())
+#     print(i.najdi_I_dN())
+#     print(i.najdi_Preizkus())
+#     print(i.najdi_RCD_standard())
+#     print(i.najdi_Ozemljitveni_sistem())
+#     print(i.najdi_t_IΔN_x1_plus())
+#     print(i.najdi_t_IΔN_x1_minus())
+#     print(i.najdi_t_IΔN_x5_plus())
+#     print(i.najdi_t_IΔN_x5_minus())
+#     print(i.najdi_t_IΔN_x05_plus())
+#     print(i.najdi_t_IΔN_x05_minus())
+#     print(i.najdi_IΔ_plus())
+#     print(i.najdi_IΔ_minus())
+#     print(i.najdi_Uc())
+#     print(i.najdi_Meja_Uc_Uc_())
+# # spodnji veljajo za meritve, ki se začnejo z R low 4
+#     print(i.najdi_Povezava())
+#     print(i.najdi_R_pozitivno())
+#     print(i.najdi_R_negativno())
+#     print(i.najdi_Meja_R())
+# # spodnji veljajo za elemente, ki se začnjejo z Varistor
+#     print(i.najdi_I_lim())
+#     print(i.najdi_Sistem())
+#     print(i.najdi_Obmocje())
+#     print(i.najdi_Uac())
+#     print(i.najdi_Udc())
+#     print(i.najdi_Spodnja_meja_Uac())
+#     print(i.najdi_Zgornja_meja_Uac())
+# # spodnji veljajo za meritve, ki se začnjejo z R iso
+#     print(i.najdi_Uizo())
+#     print(i.najdi_Rln())
+#     print(i.najdi_Rlpe())
+#     print(i.najdi_Rnpe())
+#     print(i.najdi_Umln())
+#     print(i.najdi_Umlpe())
+#     print(i.najdi_Umnpe())
+#     print(i.najdi_MejaRln_Rlpe_Rnpe())
 
-    print("------------------")
+#     print("------------------")
     
     # pod potjo se sedaj napišejo se ostali elementi ( niso pa še vsi)
 
     
 
-najin_objekt = mnozica_vseh_objektov_meritev[10]
-print(najin_objekt.najdi_Isc_faktor())
-print(najin_objekt.najdi_Ozemljitveni_sistem())
+najin_objekt = mnozica_vseh_objektov_meritev[35]
+# print(najin_objekt.najdi_Isc_faktor())
+# print(najin_objekt.najdi_Ozemljitveni_sistem())
+# print(najin_objekt.doloci_vrsto_meritve())
+# #print(najin_objekt.najdi_pot())
+print("-----------------------------------------------------------------")
 # print(najin_objekt.besedilo_po_elementih)
 
 #P-Ustrezno F-Neustrezno, E-Prazno, N-Ne obstaja
