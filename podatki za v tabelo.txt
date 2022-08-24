@@ -1,4 +1,4 @@
-AUTO TN potrebno ispisati
+AUTO TN potrebno izpisati
 uln navidezni stolpec
 dU gre pod ZL / Ik / ΔU(Ω)/(A)/(%) 3.
 Z (LPE) gre pod ZS / Ik (Ω) / (A) 1.
@@ -30,10 +30,10 @@ varistor
 
 
 ------------------------------------------------------------------------------------------------------------------------------------------
-avto tn
 
+R low 4w 
 
-R low 4w gre pod Glavna izenač. povezava (Ω) ( če je v eni kocki se zapiše meritev v cel stolpec od kocke meritve)
+gre pod Glavna izenač. povezava (Ω) ( če je v eni kocki se zapiše meritev v cel stolpec od kocke meritve)
 R+(navidezno vzemi največjo vrednost)
 R-(navidezno vzemi največjo vrednost)
 
@@ -60,7 +60,7 @@ uln (navidezni stolpec)
 
 
 padec napetosti
-du (upišeš pod zgornjo z line meritev v procente)
+du (vpišeš pod zgornjo z line meritev v procente)
 
 
 namenska oznaka je pri poti pred meritvijo

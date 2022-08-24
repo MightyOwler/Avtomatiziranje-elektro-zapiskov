@@ -1,8 +1,11 @@
 import re
 from datetime import datetime
 
-seznam_vrst_meritev = ["AUTO TN", "Zloop", "Z LINE", "RCD Auto", "R low 4", "Varistor", "R iso"]
+# Če updataš tukaj, je za updatano za vse
+# R low je kvečem 1 na kocko, se vpiše po celotni vrstici
+# 
 
+seznam_vrst_meritev = ["AUTO TN", "Zloop", "Z LINE", "RCD Auto", "R low 4", "Varistor", "R iso", "Padec napetosti"]
 
 def find_nth(haystack, needle, n):
     start = haystack.find(needle)
@@ -11,48 +14,9 @@ def find_nth(haystack, needle, n):
         n -= 1
     return start
 
-def ustvari_latex_datoteko(meritve_za_datoteko, seznam_datumov_po_vrstnem_redu):
-    """Ustvari latex datoteko
-
-    Args:
-        meritve_za_datoteko (<list objektov razreda Meritev>): vse meritve, ki jih hočemo vključiti v datoteko
-    """
-    
-    # lepo deluje z uprabo \usepackage{longtable}
-    
-    prvi_dan = seznam_datumov_po_vrstnem_redu[0].strftime("%d.~%m.~%Y")
-    zadnji_dan = seznam_datumov_po_vrstnem_redu[-1].strftime("%d.~%m.~%Y")
-    
-    dat = """
-\\documentclass{article}
-\\usepackage[slovene]{babel}
-
-\\usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
-% Useful packages
-\\usepackage{amsmath}
-\\usepackage{graphicx}
-\\usepackage[colorlinks=true, allcolors=blue]{hyperref}
-\\usepackage{longtable}
-\\title{
-""" + f"Poročilo o meritvah med {prvi_dan} in {zadnji_dan}" + """
-}
-\\author{Aljaž Šubic}
-
-\\begin{document}
-\\maketitle
-\\section{Tabela}
-\\begin{longtable}{| p{.20\textwidth} | p{.80\textwidth} |} 
-\\hline
-"""
-    for i in meritve_za_datoteko:
-        dat += f"{i.doloci_vrsto_meritve()} & {i.najdi_tip_varovalke()[0]}\\\\ \\hline\n"
-    dat += "\\end{tabular} \\end{table}"
-    
-    with open("Tabela meritev v latex datoteki.tex", "w", encoding="utf-8") as latex_dat:
-        latex_dat.write(dat)
-    
-    print("Datoteka 'Tabela meritev v latex datoteki.tex' je bila uspešno ustvarjena.")
-    
+def pretvori_v_osnovne_enote():
+    """Funkcija, ki pretvarja iz mili ali kilo enot v osnovne
+    """   
 
 class Meritev():
     def __init__(self, besedilo_meritve):
@@ -88,7 +52,6 @@ class Meritev():
                 element.append(i[len(ime_elementa) + 1:])
                 #tole bo zraven napisalo še ime
                 #element.append(i)
-        
         if element:
             return element
         else:
@@ -286,11 +249,6 @@ class Meritev():
 
     # tole bi znalo biti nekoliko moteče, ker ne vem, ali moram meritve z iste poti obravnavati skupaj
     # če ja, potem bo sicer to ok, vendar bo treba biti precej previden
-    def zapisi_meritev_v_latex(self):
-        """
-        Zapiše meritev v latex datoteko
-        """
-        pass
     
     def zapisi_meritev_v_excel(self):
         """
