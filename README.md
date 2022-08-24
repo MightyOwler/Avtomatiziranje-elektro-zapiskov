@@ -4,9 +4,8 @@ Projekt za Aljaža, program za avtomatično generiranje datoteke s podatki iz me
 
 Naloge za Aljaža:
 
-+ preveri, katere podatke potrebujeva za tabele
 + ugotovi, zakaj so v excelu nekatere celice združene
-+ preveri, kako je z imenovanji na koncu poti
++ **preveri, kako je z imenovanji na koncu poti**
 
 + datoteka primer za program, v njej je prikazane različne vrsre poti, mišlkeno kot da bi izvajal meritve na terenu samo da so prazne in je prikazana samo pot.
 
