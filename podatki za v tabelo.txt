@@ -1,0 +1,67 @@
+AUTO TN potrebno ispisati
+uln navidezni stolpec
+dU gre pod ZL / Ik / ΔU(Ω)/(A)/(%) 3.
+Z (LPE) gre pod ZS / Ik (Ω) / (A) 1.
+Z (LN) gre pod ZL / Ik / ΔU(Ω)/(A)/(%) 1.
+Ipsc(LN) gre pod ZL / Ik / ΔU(Ω)/(A)/(%)2.
+Ipsc(LPE)gre pod ZS / Ik (Ω) / (A) 2.
+tip varov. gre pod Karak varov ( meje pod dimi belusi)
+I Varovalke gre pod In (A)
+t varovalke  Odki čas (s)
+Isc faktor navidezni stolpec
+verzija poti:
+R RN2/Object3MA HALA/Dist. Board R RN2/DOVOD/Circuit F23 VENTILATOR/Circuit VENTILATOR 3 STEBER L/AUTO TN
+
+
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------
+priklop
+vtičnica
+3-fazna vtičnica
+3-fazni priklop
+lokalna povezava
+stroj
+varistor
+
+
+------------------------------------------------------------------------------------------------------------------------------------------
+avto tn
+
+
+R low 4w gre pod Glavna izenač. povezava (Ω) ( če je v eni kocki se zapiše meritev v cel stolpec od kocke meritve)
+R+(navidezno vzemi največjo vrednost)
+R-(navidezno vzemi največjo vrednost)
+
+
+z loop 
+
+ipsc ZS / Ik (Ω) / (A) 2.
+z ZS / Ik (Ω) / (A) 1. 
+ia(psc) (navidezni stolpec)
+tip varov. gre pod Karak varov ( meje pod dimi belusi)
+I Varovalke gre pod In (A)
+t varovalke  Odki čas (s)
+uln (navidezni stolpec)
+
+z line
+
+ipsc gre pod ZL / Ik / ΔU (Ω)/(A)/(%) 2. 
+z ZL / Ik / ΔU (Ω)/(A)/(%) 1.
+ia(psc) (navidezni stolpec)
+tip varov. gre pod Karak varov ( meje pod dimi belusi)
+I Varovalke gre pod In (A)
+t varovalke  Odki čas (s)
+uln (navidezni stolpec)
+
+
+padec napetosti
+du (upišeš pod zgornjo z line meritev v procente)
+
+
+namenska oznaka je pri poti pred meritvijo
+
