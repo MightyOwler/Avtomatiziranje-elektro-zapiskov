@@ -27,8 +27,6 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     loceno_besedilo_na_kocke_teksta = vse_besedilo.split("Posamezne meritve")
     
     
-    
-    
     seznam_datumov_po_vrstnem_redu = model.najdi_seznam_datumov(vse_besedilo)
     #tukaj se da še popraviti
     print("Meritve so bile opravljene od:", seznam_datumov_po_vrstnem_redu[0], "do:", seznam_datumov_po_vrstnem_redu[-1])
@@ -62,7 +60,13 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
             dolzine.append(vsota_meritev)
             if vsota_meritev == 1:
                 # v tem primeru ni problemov, saj je meritev itak ustrezna
-                loceno_besedilo.append(kocka_teksta.replace("\n", " ").strip())
+                if kocka_teksta.count("p//") == 0:
+                    loceno_besedilo.append([model.Meritev(kocka_teksta.replace("\n", " ").strip())])
+                
+                """
+                tukaj morava narediti vnos v excel
+                """
+                
             else:
                 # v tem primeru pa se moramo še malo potruditi
                 seznam_indeksov = []
@@ -73,20 +77,30 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
                 loceno_besedilo_brez_poti_na_koncu += [kocka_teksta[i:j] for i,j in zip(seznam_indeksov, seznam_indeksov[1:]+[None])]
                 loceno_besedilo_zacasno = []
                 for meritev in loceno_besedilo_brez_poti_na_koncu:
-                    loceno_besedilo_zacasno.append(meritev.replace("\n", " ").strip())
-                    #loceno_besedilo_zacasno.append(meritev.replace("\n", " ").strip() + " " + pot_do_druzine_meritev)
-                loceno_besedilo += loceno_besedilo_zacasno
+                    if meritev.count("p//") == 0:
+                        loceno_besedilo_zacasno.append(model.Meritev(meritev.replace("\n", " ").strip()))
+                        #loceno_besedilo_zacasno.append(meritev.replace("\n", " ").strip() + " " + pot_do_druzine_meritev)
+                if loceno_besedilo_zacasno:
+                    loceno_besedilo.append(loceno_besedilo_zacasno)
                 # print(seznam_indeksov)
                 # print(slovar_meritev)
+                
+                """
+                tukaj morava narediti vnos v excel
+                """
+                
         return loceno_besedilo
                         
     loceno_besedilo = ustvari_seznam_vseh_meritev()
     # print(len(loceno_besedilo))
     print(max(dolzine), len(dolzine), sum(dolzine))
     
+    
+    print(loceno_besedilo[:10])
             
-    loceno_besedilo_discardane_prazne = [i.replace("\n"," ") for i in loceno_besedilo if i.count("p//") == 0]
-    print("Dolzina locenega besedila brez praznih:", len(loceno_besedilo_discardane_prazne), len(loceno_besedilo))
+    # loceno_besedilo_discardane_prazne = [i.replace("\n"," ") for i in loceno_besedilo if i.count("p//") == 0]
+    
+    # print("Dolzina locenega besedila brez praznih:", len(loceno_besedilo_discardane_prazne), len(loceno_besedilo))
     
     # with open("poenostavljeni_podatki2.txt", "w", encoding="utf-8") as f:
     #     for i in loceno_besedilo_discardane_prazne:
@@ -100,17 +114,16 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
 
     #matrika_vseh_merjenj = [posamezna_meritev.split(", ") for posamezna_meritev in loceno_besedilo_discardane_prazne]
     
-    mnozica_vseh_objektov_meritev = [model.Meritev(i) for i in loceno_besedilo_discardane_prazne]
-    model.ustvari_latex_datoteko(mnozica_vseh_objektov_meritev, seznam_datumov_po_vrstnem_redu)
+    # mnozica_vseh_objektov_meritev = [model.Meritev(i) for i in loceno_besedilo_discardane_prazne]
 
     
-    slovar_vrst = {i:0 for i in seznam_vrst_meritev}
-    for meritev in mnozica_vseh_objektov_meritev:
-        slovar_vrst[meritev.doloci_vrsto_meritve()] += 1
+    # slovar_vrst = {i:0 for i in seznam_vrst_meritev}
+    # for meritev in mnozica_vseh_objektov_meritev:
+    #     slovar_vrst[meritev.doloci_vrsto_meritve()] += 1
         
-    print("Lastnosti slovarja:", sum(slovar_vrst.values()))
-    for i in slovar_vrst:
-        print(i+":", slovar_vrst[i])
+    # print("Lastnosti slovarja:", sum(slovar_vrst.values()))
+    # for i in slovar_vrst:
+    #     print(i+":", slovar_vrst[i])
         
 
 

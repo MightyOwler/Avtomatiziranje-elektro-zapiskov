@@ -250,13 +250,23 @@ class Meritev():
     # tole bi znalo biti nekoliko moteče, ker ne vem, ali moram meritve z iste poti obravnavati skupaj
     # če ja, potem bo sicer to ok, vendar bo treba biti precej previden
     
-    def zapisi_meritev_v_excel(self):
-        """
-        Zapiše meritev v excel datoteko
-        """
-        pass
+    
 
 
+# tole bo moralo biti stvar posamezne kocke
+def zapisi_kocko_meritev_v_excel():
+    """
+    Zapiše meritev v excel datoteko
+    """
+    
+    uln, ZL, Ik = "","",""
+    dU, ZS, glavna_izenac_povezava = "","",""
+    ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke = "","",""
+    I_varovalke, t_varovalke, isc_faktor = "","",""
+    komentar = ""
+    
+    pass
+    
     
     # to ni popolno, saj v primeru, da obstaja comment, ne deluje kot bi moralo
 def najdi_seznam_datumov(vse_besedilo):
