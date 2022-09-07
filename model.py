@@ -6,7 +6,29 @@ from datetime import datetime
 # 
 
 seznam_vrst_meritev = ["AUTO TN", "Zloop", "Z LINE", "RCD Auto", "R low 4", "Varistor", "R iso", "Padec napetosti"]
+seznam_enot_za_pretvorbe = ["V", "A", "Ω"]
+seznam_predpon_za_pretvorbe = ["m","k"]
 
+def pretvori_v_osnovne_enote(besedilo_ki_ga_pretvarjamo):
+    """
+    Funkcija, ki pretvarja iz mili ali kilo enot v osnovne
+    """
+    
+    for predpona in seznam_predpon_za_pretvorbe:
+        for enota in seznam_enot_za_pretvorbe:
+            if predpona + enota in besedilo_ki_ga_pretvarjamo:
+                besedilo_ki_ga_pretvarjamo = besedilo_ki_ga_pretvarjamo.replace(" " + predpona + enota, "").replace(",", ".")
+                besedilo_ki_ga_pretvarjamo = float(besedilo_ki_ga_pretvarjamo)
+                if predpona == "m":
+                    besedilo_ki_ga_pretvarjamo /= 1000
+                    besedilo_ki_ga_pretvarjamo = int(besedilo_ki_ga_pretvarjamo)
+                else:
+                    besedilo_ki_ga_pretvarjamo *= 1000
+                
+                return f"{besedilo_ki_ga_pretvarjamo} {enota}".replace(".",",")
+
+    return besedilo_ki_ga_pretvarjamo
+    
 def find_nth(haystack, needle, n):
     start = haystack.find(needle)
     while start >= 0 and n > 1:
@@ -14,9 +36,6 @@ def find_nth(haystack, needle, n):
         n -= 1
     return start
 
-def pretvori_v_osnovne_enote():
-    """Funkcija, ki pretvarja iz mili ali kilo enot v osnovne
-    """   
 
 class Meritev():
     def __init__(self, besedilo_meritve):
