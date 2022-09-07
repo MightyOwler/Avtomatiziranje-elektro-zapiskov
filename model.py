@@ -134,6 +134,9 @@ class Meritev():
 
     def najdi_Ia_Ipsc(self):
         return self.najdi_element('Ia(Ipsc):')
+    
+    def najdi_Un(self):
+        return self.najdi_element('Un:')
 
     #spodnji elementi so za meritve ki se začnejo z RCD Auto
     #to bo treba še bolje definirati
@@ -272,6 +275,11 @@ def zapisi_kocko_meritev_v_excel(kocka):
     vrste_meritev = [meritev.doloci_vrsto_meritve() for meritev in kocka]
     slovar_vrst_meritev = {i:vrste_meritev.count(i) for i in vrste_meritev}
     
+    if slovar_vrst_meritev["R low 4"] > 1:
+        print("Napaka: Imamo 2 ali več R low 4 meritvi v eni kocki!")
+    
+    # najprej določimo R low 4 ter padec napetosti
+    
     for meritev in kocka:
         vrsta_meritve = meritev.doloci_vrsto_meritve()
         if vrsta_meritve == "R low 4":
@@ -286,10 +294,17 @@ def zapisi_kocko_meritev_v_excel(kocka):
                 maxRplusRminus = f"{max(R_negativno_int, R_pozitivno_int)}"
     
             maxRplusRminus = f"{max(R_pozitivno_int, R_negativno_int)}"
-            
+        
+        if vrsta_meritve == "Padec napetosti":
+            dU = meritev.najdi_dU()
+        
             # do zdaj: glavna_izenac_povezavam, maxRplusRminus
             # vrsta meritve R low 4
             
+    # najprej odpravimo AUTO TN
+    
+    for meritev in kocka:
+        vrsta_meritve = meritev.doloci_vrsto_meritve()
         if vrsta_meritve == "AUTO TN":
             uln = meritev.najdi_Uln() #.replace(" V", "")
             ZL = meritev.najdi_Z_LN() #.replace(" Ω", "")
@@ -304,7 +319,46 @@ def zapisi_kocko_meritev_v_excel(kocka):
             isc_faktor = meritev.najdi_Isc_faktor()
             komentar = meritev.najdi_komentar()
             
+            """
+            datoteka.write(....)
+            """
+    # nato odpravimo Zloop / Zine
     
+    if "Zloop" in slovar_vrst_meritev or "Z LINE" in slovar_vrst_meritev:
+        ustrezni_zline_3 = []
+        ustrezni_zloop_3 = []
+        for meritev in kocka:
+            vrsta_meritve = meritev.doloci_vrsto_meritve()
+            if vrsta_meritve == "Zloop":
+                ustrezni_zloop_3.append(meritev)
+            if vrsta_meritve == "Z LINE":
+                if meritev.najdi_Un() == "400 V":
+                    ustrezni_zline_3.append(meritev)
+                    
+        if len(ustrezni_zline_3) != len(ustrezni_zloop_3) or len(ustrezni_zline_3) != 3 or len(ustrezni_zloop_3) != 3:
+            print("Napaka: Nekaj ni v redu s številom zloop/zlinov")
+            print("Dolžina zloop", ustrezni_zloop_3)
+            print("Dolžina zline", ustrezni_zline_3)
+
+        else:
+            for i in range(3):
+                uln = ustrezni_zloop_3[i].najdi_Uln()
+                ZL = ustrezni_zline_3[i].najdi_Z_LN()
+                ipsc_ln = ustrezni_zline_3[i].najdi_Ipsc_LN()
+                ipsc_lpe = ustrezni_zloop_3[i].najdi_Ipsc_LPE()
+                
+                ZS = ustrezni_zloop_3[i].najdi_Z_LPE()
+                ia_psc_navidezni_stolpec = ustrezni_zloop_3[i].najdi_Ia_Ipsc()
+                tip_varovalke = ustrezni_zloop_3[i].najdi_tip_varovalke()
+                I_varovalke = ustrezni_zloop_3[i].najdi_I_varovalke()
+                t_varovalke = ustrezni_zloop_3[i].najdi_t_varovalke()
+                isc_faktor = ustrezni_zloop_3[i].najdi_Isc_faktor()
+                komentar = ustrezni_zloop_3[i].najdi_komentar()
+
+                """
+                datoteka.write(....)
+                """
+
     # to ni popolno, saj v primeru, da obstaja comment, ne deluje kot bi moralo
 def najdi_seznam_datumov(vse_besedilo):
         loceno_besedilo_po_presledkih = vse_besedilo.split()
