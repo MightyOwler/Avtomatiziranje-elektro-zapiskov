@@ -87,8 +87,11 @@ class Meritev():
     def najdi_Z_LPE(self):
         return self.najdi_element('Z (LPE):')
     
-    def najdi_I_preizkusa(self):
+    def najdi_Z_LN(self):
         return self.najdi_element('Z (LN):')
+    
+    def najdi_Ipsc_LN(self):
+        return self.najdi_element('Ipsc (LN):')
     
     def najdi_Ipsc_LPE(self):
         return self.najdi_element('Ipsc (LPE):')
@@ -188,6 +191,7 @@ class Meritev():
     def najdi_Povezava(self):
         return self.najdi_element('Povezava:')
 
+    
     def najdi_R_pozitivno(self):
         return self.najdi_element('R+:')
 
@@ -254,19 +258,52 @@ class Meritev():
 
 
 # tole bo moralo biti stvar posamezne kocke
-def zapisi_kocko_meritev_v_excel():
+def zapisi_kocko_meritev_v_excel(kocka):
     """
     Zapiše meritev v excel datoteko
     """
     
-    uln, ZL, Ik = "","",""
+    uln, ZL, ipsc_ln, ipsc_lpe = "","","", ""
     dU, ZS, glavna_izenac_povezava = "","",""
     ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke = "","",""
     I_varovalke, t_varovalke, isc_faktor = "","",""
     komentar = ""
     
-    pass
+    vrste_meritev = [meritev.doloci_vrsto_meritve() for meritev in kocka]
+    slovar_vrst_meritev = {i:vrste_meritev.count(i) for i in vrste_meritev}
     
+    for meritev in kocka:
+        vrsta_meritve = meritev.doloci_vrsto_meritve()
+        if vrsta_meritve == "R low 4":
+            glavna_izenac_povezava = meritev.najdi_R().replace(" Ω", "")
+            R_pozitivno_int = int(meritev.najdi_R_pozitivno().replace(" Ω", "").replace(">", ""))
+            R_negativno_int = int(meritev.najdi_R_negativno().replace(" Ω", "").replace(">", ""))
+            if ">1999" in meritev.najdi_R_pozitivno() or ">1999" in meritev.najdi_R_negativno():
+                maxRplusRminus = ">1999"
+            else:
+                R_pozitivno_int = int(meritev.najdi_R_pozitivno().replace(" Ω", "").replace(">", ""))
+                R_negativno_int = int(meritev.najdi_R_negativno().replace(" Ω", "").replace(">", ""))
+                maxRplusRminus = f"{max(R_negativno_int, R_pozitivno_int)}"
+    
+            maxRplusRminus = f"{max(R_pozitivno_int, R_negativno_int)}"
+            
+            # do zdaj: glavna_izenac_povezavam, maxRplusRminus
+            # vrsta meritve R low 4
+            
+        if vrsta_meritve == "AUTO TN":
+            uln = meritev.najdi_Uln() #.replace(" V", "")
+            ZL = meritev.najdi_Z_LN() #.replace(" Ω", "")
+            ipsc_ln = meritev.najdi_Ipsc_LN()
+            ipsc_lpe = meritev.najdi_Ipsc_LPE()
+            dU = meritev.najdi_dU()
+            ZS = meritev.najdi_Z_LPE()
+            ia_psc_navidezni_stolpec = meritev.najdi_Ia_Ipsc()
+            tip_varovalke = meritev.najdi_tip_varovalke()
+            I_varovalke = meritev.najdi_I_varovalke()
+            t_varovalke = meritev.najdi_t_varovalke()
+            isc_faktor = meritev.najdi_Isc_faktor()
+            komentar = meritev.najdi_komentar()
+            
     
     # to ni popolno, saj v primeru, da obstaja comment, ne deluje kot bi moralo
 def najdi_seznam_datumov(vse_besedilo):

@@ -97,9 +97,18 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     
     
     print(loceno_besedilo[:10])
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
             
     # loceno_besedilo_discardane_prazne = [i.replace("\n"," ") for i in loceno_besedilo if i.count("p//") == 0]
-    
     # print("Dolzina locenega besedila brez praznih:", len(loceno_besedilo_discardane_prazne), len(loceno_besedilo))
     
     # with open("poenostavljeni_podatki2.txt", "w", encoding="utf-8") as f:
