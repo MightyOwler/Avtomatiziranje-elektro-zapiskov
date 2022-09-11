@@ -22,14 +22,17 @@ def pretvori_v_osnovne_enote(besedilo_ki_ga_pretvarjamo):
                 besedilo_ki_ga_pretvarjamo = float(besedilo_ki_ga_pretvarjamo)
                 if predpona == "m":
                     besedilo_ki_ga_pretvarjamo /= 1000
-                    besedilo_ki_ga_pretvarjamo = int(besedilo_ki_ga_pretvarjamo)
+                    besedilo_ki_ga_pretvarjamo = round(besedilo_ki_ga_pretvarjamo, 1)
                 else:
-                    besedilo_ki_ga_pretvarjamo = 1000
+                    besedilo_ki_ga_pretvarjamo *= 1000
                     besedilo_ki_ga_pretvarjamo = int(besedilo_ki_ga_pretvarjamo)
                 
-                return f"{besedilo_ki_ga_pretvarjamo} {enota}".replace(".",",")
-
-    return besedilo_ki_ga_pretvarjamo.replace(".",",")
+                return f"{besedilo_ki_ga_pretvarjamo}".replace(".",",")
+    for enota in seznam_enot_za_pretvorbe:
+        if enota in besedilo_ki_ga_pretvarjamo:
+            return f"{besedilo_ki_ga_pretvarjamo}".replace(" " + enota, "").replace(".",",")
+                   
+    
     
 def find_nth(haystack, needle, n):
     start = haystack.find(needle)
@@ -67,16 +70,19 @@ class Meritev():
     # ta definicija v resnici ni najboljša, saj vedno gleda samo posamezno meritev
     # če nama uspe pravilno razdeliti že prej, potem bo pa ok
     def najdi_element(self, ime_elementa):
-        element = []
+        element = ""
         for i in self.besedilo_po_elementih:
             if ime_elementa in i:
-                element.append(i[len(ime_elementa) + 1:])
-                #tole bo zraven napisalo še ime
-                #element.append(i)
-        if element:
-            return element
-        else:
-            return [""]
+                element = i[len(ime_elementa) + 1:]
+                #return pretvori_v_osnovne_enote(element)
+
+                #Pomembno: treba je preveriti, da program pravilno zaokrožuje stvari!
+                #tole obdrži prave enote
+                return element
+                
+                
+        # sicer returna prazno
+        return element        
 
     #spodnji elementi so za meritve, ki se začnejo z AUTO TN
     #to bo treba še bolje definirati
@@ -308,20 +314,20 @@ def zapisi_kocko_meritev_v_excel(kocka):
         vrsta_meritve = meritev.doloci_vrsto_meritve()
         if vrsta_meritve == "R low 4":
             
-            glavna_izenac_povezava = meritev.najdi_R()[0].replace(" Ω", "")
-            R_pozitivno_int = int(meritev.najdi_R_pozitivno()[0].replace(" Ω", "").replace(">", ""))
-            R_negativno_int = int(meritev.najdi_R_negativno()[0].replace(" Ω", "").replace(">", ""))
+            glavna_izenac_povezava = meritev.najdi_R().replace(" Ω", "")
+            R_pozitivno_int = int(meritev.najdi_R_pozitivno().replace(" Ω", "").replace(">", ""))
+            R_negativno_int = int(meritev.najdi_R_negativno().replace(" Ω", "").replace(">", ""))
             if ">1999" in meritev.najdi_R_pozitivno()[0] or ">1999" in meritev.najdi_R_negativno()[0]:
                 maxRplusRminus = ">1999"
             else:
-                R_pozitivno_int = int(meritev.najdi_R_pozitivno()[0].replace(" Ω", "").replace(">", ""))
-                R_negativno_int = int(meritev.najdi_R_negativno()[0].replace(" Ω", "").replace(">", ""))
+                R_pozitivno_int = int(meritev.najdi_R_pozitivno().replace(" Ω", "").replace(">", ""))
+                R_negativno_int = int(meritev.najdi_R_negativno().replace(" Ω", "").replace(">", ""))
                 maxRplusRminus = f"{max(R_negativno_int, R_pozitivno_int)}"
     
             maxRplusRminus = f"{max(R_pozitivno_int, R_negativno_int)}"
         
         if vrsta_meritve == "Padec napetosti":
-            dU = meritev.najdi_dU()[0]
+            dU = meritev.najdi_dU()
         
             # do zdaj: glavna_izenac_povezavam, maxRplusRminus
             # vrsta meritve R low 4
@@ -335,18 +341,18 @@ def zapisi_kocko_meritev_v_excel(kocka):
         
                 writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                 
-                uln = meritev.najdi_Uln()[0] #.replace(" V", "")
-                ZL = meritev.najdi_Z_LN()[0] #.replace(" Ω", "")
-                ipsc_ln = meritev.najdi_Ipsc_LN()[0]
-                ipsc_lpe = meritev.najdi_Ipsc_LPE()[0]
+                uln = meritev.najdi_Uln() #.replace(" V", "")
+                ZL = meritev.najdi_Z_LN() #.replace(" Ω", "")
+                ipsc_ln = meritev.najdi_Ipsc_LN()
+                ipsc_lpe = meritev.najdi_Ipsc_LPE()
                 if not dU:
-                    dU = meritev.najdi_dU()[0]
-                ZS = meritev.najdi_Z_LPE()[0]
-                ia_psc_navidezni_stolpec = meritev.najdi_Ia_Ipsc()[0]
-                tip_varovalke = meritev.najdi_tip_varovalke()[0]
-                I_varovalke = meritev.najdi_I_varovalke()[0]
-                t_varovalke = meritev.najdi_t_varovalke()[0]
-                isc_faktor = meritev.najdi_Isc_faktor()[0]
+                    dU = meritev.najdi_dU()
+                ZS = meritev.najdi_Z_LPE()
+                ia_psc_navidezni_stolpec = meritev.najdi_Ia_Ipsc()
+                tip_varovalke = meritev.najdi_tip_varovalke()
+                I_varovalke = meritev.najdi_I_varovalke()
+                t_varovalke = meritev.najdi_t_varovalke()
+                isc_faktor = meritev.najdi_Isc_faktor()
                 komentar = meritev.najdi_komentar()
                 
                 # print(f"{uln}, {ZL}, {ipsc_ln}, {dU}, {ZS}, {ipsc_lpe}, {glavna_izenac_povezava}, {ia_psc_navidezni_stolpec}, {maxRplusRminus}, {tip_varovalke}, {I_varovalke}, {t_varovalke}, {isc_faktor}, {komentar}")
@@ -370,8 +376,10 @@ def zapisi_kocko_meritev_v_excel(kocka):
             if vrsta_meritve == "Zloop":
                 ustrezni_zloop_3.append(meritev)
             if vrsta_meritve == "Z LINE":
-                if "400 V" in meritev.najdi_Un() or "\n400 V" in meritev.najdi_Un():
+                if "400" == meritev.najdi_Un() or "400 V" in meritev.najdi_Un():
                     ustrezni_zline_3.append(meritev)
+                else:
+                    print("Pot problematične meritve:", meritev.najdi_pot())
                     
                     
         if len(ustrezni_zline_3) != len(ustrezni_zloop_3) or len(ustrezni_zline_3) != 3 or len(ustrezni_zloop_3) != 3:
@@ -385,17 +393,17 @@ def zapisi_kocko_meritev_v_excel(kocka):
                 with open("csv_za_excel_datoteko.csv", "a", encoding='utf-8', newline='') as csvfile:
                     writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                     
-                    uln = ustrezni_zloop_3[i].najdi_Uln()[0]
-                    ipsc = ustrezni_zline_3[i].najdi_Ipsc()[0]
-                    z = ustrezni_zline_3[i].najdi_Z()[0]
-                    ipsc_lpe = ustrezni_zloop_3[i].najdi_Ipsc_LPE()[0]
+                    uln = ustrezni_zloop_3[i].najdi_Uln()
+                    ipsc = ustrezni_zline_3[i].najdi_Ipsc()
+                    z = ustrezni_zline_3[i].najdi_Z()
+                    ipsc_lpe = ustrezni_zloop_3[i].najdi_Ipsc_LPE()
                     
-                    ZS = ustrezni_zloop_3[i].najdi_Z_LPE()[0]
-                    ia_psc_navidezni_stolpec = ustrezni_zloop_3[i].najdi_Ia_Ipsc()[0]
-                    tip_varovalke = ustrezni_zloop_3[i].najdi_tip_varovalke()[0]
-                    I_varovalke = ustrezni_zloop_3[i].najdi_I_varovalke()[0]
-                    t_varovalke = ustrezni_zloop_3[i].najdi_t_varovalke()[0]
-                    isc_faktor = ustrezni_zloop_3[i].najdi_Isc_faktor()[0]
+                    ZS = ustrezni_zloop_3[i].najdi_Z_LPE()
+                    ia_psc_navidezni_stolpec = ustrezni_zloop_3[i].najdi_Ia_Ipsc()
+                    tip_varovalke = ustrezni_zloop_3[i].najdi_tip_varovalke()
+                    I_varovalke = ustrezni_zloop_3[i].najdi_I_varovalke()
+                    t_varovalke = ustrezni_zloop_3[i].najdi_t_varovalke()
+                    isc_faktor = ustrezni_zloop_3[i].najdi_Isc_faktor()
                     komentar = ustrezni_zloop_3[i].najdi_komentar()
                     
                     string = [uln, ipsc, z, dU, ZS, ipsc_lpe, glavna_izenac_povezava, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar]

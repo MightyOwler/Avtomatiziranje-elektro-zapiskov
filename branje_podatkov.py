@@ -61,7 +61,7 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
             if vsota_meritev == 1:
                 # v tem primeru ni problemov, saj je meritev itak ustrezna
                 if kocka_teksta.count("p//") == 0:
-                    loceno_besedilo.append([model.Meritev(kocka_teksta.replace("\n", " ").strip())])
+                    loceno_besedilo.append([model.Meritev(kocka_teksta.replace("\n", " ").replace("\r\n", " ").strip())])
                 
                 """
                 tukaj morava narediti vnos v excel
@@ -78,7 +78,7 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
                 loceno_besedilo_zacasno = []
                 for meritev in loceno_besedilo_brez_poti_na_koncu:
                     if meritev.count("p//") == 0:
-                        loceno_besedilo_zacasno.append(model.Meritev(meritev.replace("\n", " ").strip()))
+                        loceno_besedilo_zacasno.append(model.Meritev(meritev.replace("\n", " ").replace("\r\n", " ").strip()))
                         #loceno_besedilo_zacasno.append(meritev.replace("\n", " ").strip() + " " + pot_do_druzine_meritev)
                 if loceno_besedilo_zacasno:
                     loceno_besedilo.append(loceno_besedilo_zacasno)
