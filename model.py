@@ -286,54 +286,55 @@ def zapisi_kocko_meritev_v_excel(kocka):
     """
     Zapiše meritev v excel datoteko
     """
+
+
+
+    uln, ZL, ipsc_ln, ipsc_lpe = "","","", ""
+    dU, ZS, glavna_izenac_povezava = "","",""
+    ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke = "","",""
+    I_varovalke, t_varovalke, isc_faktor = "","",""
+    komentar = ""
     
-    with open("csv_za_excel_datoteko.csv", "w", encoding='UTF8') as csvfile:
-        writer = csv.writer(csvfile)
+    vrste_meritev = [meritev.doloci_vrsto_meritve() for meritev in kocka]
+    slovar_vrst_meritev = {i:vrste_meritev.count(i) for i in seznam_vrst_meritev}
     
-        uln, ZL, ipsc_ln, ipsc_lpe = "","","", ""
-        dU, ZS, glavna_izenac_povezava = "","",""
-        ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke = "","",""
-        I_varovalke, t_varovalke, isc_faktor = "","",""
-        komentar = ""
-        
-        vrste_meritev = [meritev.doloci_vrsto_meritve() for meritev in kocka]
-        slovar_vrst_meritev = {i:vrste_meritev.count(i) for i in seznam_vrst_meritev}
-        
-        if slovar_vrst_meritev["R low 4"] > 1:
-            print("Napaka: Imamo 2 ali več R low 4 meritvi v eni kocki!")
-        
-        # najprej določimo R low 4 ter padec napetosti
-        
-        for meritev in kocka:
-            print(meritev.doloci_vrsto_meritve())
-        
-        
-        for meritev in kocka:
-            vrsta_meritve = meritev.doloci_vrsto_meritve()
-            if vrsta_meritve == "R low 4":
-                glavna_izenac_povezava = meritev.najdi_R()[0].replace(" Ω", "")
+    if slovar_vrst_meritev["R low 4"] > 1:
+        print("Napaka: Imamo 2 ali več R low 4 meritvi v eni kocki!")
+    
+    # najprej določimo R low 4 ter padec napetosti
+    
+    
+    for meritev in kocka:
+        vrsta_meritve = meritev.doloci_vrsto_meritve()
+        if vrsta_meritve == "R low 4":
+            
+            glavna_izenac_povezava = meritev.najdi_R()[0].replace(" Ω", "")
+            R_pozitivno_int = int(meritev.najdi_R_pozitivno()[0].replace(" Ω", "").replace(">", ""))
+            R_negativno_int = int(meritev.najdi_R_negativno()[0].replace(" Ω", "").replace(">", ""))
+            if ">1999" in meritev.najdi_R_pozitivno()[0] or ">1999" in meritev.najdi_R_negativno()[0]:
+                maxRplusRminus = ">1999"
+            else:
                 R_pozitivno_int = int(meritev.najdi_R_pozitivno()[0].replace(" Ω", "").replace(">", ""))
                 R_negativno_int = int(meritev.najdi_R_negativno()[0].replace(" Ω", "").replace(">", ""))
-                if ">1999" in meritev.najdi_R_pozitivno()[0] or ">1999" in meritev.najdi_R_negativno()[0]:
-                    maxRplusRminus = ">1999"
-                else:
-                    R_pozitivno_int = int(meritev.najdi_R_pozitivno()[0].replace(" Ω", "").replace(">", ""))
-                    R_negativno_int = int(meritev.najdi_R_negativno()[0].replace(" Ω", "").replace(">", ""))
-                    maxRplusRminus = f"{max(R_negativno_int, R_pozitivno_int)}"
+                maxRplusRminus = f"{max(R_negativno_int, R_pozitivno_int)}"
+    
+            maxRplusRminus = f"{max(R_pozitivno_int, R_negativno_int)}"
         
-                maxRplusRminus = f"{max(R_pozitivno_int, R_negativno_int)}"
+        if vrsta_meritve == "Padec napetosti":
+            dU = meritev.najdi_dU()[0]
+        
+            # do zdaj: glavna_izenac_povezavam, maxRplusRminus
+            # vrsta meritve R low 4
             
-            if vrsta_meritve == "Padec napetosti":
-                dU = meritev.najdi_dU()[0]
-            
-                # do zdaj: glavna_izenac_povezavam, maxRplusRminus
-                # vrsta meritve R low 4
+    # najprej odpravimo AUTO TN
+    
+    for meritev in kocka:
+        vrsta_meritve = meritev.doloci_vrsto_meritve()
+        if vrsta_meritve == "AUTO TN":
+            with open("csv_za_excel_datoteko.csv", "a", encoding='utf-8', newline='') as csvfile:
+        
+                writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                 
-        # najprej odpravimo AUTO TN
-        
-        for meritev in kocka:
-            vrsta_meritve = meritev.doloci_vrsto_meritve()
-            if vrsta_meritve == "AUTO TN":
                 uln = meritev.najdi_Uln()[0] #.replace(" V", "")
                 ZL = meritev.najdi_Z_LN()[0] #.replace(" Ω", "")
                 ipsc_ln = meritev.najdi_Ipsc_LN()[0]
@@ -348,31 +349,41 @@ def zapisi_kocko_meritev_v_excel(kocka):
                 isc_faktor = meritev.najdi_Isc_faktor()[0]
                 komentar = meritev.najdi_komentar()
                 
-                print(f"{uln}, {ZL}, {ipsc_ln}, {dU}, {ZS}, {ipsc_lpe}, {glavna_izenac_povezava}, {ia_psc_navidezni_stolpec}, {maxRplusRminus}, {tip_varovalke}, {I_varovalke}, {t_varovalke}, {isc_faktor}, {komentar}")
-                writer.writerow([uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava, ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, komentar])
+                # print(f"{uln}, {ZL}, {ipsc_ln}, {dU}, {ZS}, {ipsc_lpe}, {glavna_izenac_povezava}, {ia_psc_navidezni_stolpec}, {maxRplusRminus}, {tip_varovalke}, {I_varovalke}, {t_varovalke}, {isc_faktor}, {komentar}")
+                # writer.writerow([uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava, ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, komentar])
+                
+                string = [uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava, ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, komentar]
+                writer.writerow(string)
+                print(string)
+                csvfile.close()
+                
                 """
                 datoteka.write(....)
                 """
-        # nato odpravimo Zloop / Zine
-        
-        if "Zloop" in slovar_vrst_meritev or "Z LINE" in slovar_vrst_meritev:
-            ustrezni_zline_3 = []
-            ustrezni_zloop_3 = []
-            for meritev in kocka:
-                vrsta_meritve = meritev.doloci_vrsto_meritve()
-                if vrsta_meritve == "Zloop":
-                    ustrezni_zloop_3.append(meritev)
-                if vrsta_meritve == "Z LINE":
-                    if meritev.najdi_Un() == "400 V":
-                        ustrezni_zline_3.append(meritev)
-                        
-            if len(ustrezni_zline_3) != len(ustrezni_zloop_3) or len(ustrezni_zline_3) != 3 or len(ustrezni_zloop_3) != 3:
-                print("Napaka: Nekaj ni v redu s številom zloop/zlinov")
-                print("Dolžina zloop", ustrezni_zloop_3)
-                print("Dolžina zline", ustrezni_zline_3)
+    # nato odpravimo Zloop / Zine
+    
+    if "Zloop" in slovar_vrst_meritev or "Z LINE" in slovar_vrst_meritev:
+        ustrezni_zline_3 = []
+        ustrezni_zloop_3 = []
+        for meritev in kocka:
+            vrsta_meritve = meritev.doloci_vrsto_meritve()
+            if vrsta_meritve == "Zloop":
+                ustrezni_zloop_3.append(meritev)
+            if vrsta_meritve == "Z LINE":
+                if meritev.najdi_Un() == "400 V":
+                    ustrezni_zline_3.append(meritev)
+                    
+        if len(ustrezni_zline_3) != len(ustrezni_zloop_3) or len(ustrezni_zline_3) != 3 or len(ustrezni_zloop_3) != 3:
+            # print("Napaka: Nekaj ni v redu s številom zloop/zlinov")
+            # print("Dolžina zloop", ustrezni_zloop_3)
+            # print("Dolžina zline", ustrezni_zline_3)
+            pass
 
-            else:
-                for i in range(3):
+        else:
+            for i in range(3):
+                with open("csv_za_excel_datoteko.csv", "a", encoding='utf-8', newline='') as csvfile:
+                    writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                    
                     uln = ustrezni_zloop_3[i].najdi_Uln()[0]
                     ZL = ustrezni_zline_3[i].najdi_Z_LN()[0]
                     ipsc_ln = ustrezni_zline_3[i].najdi_Ipsc_LN()[0]
@@ -387,13 +398,13 @@ def zapisi_kocko_meritev_v_excel(kocka):
                     komentar = ustrezni_zloop_3[i].najdi_komentar()
                     
                     print(f"{uln}, {ZL}, {ipsc_ln}, {dU}, {ZS}, {ipsc_lpe}, {glavna_izenac_povezava}, {ia_psc_navidezni_stolpec}, {maxRplusRminus}, {tip_varovalke}, {I_varovalke}, {t_varovalke}, {isc_faktor}, {komentar}")
-                    string = writer.writerow([uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava, ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, komentar])
-                    writer.writerow(string)
-                    # writer.writerow([uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava, ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, komentar])
-                    
-                    """
-                    datoteka.write(....)
-                    """
+                    string = [uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava, ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, komentar]
+
+                # writer.writerow([uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava, ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, komentar])
+                
+                """
+                datoteka.write(....)
+                """
 
         # to ni popolno, saj v primeru, da obstaja comment, ne deluje kot bi moralo
 def najdi_seznam_datumov(vse_besedilo):

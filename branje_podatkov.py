@@ -96,7 +96,7 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     print(max(dolzine), len(dolzine), sum(dolzine))
     
     
-    print(loceno_besedilo[:10])
+    #print(loceno_besedilo[:10])
     
 
     for kocka in loceno_besedilo:
