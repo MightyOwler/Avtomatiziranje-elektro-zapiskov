@@ -98,13 +98,9 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     
     print(loceno_besedilo[:10])
     
-    
-    
-    
-    
-    
-    
-    
+
+    for kocka in loceno_besedilo:
+        model.zapisi_kocko_meritev_v_excel(kocka)
     
     
             

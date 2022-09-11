@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+import csv
 
 # Če updataš tukaj, je za updatano za vse
 # R low je kvečem 1 na kocko, se vpiše po celotni vrstici
@@ -75,7 +76,7 @@ class Meritev():
         if element:
             return element
         else:
-            return "/"
+            return ""
 
     #spodnji elementi so za meritve, ki se začnejo z AUTO TN
     #to bo treba še bolje definirati
@@ -286,7 +287,8 @@ def zapisi_kocko_meritev_v_excel(kocka):
     Zapiše meritev v excel datoteko
     """
     
-    with open("csv_za_excel_datoteko.csv", "r") as csvfile:
+    with open("csv_za_excel_datoteko.csv", "w", encoding='UTF8') as csvfile:
+        writer = csv.writer(csvfile)
     
         uln, ZL, ipsc_ln, ipsc_lpe = "","","", ""
         dU, ZS, glavna_izenac_povezava = "","",""
@@ -295,7 +297,7 @@ def zapisi_kocko_meritev_v_excel(kocka):
         komentar = ""
         
         vrste_meritev = [meritev.doloci_vrsto_meritve() for meritev in kocka]
-        slovar_vrst_meritev = {i:vrste_meritev.count(i) for i in vrste_meritev}
+        slovar_vrst_meritev = {i:vrste_meritev.count(i) for i in seznam_vrst_meritev}
         
         if slovar_vrst_meritev["R low 4"] > 1:
             print("Napaka: Imamo 2 ali več R low 4 meritvi v eni kocki!")
@@ -303,22 +305,26 @@ def zapisi_kocko_meritev_v_excel(kocka):
         # najprej določimo R low 4 ter padec napetosti
         
         for meritev in kocka:
+            print(meritev.doloci_vrsto_meritve())
+        
+        
+        for meritev in kocka:
             vrsta_meritve = meritev.doloci_vrsto_meritve()
             if vrsta_meritve == "R low 4":
-                glavna_izenac_povezava = meritev.najdi_R().replace(" Ω", "")
-                R_pozitivno_int = int(meritev.najdi_R_pozitivno().replace(" Ω", "").replace(">", ""))
-                R_negativno_int = int(meritev.najdi_R_negativno().replace(" Ω", "").replace(">", ""))
-                if ">1999" in meritev.najdi_R_pozitivno() or ">1999" in meritev.najdi_R_negativno():
+                glavna_izenac_povezava = meritev.najdi_R()[0].replace(" Ω", "")
+                R_pozitivno_int = int(meritev.najdi_R_pozitivno()[0].replace(" Ω", "").replace(">", ""))
+                R_negativno_int = int(meritev.najdi_R_negativno()[0].replace(" Ω", "").replace(">", ""))
+                if ">1999" in meritev.najdi_R_pozitivno()[0] or ">1999" in meritev.najdi_R_negativno()[0]:
                     maxRplusRminus = ">1999"
                 else:
-                    R_pozitivno_int = int(meritev.najdi_R_pozitivno().replace(" Ω", "").replace(">", ""))
-                    R_negativno_int = int(meritev.najdi_R_negativno().replace(" Ω", "").replace(">", ""))
+                    R_pozitivno_int = int(meritev.najdi_R_pozitivno()[0].replace(" Ω", "").replace(">", ""))
+                    R_negativno_int = int(meritev.najdi_R_negativno()[0].replace(" Ω", "").replace(">", ""))
                     maxRplusRminus = f"{max(R_negativno_int, R_pozitivno_int)}"
         
                 maxRplusRminus = f"{max(R_pozitivno_int, R_negativno_int)}"
             
             if vrsta_meritve == "Padec napetosti":
-                dU = meritev.najdi_dU()
+                dU = meritev.najdi_dU()[0]
             
                 # do zdaj: glavna_izenac_povezavam, maxRplusRminus
                 # vrsta meritve R low 4
@@ -328,21 +334,22 @@ def zapisi_kocko_meritev_v_excel(kocka):
         for meritev in kocka:
             vrsta_meritve = meritev.doloci_vrsto_meritve()
             if vrsta_meritve == "AUTO TN":
-                uln = meritev.najdi_Uln() #.replace(" V", "")
-                ZL = meritev.najdi_Z_LN() #.replace(" Ω", "")
-                ipsc_ln = meritev.najdi_Ipsc_LN()
-                ipsc_lpe = meritev.najdi_Ipsc_LPE()
-                dU = meritev.najdi_dU()
-                ZS = meritev.najdi_Z_LPE()
+                uln = meritev.najdi_Uln()[0] #.replace(" V", "")
+                ZL = meritev.najdi_Z_LN()[0] #.replace(" Ω", "")
+                ipsc_ln = meritev.najdi_Ipsc_LN()[0]
+                ipsc_lpe = meritev.najdi_Ipsc_LPE()[0]
+                if not dU:
+                    dU = meritev.najdi_dU()[0]
+                ZS = meritev.najdi_Z_LPE()[0]
                 ia_psc_navidezni_stolpec = meritev.najdi_Ia_Ipsc()
-                tip_varovalke = meritev.najdi_tip_varovalke()
-                I_varovalke = meritev.najdi_I_varovalke()
-                t_varovalke = meritev.najdi_t_varovalke()
-                isc_faktor = meritev.najdi_Isc_faktor()
+                tip_varovalke = meritev.najdi_tip_varovalke()[0]
+                I_varovalke = meritev.najdi_I_varovalke()[0]
+                t_varovalke = meritev.najdi_t_varovalke()[0]
+                isc_faktor = meritev.najdi_Isc_faktor()[0]
                 komentar = meritev.najdi_komentar()
                 
-                
-                csvfile.write(f"{uln}, {ZL}, {ipsc_ln}, {dU}, {ZS}, {ipsc_lpe}, {glavna_izenac_povezava}, {ia_psc_navidezni_stolpec}, {maxRplusRminus}, {tip_varovalke}, {I_varovalke}, {t_varovalke}, {isc_faktor}, {komentar}")
+                print(f"{uln}, {ZL}, {ipsc_ln}, {dU}, {ZS}, {ipsc_lpe}, {glavna_izenac_povezava}, {ia_psc_navidezni_stolpec}, {maxRplusRminus}, {tip_varovalke}, {I_varovalke}, {t_varovalke}, {isc_faktor}, {komentar}")
+                writer.writerow([uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava, ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, komentar])
                 """
                 datoteka.write(....)
                 """
@@ -366,21 +373,24 @@ def zapisi_kocko_meritev_v_excel(kocka):
 
             else:
                 for i in range(3):
-                    uln = ustrezni_zloop_3[i].najdi_Uln()
-                    ZL = ustrezni_zline_3[i].najdi_Z_LN()
-                    ipsc_ln = ustrezni_zline_3[i].najdi_Ipsc_LN()
-                    ipsc_lpe = ustrezni_zloop_3[i].najdi_Ipsc_LPE()
+                    uln = ustrezni_zloop_3[i].najdi_Uln()[0]
+                    ZL = ustrezni_zline_3[i].najdi_Z_LN()[0]
+                    ipsc_ln = ustrezni_zline_3[i].najdi_Ipsc_LN()[0]
+                    ipsc_lpe = ustrezni_zloop_3[i].najdi_Ipsc_LPE()[0]
                     
-                    ZS = ustrezni_zloop_3[i].najdi_Z_LPE()
+                    ZS = ustrezni_zloop_3[i].najdi_Z_LPE()[0]
                     ia_psc_navidezni_stolpec = ustrezni_zloop_3[i].najdi_Ia_Ipsc()
-                    tip_varovalke = ustrezni_zloop_3[i].najdi_tip_varovalke()
-                    I_varovalke = ustrezni_zloop_3[i].najdi_I_varovalke()
-                    t_varovalke = ustrezni_zloop_3[i].najdi_t_varovalke()
-                    isc_faktor = ustrezni_zloop_3[i].najdi_Isc_faktor()
+                    tip_varovalke = ustrezni_zloop_3[i].najdi_tip_varovalke()[0]
+                    I_varovalke = ustrezni_zloop_3[i].najdi_I_varovalke()[0]
+                    t_varovalke = ustrezni_zloop_3[i].najdi_t_varovalke()[0]
+                    isc_faktor = ustrezni_zloop_3[i].najdi_Isc_faktor()[0]
                     komentar = ustrezni_zloop_3[i].najdi_komentar()
                     
+                    print(f"{uln}, {ZL}, {ipsc_ln}, {dU}, {ZS}, {ipsc_lpe}, {glavna_izenac_povezava}, {ia_psc_navidezni_stolpec}, {maxRplusRminus}, {tip_varovalke}, {I_varovalke}, {t_varovalke}, {isc_faktor}, {komentar}")
+                    string = writer.writerow([uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava, ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, komentar])
+                    writer.writerow(string)
+                    # writer.writerow([uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava, ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, komentar])
                     
-                    csvfile.write(f"{uln}, {ZL}, {ipsc_ln}, {dU}, {ZS}, {ipsc_lpe}, {glavna_izenac_povezava}, {ia_psc_navidezni_stolpec}, {maxRplusRminus}, {tip_varovalke}, {I_varovalke}, {t_varovalke}, {isc_faktor}, {komentar}")
                     """
                     datoteka.write(....)
                     """
