@@ -76,7 +76,7 @@ class Meritev():
         if element:
             return element
         else:
-            return ""
+            return [""]
 
     #spodnji elementi so za meritve, ki se začnejo z AUTO TN
     #to bo treba še bolje definirati
@@ -342,7 +342,7 @@ def zapisi_kocko_meritev_v_excel(kocka):
                 if not dU:
                     dU = meritev.najdi_dU()[0]
                 ZS = meritev.najdi_Z_LPE()[0]
-                ia_psc_navidezni_stolpec = meritev.najdi_Ia_Ipsc()
+                ia_psc_navidezni_stolpec = meritev.najdi_Ia_Ipsc()[0]
                 tip_varovalke = meritev.najdi_tip_varovalke()[0]
                 I_varovalke = meritev.najdi_I_varovalke()[0]
                 t_varovalke = meritev.najdi_t_varovalke()[0]
@@ -352,9 +352,9 @@ def zapisi_kocko_meritev_v_excel(kocka):
                 # print(f"{uln}, {ZL}, {ipsc_ln}, {dU}, {ZS}, {ipsc_lpe}, {glavna_izenac_povezava}, {ia_psc_navidezni_stolpec}, {maxRplusRminus}, {tip_varovalke}, {I_varovalke}, {t_varovalke}, {isc_faktor}, {komentar}")
                 # writer.writerow([uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava, ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, komentar])
                 
-                string = [uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava, ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, komentar]
+                string = [uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava,  maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar]
                 writer.writerow(string)
-                print(string)
+                #print(string)
                 csvfile.close()
                 
                 """
@@ -362,7 +362,7 @@ def zapisi_kocko_meritev_v_excel(kocka):
                 """
     # nato odpravimo Zloop / Zine
     
-    if "Zloop" in slovar_vrst_meritev or "Z LINE" in slovar_vrst_meritev:
+    if "Zloop" in vrste_meritev or "Z LINE" in vrste_meritev:
         ustrezni_zline_3 = []
         ustrezni_zloop_3 = []
         for meritev in kocka:
@@ -370,13 +370,14 @@ def zapisi_kocko_meritev_v_excel(kocka):
             if vrsta_meritve == "Zloop":
                 ustrezni_zloop_3.append(meritev)
             if vrsta_meritve == "Z LINE":
-                if meritev.najdi_Un() == "400 V":
+                if "400 V" in meritev.najdi_Un() or "\n400 V" in meritev.najdi_Un():
                     ustrezni_zline_3.append(meritev)
                     
+                    
         if len(ustrezni_zline_3) != len(ustrezni_zloop_3) or len(ustrezni_zline_3) != 3 or len(ustrezni_zloop_3) != 3:
-            # print("Napaka: Nekaj ni v redu s številom zloop/zlinov")
-            # print("Dolžina zloop", ustrezni_zloop_3)
-            # print("Dolžina zline", ustrezni_zline_3)
+            print("Napaka: Nekaj ni v redu s številom zloop/zlinov")
+            print("Dolžina zloop", ustrezni_zloop_3)
+            print("Dolžina zline", ustrezni_zline_3)
             pass
 
         else:
@@ -385,22 +386,22 @@ def zapisi_kocko_meritev_v_excel(kocka):
                     writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                     
                     uln = ustrezni_zloop_3[i].najdi_Uln()[0]
-                    ZL = ustrezni_zline_3[i].najdi_Z_LN()[0]
-                    ipsc_ln = ustrezni_zline_3[i].najdi_Ipsc_LN()[0]
+                    ipsc = ustrezni_zline_3[i].najdi_Ipsc()[0]
+                    z = ustrezni_zline_3[i].najdi_Z()[0]
                     ipsc_lpe = ustrezni_zloop_3[i].najdi_Ipsc_LPE()[0]
                     
                     ZS = ustrezni_zloop_3[i].najdi_Z_LPE()[0]
-                    ia_psc_navidezni_stolpec = ustrezni_zloop_3[i].najdi_Ia_Ipsc()
+                    ia_psc_navidezni_stolpec = ustrezni_zloop_3[i].najdi_Ia_Ipsc()[0]
                     tip_varovalke = ustrezni_zloop_3[i].najdi_tip_varovalke()[0]
                     I_varovalke = ustrezni_zloop_3[i].najdi_I_varovalke()[0]
                     t_varovalke = ustrezni_zloop_3[i].najdi_t_varovalke()[0]
                     isc_faktor = ustrezni_zloop_3[i].najdi_Isc_faktor()[0]
                     komentar = ustrezni_zloop_3[i].najdi_komentar()
                     
-                    print(f"{uln}, {ZL}, {ipsc_ln}, {dU}, {ZS}, {ipsc_lpe}, {glavna_izenac_povezava}, {ia_psc_navidezni_stolpec}, {maxRplusRminus}, {tip_varovalke}, {I_varovalke}, {t_varovalke}, {isc_faktor}, {komentar}")
-                    string = [uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava, ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, komentar]
-
-                # writer.writerow([uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava, ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, komentar])
+                    string = [uln, ipsc, z, dU, ZS, ipsc_lpe, glavna_izenac_povezava, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar]
+                    writer.writerow(string)
+                    #print(string)
+                    csvfile.close()
                 
                 """
                 datoteka.write(....)
