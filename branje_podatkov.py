@@ -40,17 +40,18 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
 
     loceno_besedilo_brez_poti_na_koncu = []
     dolzine = []
+    seznam_ustreznih_poti_do_kock = []
     
     def ustvari_seznam_vseh_meritev():
         loceno_besedilo = []
         
         for kocka_teksta in loceno_besedilo_na_kocke_teksta:
             slovar_meritev = {i:0 for i in seznam_vrst_meritev}
-            #pot_do_druzine_meritev = model.najdi_pot_izven_razreda_Meritev(kocka_teksta)
+            pot_do_druzine_meritev = model.najdi_pot_izven_razreda_Meritev(kocka_teksta)
             idx_poti = kocka_teksta.find("Pot:")
             kocka_teksta = kocka_teksta[:idx_poti]
 
-            #print(pot_do_druzine_meritev)
+            
             for vrsta_meritve in seznam_vrst_meritev:
                 if vrsta_meritve in kocka_teksta:
                     slovar_meritev[vrsta_meritve] = kocka_teksta.count(vrsta_meritve)
@@ -62,7 +63,7 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
                 # v tem primeru ni problemov, saj je meritev itak ustrezna
                 if kocka_teksta.count("p//") == 0:
                     loceno_besedilo.append([model.Meritev(kocka_teksta.replace("\n", " ").replace("\r\n", " ").strip())])
-                
+                    seznam_ustreznih_poti_do_kock.append(pot_do_druzine_meritev)
                 """
                 tukaj morava narediti vnos v excel
                 """
@@ -79,26 +80,31 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
                 for meritev in loceno_besedilo_brez_poti_na_koncu:
                     if meritev.count("p//") == 0:
                         loceno_besedilo_zacasno.append(model.Meritev(meritev.replace("\n", " ").replace("\r\n", " ").strip()))
+                        
                         #loceno_besedilo_zacasno.append(meritev.replace("\n", " ").strip() + " " + pot_do_druzine_meritev)
                 if loceno_besedilo_zacasno:
                     loceno_besedilo.append(loceno_besedilo_zacasno)
+                    seznam_ustreznih_poti_do_kock.append(pot_do_druzine_meritev)
                 # print(seznam_indeksov)
                 # print(slovar_meritev)
                 
                 """
                 tukaj morava narediti vnos v excel
                 """
-                
+             
         return loceno_besedilo
                         
     loceno_besedilo = ustvari_seznam_vseh_meritev()
+    slovar_kock_in_ustreznih_poti = dict(zip(loceno_besedilo, seznam_ustreznih_poti_do_kock))
+    
     # print(len(loceno_besedilo))
-    print(max(dolzine), len(dolzine), sum(dolzine))
-    
-    
+    # print(max(dolzine), len(dolzine), sum(dolzine))
     #print(loceno_besedilo[:10])
     
-
+    print(len(loceno_besedilo), len(seznam_ustreznih_poti_do_kock))
+    
+    with open("csv_za_excel_datoteko.csv", "w", encoding='utf-8', newline='') as csvfile:
+        csvfile.close()
     for kocka in loceno_besedilo:
         model.zapisi_kocko_meritev_v_excel(kocka)
     
