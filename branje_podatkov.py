@@ -95,7 +95,7 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
         return loceno_besedilo
                         
     loceno_besedilo = ustvari_seznam_vseh_meritev()
-    slovar_kock_in_ustreznih_poti = dict(zip(loceno_besedilo, seznam_ustreznih_poti_do_kock))
+    slovar_kock_in_ustreznih_poti = dict(zip(range(len(loceno_besedilo)), seznam_ustreznih_poti_do_kock))
     
     # print(len(loceno_besedilo))
     # print(max(dolzine), len(dolzine), sum(dolzine))
@@ -106,7 +106,7 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     with open("csv_za_excel_datoteko.csv", "w", encoding='utf-8', newline='') as csvfile:
         csvfile.close()
     for kocka in loceno_besedilo:
-        model.zapisi_kocko_meritev_v_excel(kocka)
+        model.zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti)
     
     
             

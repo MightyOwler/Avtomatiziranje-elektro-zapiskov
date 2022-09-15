@@ -286,16 +286,21 @@ class Meritev():
     # če ja, potem bo sicer to ok, vendar bo treba biti precej previden
     
 # tole bo moralo biti stvar posamezne kocke
-def zapisi_kocko_meritev_v_excel(kocka):
+def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti):
     """
     Zapiše meritev v excel datoteko
     """
-
+    
     uln, ZL, ipsc_ln, ipsc_lpe = "","","", ""
     dU, ZS, glavna_izenac_povezava = "","",""
     ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke = "","",""
     I_varovalke, t_varovalke, isc_faktor = "","",""
     komentar = ""
+    
+    pot = slovar_kock_in_ustreznih_poti[loceno_besedilo.index(kocka)]
+    # Za vsak slučaj
+    if pot is None:
+        print("Ni poti, oz prišlo je do napake")
     
     vrste_meritev = [meritev.doloci_vrsto_meritve() for meritev in kocka]
     slovar_vrst_meritev = {i:vrste_meritev.count(i) for i in seznam_vrst_meritev}
@@ -304,7 +309,6 @@ def zapisi_kocko_meritev_v_excel(kocka):
         print("Napaka: Imamo 2 ali več R low 4 meritvi v eni kocki!")
     
     # najprej določimo R low 4 ter padec napetosti
-    
     
     for meritev in kocka:
         vrsta_meritve = meritev.doloci_vrsto_meritve()
