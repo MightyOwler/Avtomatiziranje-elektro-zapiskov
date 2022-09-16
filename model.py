@@ -301,16 +301,16 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
         if vrsta_meritve == "R low 4":
             
             glavna_izenac_povezava = meritev.najdi_R().replace(" Ω", "")
-            R_pozitivno_int = int(meritev.najdi_R_pozitivno().replace(" Ω", "").replace(">", ""))
-            R_negativno_int = int(meritev.najdi_R_negativno().replace(" Ω", "").replace(">", ""))
-            if ">1999" in meritev.najdi_R_pozitivno()[0] or ">1999" in meritev.najdi_R_negativno()[0]:
+            if ">1999" in meritev.najdi_R_pozitivno() or ">1999" in meritev.najdi_R_negativno():
                 maxRplusRminus = ">1999"
             else:
-                R_pozitivno_int = int(meritev.najdi_R_pozitivno().replace(" Ω", "").replace(">", ""))
-                R_negativno_int = int(meritev.najdi_R_negativno().replace(" Ω", "").replace(">", ""))
-                maxRplusRminus = f"{max(R_negativno_int, R_pozitivno_int)}"
-    
-            maxRplusRminus = f"{max(R_pozitivno_int, R_negativno_int)}"
+                R_pozitivno_int = float(meritev.najdi_R_pozitivno().replace(",", ".").replace(" Ω", "").replace(">", ""))
+                R_negativno_int = float(meritev.najdi_R_negativno().replace(",", ".").replace(" Ω", "").replace(">", ""))
+                # Pri kateri velikosti spremenimo v int?
+                if max(R_negativno_int, R_pozitivno_int) >= 100:
+                    maxRplusRminus = f"{int(max(R_negativno_int, R_pozitivno_int))}"
+                else:
+                    maxRplusRminus = f"{max(R_negativno_int, R_pozitivno_int)}"
         
         if vrsta_meritve == "Padec napetosti":
             dU = meritev.najdi_dU()
