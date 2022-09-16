@@ -160,10 +160,10 @@ class Meritev():
     def najdi_Uporaba(self):
         return self.najdi_element('Uporaba:', pretvori_v_osnovne = False)
 
-    def najdi_I_dN(self):
+    def najdi_Tip(self):
         return self.najdi_element('Tip:', pretvori_v_osnovne = False)
 
-    def najdi_Tip(self):
+    def najdi_I_dN(self):
         return self.najdi_element('I dN:')
 
     def najdi_Preizkus(self):
@@ -176,28 +176,28 @@ class Meritev():
         return self.najdi_element('Ozemljitveni sistem:')
 
     def najdi_t_IΔN_x1_plus(self):
-        return self.najdi_element('t IΔN x1, (+):', pretvori_v_osnovne = False) # pri tej meritvi pogledaš za isto meritev samo da je - namesto + in pogledaš katera vrednost je večja, tista vrednost je pomembna
+        return self.najdi_element('t IΔN x1,(+):', pretvori_v_osnovne = False) # pri tej meritvi pogledaš za isto meritev samo da je - namesto + in pogledaš katera vrednost je večja, tista vrednost je pomembna
 
     def najdi_t_IΔN_x1_minus(self):
-        return self.najdi_element('t IΔN x1, (-):', pretvori_v_osnovne = False)# pri tev meritvi pogledaš zgornjo, ki ima x1 (+) in pogledaš katera ot teh dveh je večja. to vrednost uporabiš kot rezultat
+        return self.najdi_element('t IΔN x1,(-):', pretvori_v_osnovne = False)# pri tev meritvi pogledaš zgornjo, ki ima x1 (+) in pogledaš katera ot teh dveh je večja. to vrednost uporabiš kot rezultat
 
     def najdi_t_IΔN_x5_plus(self):
-        return self.najdi_element('t IΔN x5, (+):', pretvori_v_osnovne = False)# pri tej meritvi pogledaš za isto meritev samo da je - namesto + in pogledaš katera vrednost je večja, tista vrednost je pomembna
+        return self.najdi_element('t IΔN x5,(+):', pretvori_v_osnovne = False)# pri tej meritvi pogledaš za isto meritev samo da je - namesto + in pogledaš katera vrednost je večja, tista vrednost je pomembna
 
     def najdi_t_IΔN_x5_minus(self):
-        return self.najdi_element('t IΔN x5, (-):', pretvori_v_osnovne = False)# pri tev meritvi pogledaš zgornjo, ki ima x1 (+) in pogledaš katera ot teh dveh je večja. to vrednost uporabiš kot rezultat
+        return self.najdi_element('t IΔN x5,(-):', pretvori_v_osnovne = False)# pri tev meritvi pogledaš zgornjo, ki ima x1 (+) in pogledaš katera ot teh dveh je večja. to vrednost uporabiš kot rezultat
 
     def najdi_t_IΔN_x05_plus(self):
-        return self.najdi_element('t IΔN x0.5, (+):', pretvori_v_osnovne = False)# pri tej meritvi pogledaš za isto meritev samo da je - namesto + in pogledaš katera vrednost je večja, tista vrednost je pomembna
+        return self.najdi_element('t IΔN x0.5,(+):', pretvori_v_osnovne = False)# pri tej meritvi pogledaš za isto meritev samo da je - namesto + in pogledaš katera vrednost je večja, tista vrednost je pomembna
 
     def najdi_t_IΔN_x05_minus(self):
-        return self.najdi_element('t IΔN x0.5, (-):', pretvori_v_osnovne = False)# pri tev meritvi pogledaš zgornjo, ki ima x1 (+) in pogledaš katera ot teh dveh je večja. to vrednost uporabiš kot rezultat
+        return self.najdi_element('t IΔN x0.5,(-):', pretvori_v_osnovne = False)# pri tev meritvi pogledaš zgornjo, ki ima x1 (+) in pogledaš katera ot teh dveh je večja. to vrednost uporabiš kot rezultat
 
     def najdi_IΔ_plus(self):
-        return self.najdi_element('IΔ, (+):')# pri tej meritvi pogledaš za isto meritev samo da je - namesto + in pogledaš katera vrednost je večja, tista vrednost je pomembna
+        return self.najdi_element('IΔ,(+):')# pri tej meritvi pogledaš za isto meritev samo da je - namesto + in pogledaš katera vrednost je večja, tista vrednost je pomembna
 
     def najdi_IΔ_minus(self):
-        return self.najdi_element('IΔ, (-):')# pri tev meritvi pogledaš zgornjo, ki ima x1 (+) in pogledaš katera ot teh dveh je večja. to vrednost uporabiš kot rezultat
+        return self.najdi_element('IΔ,(-):')# pri tev meritvi pogledaš zgornjo, ki ima x1 (+) in pogledaš katera ot teh dveh je večja. to vrednost uporabiš kot rezultat
 
     def najdi_Uc(self):
         return self.najdi_element('Uc:')
@@ -284,6 +284,10 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
     komentar = ""
     
     pot = slovar_kock_in_ustreznih_poti[loceno_besedilo.index(kocka)]
+    
+    # Seveda je treba ime še pravilno določiti
+    ime = ""
+    
     # Za vsak slučaj preverimo, ali pot ne obstaja
     if pot is None:
         print("Ni poti, oz prišlo je do napake")
@@ -337,7 +341,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 isc_faktor = meritev.najdi_Isc_faktor()
                 komentar = meritev.najdi_komentar()
                 
-                array_ki_ga_zapisemo_v_csv = [uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava,  maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar, pot]
+                array_ki_ga_zapisemo_v_csv = [ime, uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava,  maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar, pot]
                 writer.writerow(array_ki_ga_zapisemo_v_csv)
                 csvfile.close()
                 
@@ -389,13 +393,67 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                         komentar = ustrezni_zloop_3[i].najdi_komentar()
                     
                     
-                    array_ki_ga_zapisemo_v_csv = [uln, ipsc, z, dU, ZS, ipsc_lpe, glavna_izenac_povezava, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar, pot]
+                    array_ki_ga_zapisemo_v_csv = [ime, uln, ipsc, z, dU, ZS, ipsc_lpe, glavna_izenac_povezava, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar, pot]
                     writer.writerow(array_ki_ga_zapisemo_v_csv)
                     csvfile.close()
                     
-        """
-        Tukaj morava nadaljevati z RCD Auto
-        """
+    """
+    Tukaj morava nadaljevati z RCD Auto
+    """
+    
+    for meritev in kocka:
+        vrsta_meritve = meritev.doloci_vrsto_meritve()
+        if vrsta_meritve == "RCD Auto":
+            with open("csv_za_excel_datoteko_RCD.csv", "a", encoding='utf-8', newline='') as csvfile_RCD:
+                writer = csv.writer(csvfile_RCD, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+                oznaka = ""     # na roko
+                I_nazivni = ""      # na roko
+                I_dN = meritev.najdi_I_dN()
+                tip_rcd = meritev.najdi_Tip()
+                tip_GS = ""     # na roko
+                tip_f = ""     # na roko
+                znamka = ""     # na roko
+                impendanca = ""     # na roko
+                Uc = ""     # na roko
+                I_d = ""     # na roko
+                t1x = ""
+                t5x = ""
+                
+                t1x_plus = meritev.najdi_t_IΔN_x1_plus().replace(",", ".").replace(" ms", "").replace(">", "")
+                t1x_neg = meritev.najdi_t_IΔN_x1_minus().replace(",", ".").replace(" ms", "").replace(">", "")
+                t5x_plus = meritev.najdi_t_IΔN_x5_plus().replace(",", ".").replace(" ms", "").replace(">", "")
+                t5x_neg = meritev.najdi_t_IΔN_x5_minus().replace(",", ".").replace(" ms", "").replace(">", "")
+                
+                # V primeru, da vse količine obstajajo
+                if t1x_plus is not "" and t1x_neg is not "" and t5x_plus is not "" and t1x_neg is not "":
+                    
+                    t1x_plus = float(t1x_plus)
+                    t1x_neg = float(t1x_neg)
+                    t5x_plus = float(t5x_plus)
+                    t5x_neg = float(t5x_neg)
+                    
+                    # Pri kateri velikosti spremenimo v int?
+                    if max(t1x_plus, t1x_neg) >= 100:
+                        t1x = f"{int(max(t1x_plus, t1x_neg))}"
+                    else:
+                        t1x = f"{max(t1x_plus, t1x_neg)}"
+                    
+                    
+                    # Pri kateri velikosti spremenimo v int?
+                    if max(t5x_plus, t5x_neg) >= 100:
+                        t5x = f"{int(max(t5x_plus, t5x_neg))}"
+                    else:
+                        t5x = f"{max(t5x_plus, t5x_neg)}"
+                else:
+                    print("\nNapaka: manjkajoči podatki t1x ali t5x pri", pot.strip())
+                    t1x = "X"
+                    t5x = "X"
+                    
+                
+                array_ki_ga_zapisemo_v_csv = [oznaka, I_nazivni, I_dN, tip_rcd, tip_GS, tip_f, znamka, impendanca, Uc, I_d, t1x, t5x]
+                writer.writerow(array_ki_ga_zapisemo_v_csv)
+                csvfile_RCD.close()
 
 def najdi_po_vrsti_urejen_seznam_datumov(vse_besedilo):
         loceno_besedilo_po_presledkih = vse_besedilo.split()

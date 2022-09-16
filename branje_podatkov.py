@@ -10,7 +10,7 @@ seznam_vrst_meritev = model.seznam_vrst_meritev
 
 
 with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
-    celotno_besedilo_z_merjenj =  podatki.read()
+    celotno_besedilo_z_merjenj =  podatki.read().replace(", (+)", ",(+)").replace(", (-)", ",(-)")
     loceno_besedilo_na_kocke_teksta = celotno_besedilo_z_merjenj.split("Posamezne meritve")
     
     
@@ -70,6 +70,8 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     print("Število vseh meritev:", len(seznam_vseh_meritev), "\nŠtevilo ustreznih poti do meritev:", len(seznam_ustreznih_poti_do_kock))
     
     with open("csv_za_excel_datoteko.csv", "w", encoding='utf-8', newline='') as csvfile:
+        csvfile.close()
+    with open("csv_za_excel_datoteko_RCD.csv", "w", encoding='utf-8', newline='') as csvfile:
         csvfile.close()
     for kocka in seznam_vseh_meritev:
         model.zapisi_kocko_meritev_v_excel(kocka, seznam_vseh_meritev, slovar_kock_in_ustreznih_poti)
