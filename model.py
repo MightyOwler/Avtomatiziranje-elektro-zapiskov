@@ -384,7 +384,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                     writer.writerow(array_ki_ga_zapisemo_v_csv)
                     csvfile.close()
 
-def najdi_seznam_datumov(vse_besedilo):
+def najdi_po_vrsti_urejen_seznam_datumov(vse_besedilo):
         loceno_besedilo_po_presledkih = vse_besedilo.split()
         seznam_stringov_z_datumi = []
         for i in loceno_besedilo_po_presledkih:
@@ -407,11 +407,3 @@ def najdi_pot_izven_razreda_Meritev(besedilo):
             idx = string_ki_ga_obdelujemo.find("Serijsko")
             string_ki_ga_obdelujemo = string_ki_ga_obdelujemo[:idx]
         return string_ki_ga_obdelujemo
-
-
-
-            
-
-    
-    
-    

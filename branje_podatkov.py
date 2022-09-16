@@ -10,11 +10,11 @@ seznam_vrst_meritev = model.seznam_vrst_meritev
 
 
 with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
-    vse_besedilo =  podatki.read()
-    loceno_besedilo_na_kocke_teksta = vse_besedilo.split("Posamezne meritve")
+    celotno_besedilo_z_merjenj =  podatki.read()
+    loceno_besedilo_na_kocke_teksta = celotno_besedilo_z_merjenj.split("Posamezne meritve")
     
     
-    seznam_datumov_po_vrstnem_redu = model.najdi_seznam_datumov(vse_besedilo)
+    seznam_datumov_po_vrstnem_redu = model.najdi_po_vrsti_urejen_seznam_datumov(celotno_besedilo_z_merjenj)
     #tukaj se da še polepšati zapis datuma
     print("Meritve so bile opravljene od:", seznam_datumov_po_vrstnem_redu[0], "do:", seznam_datumov_po_vrstnem_redu[-1])
 
@@ -71,5 +71,3 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
         model.zapisi_kocko_meritev_v_excel(kocka, seznam_vseh_meritev, slovar_kock_in_ustreznih_poti)
 
 print("-----------------------------------------------------------------")
-
-
