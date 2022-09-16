@@ -448,59 +448,7 @@ def najdi_pot_izven_razreda_Meritev(besedilo):
         return string_ki_ga_obdelujemo
 
 
-def ustvari_datoteko_s_poenostavljenimi_podatki(mnozica_vseh_objektov_meritev):
-    with open("poenostavljeni_podatki.txt", "w", encoding="utf-8") as f:
-        for j,i in enumerate(mnozica_vseh_objektov_meritev):
-        #print(i.besedilo_po_elementih)
-            f.write("Številka meritve"+ " " + str(j + 1))
-            f.write("\n")
-            # spodnji elementi veljajop za meritve, ki se začnejo z AUTO TN
-            f.write(str(i.najdi_tip_varovalke()))
-            f.write("\n")
-            f.write(str(i.najdi_I_varovalke()))
-            f.write("\n")
-            f.write(str(i.najdi_t_varovalke()))
-            f.write("\n")
-            f.write(str(i.najdi_Isc_faktor()))
-            f.write("\n")
-            f.write(str(i.najdi_dU()))
-            f.write("\n")
-            f.write(str(i.najdi_Z_LPE()))
-            f.write("\n")
-            f.write(str(i.najdi_I_preizkusa()))
-            f.write("\n")
-            f.write(str(i.najdi_Ipsc_LPE()))
-            f.write("\n")
-            f.write(str(i.najdi_Uln()))
-            f.write("\n")
-            f.write(str(i.najdi_R()))
-            f.write("\n")
-            f.write(str(i.najdi_Zref()))
-            f.write("\n")
-            f.write(str(i.najdi_meja_dU()))
-            f.write("\n")
-            #f.write(str(i.najdi_pot()))
-            # spodnje meritve so za meritve ki se začnejo z Zloop in Z LINE 
-            f.write("\n")
-            f.write(str(i.najdi_Merilno_breme()))
-            f.write("\n")
-            f.write(str(i.najdi_Povprečje()))
-            f.write("\n")
-            f.write(str(i.najdi_Toleranca()))
-            f.write("\n")
-            f.write(str(i.najdi_Ipsc()))
-            f.write("\n")
-            f.write(str(i.najdi_Z()))
-            f.write("\n")
-            f.write(str(i.najdi_XL()))
-            f.write("\n")
-            f.write(str(i.najdi_IscMax()))
-            f.write("\n")
-            f.write(str(i.najdi_IscMin()))
-            f.write("\n")
-            f.write(str(i.najdi_Ia_Ipsc()))
-            f.write("\n")
-            f.write("\n----------------------------------------------------------------------------------------------------\n")
+
             
 
     

@@ -109,33 +109,6 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
         model.zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti)
     
     
-            
-    # loceno_besedilo_discardane_prazne = [i.replace("\n"," ") for i in loceno_besedilo if i.count("p//") == 0]
-    # print("Dolzina locenega besedila brez praznih:", len(loceno_besedilo_discardane_prazne), len(loceno_besedilo))
-    
-    # with open("poenostavljeni_podatki2.txt", "w", encoding="utf-8") as f:
-    #     for i in loceno_besedilo_discardane_prazne:
-    #         f.write(i)
-    #         f.write("\n\n")
-    #     f.write("\n\n-----------------------------------------------------------------\n\n")
-    #     # for i in loceno_besedilo:
-    #     #     f.write(i)
-    #     #     f.write("\n\n")
-        
-
-    #matrika_vseh_merjenj = [posamezna_meritev.split(", ") for posamezna_meritev in loceno_besedilo_discardane_prazne]
-    
-    # mnozica_vseh_objektov_meritev = [model.Meritev(i) for i in loceno_besedilo_discardane_prazne]
-
-    
-    # slovar_vrst = {i:0 for i in seznam_vrst_meritev}
-    # for meritev in mnozica_vseh_objektov_meritev:
-    #     slovar_vrst[meritev.doloci_vrsto_meritve()] += 1
-        
-    # print("Lastnosti slovarja:", sum(slovar_vrst.values()))
-    # for i in slovar_vrst:
-    #     print(i+":", slovar_vrst[i])
-        
 
 
 print("-----------------------------------------------------------------")
