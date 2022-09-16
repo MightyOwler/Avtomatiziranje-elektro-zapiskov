@@ -419,6 +419,8 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 I_d = ""     # na roko
                 t1x = ""
                 t5x = ""
+                ozemljitveni_sistem = meritev.najdi_Ozemljitveni_sistem()
+                komentar = meritev.najdi_komentar()
                 
                 t1x_plus = meritev.najdi_t_IΔN_x1_plus().replace(",", ".").replace(" ms", "").replace(">", "")
                 t1x_neg = meritev.najdi_t_IΔN_x1_minus().replace(",", ".").replace(" ms", "").replace(">", "")
@@ -435,23 +437,23 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                     
                     # Pri kateri velikosti spremenimo v int?
                     if max(t1x_plus, t1x_neg) >= 100:
-                        t1x = f"{int(max(t1x_plus, t1x_neg))}"
+                        t1x = f"{int(max(t1x_plus, t1x_neg))}".replace(".",",")
                     else:
-                        t1x = f"{max(t1x_plus, t1x_neg)}"
+                        t1x = f"{max(t1x_plus, t1x_neg)}".replace(".",",")
                     
                     
                     # Pri kateri velikosti spremenimo v int?
                     if max(t5x_plus, t5x_neg) >= 100:
-                        t5x = f"{int(max(t5x_plus, t5x_neg))}"
+                        t5x = f"{int(max(t5x_plus, t5x_neg))}".replace(".",",")
                     else:
-                        t5x = f"{max(t5x_plus, t5x_neg)}"
+                        t5x = f"{max(t5x_plus, t5x_neg)}".replace(".",",")
                 else:
                     print("\nNapaka: manjkajoči podatki t1x ali t5x pri", pot.strip())
                     t1x = "X"
                     t5x = "X"
                     
                 
-                array_ki_ga_zapisemo_v_csv = [oznaka, I_nazivni, I_dN, tip_rcd, tip_GS, tip_f, znamka, impendanca, Uc, I_d, t1x, t5x]
+                array_ki_ga_zapisemo_v_csv = [oznaka, I_nazivni, I_dN, tip_rcd, tip_GS, tip_f, znamka, impendanca, Uc, I_d, t1x, t5x, ozemljitveni_sistem, komentar, pot]
                 writer.writerow(array_ki_ga_zapisemo_v_csv)
                 csvfile_RCD.close()
 
