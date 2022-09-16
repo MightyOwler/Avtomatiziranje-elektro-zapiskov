@@ -283,7 +283,9 @@ class Meritev():
 
 def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti):
     """
-    Zapiše meritev v excel datoteko
+    Zapiše meritev v csv datoteko, ki je primerna za obdelavo v csv-ju
+    
+    Args: kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti
     """
     
     uln, ZL, ipsc_ln, ipsc_lpe = "","","", ""
@@ -293,7 +295,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
     komentar = ""
     
     pot = slovar_kock_in_ustreznih_poti[loceno_besedilo.index(kocka)]
-    # Za vsak slučaj
+    # Za vsak slučaj preverimo, ali pot ne obstaja
     if pot is None:
         print("Ni poti, oz prišlo je do napake")
     
@@ -323,9 +325,6 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
         
         if vrsta_meritve == "Padec napetosti":
             dU = meritev.najdi_dU()
-        
-            # do zdaj: glavna_izenac_povezavam, maxRplusRminus
-            # vrsta meritve R low 4
             
     # najprej odpravimo AUTO TN
     
@@ -400,7 +399,7 @@ def najdi_seznam_datumov(vse_besedilo):
         loceno_besedilo_po_presledkih = vse_besedilo.split()
         seznam_stringov_z_datumi = []
         for i in loceno_besedilo_po_presledkih:
-            # \d\d\.\d\d\.\d\d\d\d je pravi regex expression
+            # \d\d\.\d\d\.\d\d\d\d je pravi regex expression za to obliko datuma
             if re.search(r"\d{2}\.\d{2}\.\d{4}", i): #".2021" in i or ".2022" in i:
                 # vsi datumi so pravilne oblike, zato je upravičeno tole
                 string_datuma = i[9:]
