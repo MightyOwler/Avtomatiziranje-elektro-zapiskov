@@ -336,8 +336,8 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
         
                 writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                 
-                uln = meritev.najdi_Uln() #.replace(" V", "")
-                ZL = meritev.najdi_Z_LN() #.replace(" Ω", "")
+                uln = meritev.najdi_Uln()
+                ZL = meritev.najdi_Z_LN()
                 ipsc_ln = meritev.najdi_Ipsc_LN()
                 ipsc_lpe = meritev.najdi_Ipsc_LPE()
                 if not dU:
@@ -370,13 +370,9 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                     
         if len(ustrezni_zline_3) != len(ustrezni_zloop_3) or len(ustrezni_zline_3) != 3 or len(ustrezni_zloop_3) != 3:
             print("Napaka: Nekaj ni v redu s številom zloop/zlinov")
-            
-            #print("Pot problematične meritve:", meritev.najdi_pot())
-            print("Dolžina zloop", ustrezni_zloop_3)
-            print("Dolžina zline", ustrezni_zline_3)
-            # for i in ustrezni_zline_3:
-            #     print(i.besedilo, i.besedilo_po_elementih)
-            pass
+            print("Pot problematične meritve:", pot)
+            print("Dolžina zloop", len(ustrezni_zloop_3))
+            print("Dolžina zline", len(ustrezni_zline_3))
 
         else:
             for i in range(3):
@@ -421,7 +417,6 @@ def najdi_pot_izven_razreda_Meritev(besedilo):
             string_ki_ga_obdelujemo = string_ki_ga_obdelujemo[:idx]
         if "Serijsko" in string_ki_ga_obdelujemo:
             idx = string_ki_ga_obdelujemo.find("Serijsko")
-            # poanta je v temu, da so spredaj odvečne črke
             string_ki_ga_obdelujemo = string_ki_ga_obdelujemo[:idx]
         return string_ki_ga_obdelujemo
 
