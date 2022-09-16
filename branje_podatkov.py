@@ -2,10 +2,6 @@
 import model
 import re
 
-"""
-Morala bova šteti vrste meritev v celem blocku razen med potjo in serijsko!!
-"""
-
 # neprazne meritve
 # AUTO TN: 434
 # Zloop mΩ: 66
@@ -16,9 +12,13 @@ Morala bova šteti vrste meritev v celem blocku razen med potjo in serijsko!!
 # Padec napetosti: 1
 # R iso: 0doloci_vrsto_meritve
 
+# kot vidimo zgoraj, je nepraznih zline meritev 106 namesto 108 (ker sta 2 prazni!!)
+
 #problem je v tem, da ne loči še med AUTO TN in AUTO TN (RCD)
 #to ni velik problem: AUTO TN (RCD) --> Auto Tn (RCD) bo rešilo problem
 #obstaja 7 vrst meritev: AUTO TN, Zloop mΩ, Z LINE, RCD Auto, R low 4, Varistor, R iso
+
+
 seznam_vrst_meritev = model.seznam_vrst_meritev
 
 
@@ -28,15 +28,8 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     
     
     seznam_datumov_po_vrstnem_redu = model.najdi_seznam_datumov(vse_besedilo)
-    #tukaj se da še popraviti
+    #tukaj se da še polepšati zapis datuma
     print("Meritve so bile opravljene od:", seznam_datumov_po_vrstnem_redu[0], "do:", seznam_datumov_po_vrstnem_redu[-1])
-
-    # od Page dalje do serijskega lahko vse discardamo
-    # odvrževa brezvezne meritve
-    
-    # vprašanje, če je to v redu, ker dejansko so v tabelicah skupaj zlepljene posamezne meritve...
-    # verjentno bo treba v razredu Meritev ločiti med seboj posamezne meritve...
-    # je pa spodnja koda kar uporabna za to
 
     loceno_besedilo_brez_poti_na_koncu = []
     dolzine = []
@@ -60,16 +53,13 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
             #to je zato, da lahko preverimo, koliko meritev obstaja 
             dolzine.append(vsota_meritev)
             if vsota_meritev == 1:
-                # v tem primeru ni problemov, saj je meritev itak ustrezna
+                # v primeru, da je v kocki teksta samo ena meritev ni problemov, saj je meritev kar celotna kocka
                 if kocka_teksta.count("p//") == 0:
                     loceno_besedilo.append([model.Meritev(kocka_teksta.replace("\n", " ").replace("\r\n", " ").strip())])
                     seznam_ustreznih_poti_do_kock.append(pot_do_druzine_meritev)
-                """
-                tukaj morava narediti vnos v excel
-                """
                 
             else:
-                # v tem primeru pa se moramo še malo potruditi
+                # sicer pa se moramo še malo potruditi
                 seznam_indeksov = []
                 loceno_besedilo_brez_poti_na_koncu = []
                 for key in slovar_meritev:  
@@ -80,26 +70,18 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
                 for meritev in loceno_besedilo_brez_poti_na_koncu:
                     if meritev.count("p//") == 0:
                         loceno_besedilo_zacasno.append(model.Meritev(meritev.replace("\n", " ").replace("\r\n", " ").strip()))
-                        
-                        #loceno_besedilo_zacasno.append(meritev.replace("\n", " ").strip() + " " + pot_do_druzine_meritev)
                 if loceno_besedilo_zacasno:
                     loceno_besedilo.append(loceno_besedilo_zacasno)
                     seznam_ustreznih_poti_do_kock.append(pot_do_druzine_meritev)
-                # print(seznam_indeksov)
-                # print(slovar_meritev)
+
                 
-                """
-                tukaj morava narediti vnos v excel
-                """
              
         return loceno_besedilo
-                        
+    
+    # loceno_besedilo so meritve, vse meritve, ne glede na kocke (v eni kocki je lahko več meritev)
     loceno_besedilo = ustvari_seznam_vseh_meritev()
     slovar_kock_in_ustreznih_poti = dict(zip(range(len(loceno_besedilo)), seznam_ustreznih_poti_do_kock))
     
-    # print(len(loceno_besedilo))
-    # print(max(dolzine), len(dolzine), sum(dolzine))
-    #print(loceno_besedilo[:10])
     
     print(len(loceno_besedilo), len(seznam_ustreznih_poti_do_kock))
     
@@ -116,8 +98,6 @@ print("-----------------------------------------------------------------")
 
 #P-Ustrezno F-Neustrezno, E-Prazno, N-Ne obstaja
 # to ubistu pomeni isto kot ustrezno, prazno, narobe ki je pojavi na začetku vsakega sklopa meritev samo da tukaj se pojavi za vsako meritvijo, kar pomeni da lahko na ta način ločiva meritve eno od druge
-
-
 
 # vsi elementi v posameznih vrstah meritev
 

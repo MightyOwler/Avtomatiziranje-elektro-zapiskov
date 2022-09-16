@@ -2,7 +2,6 @@ import re
 from datetime import datetime
 import csv
 
-# Če updataš tukaj, je za updatano za vse
 # R low je kvečem 1 na kocko, se vpiše po celotni vrstici
 
 seznam_vrst_meritev = ["AUTO TN", "Zloop", "Z LINE", "RCD Auto", "R low 4", "Varistor", "R iso", "Padec napetosti"]
@@ -282,10 +281,6 @@ class Meritev():
         return self.najdi_element('Meja(Rln, Rlpe, Rnpe):')
 
 
-    # tole bi znalo biti nekoliko moteče, ker ne vem, ali moram meritve z iste poti obravnavati skupaj
-    # če ja, potem bo sicer to ok, vendar bo treba biti precej previden
-    
-# tole bo moralo biti stvar posamezne kocke
 def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti):
     """
     Zapiše meritev v excel datoteko
@@ -359,9 +354,6 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 writer.writerow(string)
                 csvfile.close()
                 
-                """
-                datoteka.write(....)
-                """
     # nato odpravimo Zloop / Zine
     
     if "Zloop" in vrste_meritev or "Z LINE" in vrste_meritev:
@@ -374,16 +366,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
             if vrsta_meritve == "Z LINE":
                 if "400" == meritev.najdi_Un():
                     ustrezni_zline_3.append(meritev)
-                else:
-                    pass
-                
-                    # to je bilo potrebno za odkritje bugga
-                    
-                    # print(repr(meritev.najdi_Ipsc() + " " + meritev.najdi_Z() + " " + meritev.najdi_Un()))
-                    # #print(meritev.besedilo)
-                    # for i in kocka:
-                    #     print(i.besedilo)
-                    # print("__________")
+
                     
         if len(ustrezni_zline_3) != len(ustrezni_zloop_3) or len(ustrezni_zline_3) != 3 or len(ustrezni_zloop_3) != 3:
             print("Napaka: Nekaj ni v redu s številom zloop/zlinov")
@@ -416,12 +399,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                     string = [uln, ipsc, z, dU, ZS, ipsc_lpe, glavna_izenac_povezava, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar]
                     writer.writerow(string)
                     csvfile.close()
-                
-                """
-                datoteka.write(....)
-                """
 
-        # to ni popolno, saj v primeru, da obstaja comment, ne deluje kot bi moralo
 def najdi_seznam_datumov(vse_besedilo):
         loceno_besedilo_po_presledkih = vse_besedilo.split()
         seznam_stringov_z_datumi = []
