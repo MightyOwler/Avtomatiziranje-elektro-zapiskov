@@ -31,10 +31,10 @@ def pretvori_v_osnovne_enote(besedilo_ki_ga_pretvarjamo):
             return f"{besedilo_ki_ga_pretvarjamo}".replace(" " + enota, "").replace(".",",")
                      
     
-def find_nth(haystack, needle, n):
-    start = haystack.find(needle)
+def najdi_n_to_pojavitev_substringa(glavni_string, iskani_substring, n):
+    start = glavni_string.find(iskani_substring)
     while start >= 0 and n > 1:
-        start = haystack.find(needle, start+len(needle))
+        start = glavni_string.find(iskani_substring, start+len(iskani_substring))
         n -= 1
     return start
 
@@ -47,25 +47,19 @@ class Meritev():
         self.vrsta_meritve = self.doloci_vrsto_meritve
         
     def doloci_vrsto_meritve(self):
-        #seznam_vrst = [] ## če bo vse v redu, bi to moralo biti povsod 1
         for vrsta_meritve in seznam_vrst_meritev:
             if vrsta_meritve in self.besedilo:
-                #seznam_vrst.append(vrsta_meritve)
                 return vrsta_meritve
-        #return seznam_vrst
         
     def najdi_komentar(self):
         if "Comment:" in self.besedilo:
             st_pojavitev = self.besedilo.count("Comment:")
-            idx_komentarja = find_nth(self.besedilo, "Comment:", st_pojavitev)
+            idx_komentarja = najdi_n_to_pojavitev_substringa(self.besedilo, "Comment:", st_pojavitev)
             komentar = self.besedilo[idx_komentarja:]
             return komentar.replace("Comment:","").replace("//","").strip()
         else:
             return ""
-            
-    
-    # ta definicija v resnici ni najboljša, saj vedno gleda samo posamezno meritev
-    # če nama uspe pravilno razdeliti že prej, potem bo pa ok
+        
     def najdi_element(self, ime_elementa, pretvori_v_osnovne = True):
         element = ""
         for i in self.besedilo_po_elementih:
@@ -76,11 +70,7 @@ class Meritev():
                 else:
                     return element
                 #Pomembno: treba je preveriti, da program pravilno zaokrožuje stvari!
-                #tole obdrži prave enote
                 
-                
-                
-        # sicer returna prazno
         return element        
 
     #spodnji elementi so za meritve, ki se začnejo z AUTO TN
@@ -166,7 +156,6 @@ class Meritev():
         return self.najdi_element('Un:')
 
     #spodnji elementi so za meritve ki se začnejo z RCD Auto
-    #to bo treba še bolje definirati
 
     def najdi_Uporaba(self):
         return self.najdi_element('Uporaba:', pretvori_v_osnovne = False)
@@ -299,8 +288,8 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
     if pot is None:
         print("Ni poti, oz prišlo je do napake")
     
-    vrste_meritev = [meritev.doloci_vrsto_meritve() for meritev in kocka]
-    slovar_vrst_meritev = {i:vrste_meritev.count(i) for i in seznam_vrst_meritev}
+    vrste_meritev_v_kocki = [meritev.doloci_vrsto_meritve() for meritev in kocka]
+    slovar_vrst_meritev = {i:vrste_meritev_v_kocki.count(i) for i in seznam_vrst_meritev}
     
     if slovar_vrst_meritev["R low 4"] > 1:
         print("Napaka: Imamo 2 ali več R low 4 meritvi v eni kocki!")
@@ -349,13 +338,13 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 isc_faktor = meritev.najdi_Isc_faktor()
                 komentar = meritev.najdi_komentar()
                 
-                array_ki_gre_v_csv = [uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava,  maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar]
-                writer.writerow(array_ki_gre_v_csv)
+                array_ki_ga_zapisemo_v_csv = [uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava,  maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar]
+                writer.writerow(array_ki_ga_zapisemo_v_csv)
                 csvfile.close()
                 
     # nato odpravimo Zloop / Zine
     
-    if "Zloop" in vrste_meritev or "Z LINE" in vrste_meritev:
+    if "Zloop" in vrste_meritev_v_kocki or "Z LINE" in vrste_meritev_v_kocki:
         ustrezni_zline_3 = []
         ustrezni_zloop_3 = []
         for meritev in kocka:
@@ -391,8 +380,8 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                     isc_faktor = ustrezni_zloop_3[i].najdi_Isc_faktor()
                     komentar = ustrezni_zloop_3[i].najdi_komentar()
                     
-                    array_ki_gre_v_csv = [uln, ipsc, z, dU, ZS, ipsc_lpe, glavna_izenac_povezava, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar]
-                    writer.writerow(array_ki_gre_v_csv)
+                    array_ki_ga_zapisemo_v_csv = [uln, ipsc, z, dU, ZS, ipsc_lpe, glavna_izenac_povezava, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar]
+                    writer.writerow(array_ki_ga_zapisemo_v_csv)
                     csvfile.close()
 
 def najdi_seznam_datumov(vse_besedilo):
