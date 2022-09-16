@@ -54,6 +54,10 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
                 for meritev in seznam_vseh_meritev_brez_poti_na_koncu:
                     if meritev.count("p//") == 0:
                         loceno_besedilo_zacasno.append(model.Meritev(meritev.replace("\n", " ").replace("\r\n", " ").strip()))
+                    # To zna biti malenkost nevarno, ampak se zdi da deluje
+                    elif meritev.count("p//") > 0 and meritev.count("Z LINE") > 0:
+                        loceno_besedilo_zacasno.append(model.Meritev(meritev.replace("\n", " ").replace("\r\n", " ").strip()))
+
                 if loceno_besedilo_zacasno:
                     seznam_vseh_meritev.append(loceno_besedilo_zacasno)
                     seznam_ustreznih_poti_do_kock.append(pot_do_druzine_meritev)
@@ -71,3 +75,4 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
         model.zapisi_kocko_meritev_v_excel(kocka, seznam_vseh_meritev, slovar_kock_in_ustreznih_poti)
 
 print("-----------------------------------------------------------------")
+

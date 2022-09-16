@@ -5,7 +5,7 @@ import csv
 # R low je kvečem 1 na kocko, se vpiše po celotni vrstici
 
 seznam_vrst_meritev = ["AUTO TN", "Zloop", "Z LINE", "RCD Auto", "R low 4", "Varistor", "R iso", "Padec napetosti"]
-seznam_enot_za_pretvorbe = ["V", "A", "Ω"]
+seznam_enot_za_pretvorbe = ["V", "A", "Ω", "s"]
 seznam_predpon_za_pretvorbe = ["m","k"]
 
 def pretvori_v_osnovne_enote(besedilo_ki_ga_pretvarjamo):
@@ -87,7 +87,7 @@ class Meritev():
     
     # tukaj je vedno v sekundah?
     def najdi_t_varovalke(self):
-        return self.najdi_element('t varovalke:', pretvori_v_osnovne = False)
+        return self.najdi_element('t varovalke:')
     
     def najdi_Isc_faktor(self):
         return self.najdi_element('Isc faktor:', pretvori_v_osnovne = False)
@@ -99,7 +99,7 @@ class Meritev():
         return self.najdi_element('Uln:')
     
     def najdi_dU(self):
-        return self.najdi_element('dU:')
+        return self.najdi_element('dU:', pretvori_v_osnovne = False)
     
     def najdi_Z_LPE(self):
         return self.najdi_element('Z (LPE):')
@@ -328,8 +328,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 ZL = meritev.najdi_Z_LN()
                 ipsc_ln = meritev.najdi_Ipsc_LN()
                 ipsc_lpe = meritev.najdi_Ipsc_LPE()
-                if not dU:
-                    dU = meritev.najdi_dU()
+                dU = meritev.najdi_dU()
                 ZS = meritev.najdi_Z_LPE()
                 ia_psc_navidezni_stolpec = meritev.najdi_Ia_Ipsc()
                 tip_varovalke = meritev.najdi_tip_varovalke()
@@ -338,7 +337,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 isc_faktor = meritev.najdi_Isc_faktor()
                 komentar = meritev.najdi_komentar()
                 
-                array_ki_ga_zapisemo_v_csv = [uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava,  maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar]
+                array_ki_ga_zapisemo_v_csv = [uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava,  maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar, pot]
                 writer.writerow(array_ki_ga_zapisemo_v_csv)
                 csvfile.close()
                 
@@ -355,34 +354,48 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 if "400" == meritev.najdi_Un():
                     ustrezni_zline_3.append(meritev)
 
-                    
+        # Safety check v primeru, da ni treh zloop/zline elementov            
         if len(ustrezni_zline_3) != len(ustrezni_zloop_3) or len(ustrezni_zline_3) != 3 or len(ustrezni_zloop_3) != 3:
             print("\nNapaka: Nekaj ni v redu s številom zloop/zlinov")
             print("Pot problematične meritve:", pot.strip())
             print("Dolžina zloop", len(ustrezni_zloop_3))
             print("Dolžina zline", len(ustrezni_zline_3))
+            
+            # tukaj je treba na koncu dati, da je bila meritev neustrezna!! (V primeru, da pri zadnji piše //p)
 
         else:
             for i in range(3):
                 with open("csv_za_excel_datoteko.csv", "a", encoding='utf-8', newline='') as csvfile:
                     writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                     
-                    uln = ustrezni_zloop_3[i].najdi_Uln()
-                    ipsc = ustrezni_zline_3[i].najdi_Ipsc()
-                    z = ustrezni_zline_3[i].najdi_Z()
-                    ipsc_lpe = ustrezni_zloop_3[i].najdi_Ipsc_LPE()
+                    if ustrezni_zline_3[i].besedilo.count("p//") > 0:
+                        ipsc, z = "X", "X"
+                    else:
+                        ipsc = ustrezni_zline_3[i].najdi_Ipsc()
+                        z = ustrezni_zline_3[i].najdi_Z()
+                        
                     
-                    ZS = ustrezni_zloop_3[i].najdi_Z_LPE()
-                    ia_psc_navidezni_stolpec = ustrezni_zloop_3[i].najdi_Ia_Ipsc()
-                    tip_varovalke = ustrezni_zloop_3[i].najdi_tip_varovalke()
-                    I_varovalke = ustrezni_zloop_3[i].najdi_I_varovalke()
-                    t_varovalke = ustrezni_zloop_3[i].najdi_t_varovalke()
-                    isc_faktor = ustrezni_zloop_3[i].najdi_Isc_faktor()
-                    komentar = ustrezni_zloop_3[i].najdi_komentar()
+                    if ustrezni_zloop_3[i].besedilo.count("p//") > 0:
+                        uln, ipsc_lpe, ZS, ia_psc_navidezni_stolpec, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, komentar = "X", "X", "X", "X", "X", "X", "X", "X", "X"
+                    else:
+                        uln = ustrezni_zloop_3[i].najdi_Uln()
+                        ipsc_lpe = ustrezni_zloop_3[i].najdi_Ipsc_LPE()
+                        ZS = ustrezni_zloop_3[i].najdi_Z_LPE()
+                        ia_psc_navidezni_stolpec = ustrezni_zloop_3[i].najdi_Ia_Ipsc()
+                        tip_varovalke = ustrezni_zloop_3[i].najdi_tip_varovalke()
+                        I_varovalke = ustrezni_zloop_3[i].najdi_I_varovalke()
+                        t_varovalke = ustrezni_zloop_3[i].najdi_t_varovalke()
+                        isc_faktor = ustrezni_zloop_3[i].najdi_Isc_faktor()
+                        komentar = ustrezni_zloop_3[i].najdi_komentar()
                     
-                    array_ki_ga_zapisemo_v_csv = [uln, ipsc, z, dU, ZS, ipsc_lpe, glavna_izenac_povezava, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar]
+                    
+                    array_ki_ga_zapisemo_v_csv = [uln, ipsc, z, dU, ZS, ipsc_lpe, glavna_izenac_povezava, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar, pot]
                     writer.writerow(array_ki_ga_zapisemo_v_csv)
                     csvfile.close()
+                    
+        """
+        Tukaj morava nadaljevati z RCD Auto
+        """
 
 def najdi_po_vrsti_urejen_seznam_datumov(vse_besedilo):
         loceno_besedilo_po_presledkih = vse_besedilo.split()
