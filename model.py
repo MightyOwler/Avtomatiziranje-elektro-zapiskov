@@ -349,8 +349,8 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 isc_faktor = meritev.najdi_Isc_faktor()
                 komentar = meritev.najdi_komentar()
                 
-                string = [uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava,  maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar]
-                writer.writerow(string)
+                array_ki_gre_v_csv = [uln, ZL, ipsc_ln, dU, ZS, ipsc_lpe, glavna_izenac_povezava,  maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar]
+                writer.writerow(array_ki_gre_v_csv)
                 csvfile.close()
                 
     # nato odpravimo Zloop / Zine
@@ -391,8 +391,8 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                     isc_faktor = ustrezni_zloop_3[i].najdi_Isc_faktor()
                     komentar = ustrezni_zloop_3[i].najdi_komentar()
                     
-                    string = [uln, ipsc, z, dU, ZS, ipsc_lpe, glavna_izenac_povezava, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar]
-                    writer.writerow(string)
+                    array_ki_gre_v_csv = [uln, ipsc, z, dU, ZS, ipsc_lpe, glavna_izenac_povezava, maxRplusRminus, tip_varovalke, I_varovalke, t_varovalke, isc_faktor, ia_psc_navidezni_stolpec, komentar]
+                    writer.writerow(array_ki_gre_v_csv)
                     csvfile.close()
 
 def najdi_seznam_datumov(vse_besedilo):

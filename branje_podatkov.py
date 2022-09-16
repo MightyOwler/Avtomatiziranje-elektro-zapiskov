@@ -22,7 +22,7 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     seznam_ustreznih_poti_do_kock = []
     
     def ustvari_seznam_vseh_meritev():
-        loceno_besedilo = []
+        seznam_vseh_meritev = []
         
         for kocka_teksta in loceno_besedilo_na_kocke_teksta:
             slovar_meritev = {i:0 for i in seznam_vrst_meritev}
@@ -39,7 +39,7 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
             if stevilo_meritev_v_trenutni_kocki == 1:
                 # v primeru, da je v kocki teksta samo ena meritev, ni problemov, saj je meritev kar celotna kocka
                 if kocka_teksta.count("p//") == 0:
-                    loceno_besedilo.append([model.Meritev(kocka_teksta.replace("\n", " ").replace("\r\n", " ").strip())])
+                    seznam_vseh_meritev.append([model.Meritev(kocka_teksta.replace("\n", " ").replace("\r\n", " ").strip())])
                     seznam_ustreznih_poti_do_kock.append(pot_do_druzine_meritev)
                 
             else:
@@ -55,23 +55,20 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
                     if meritev.count("p//") == 0:
                         loceno_besedilo_zacasno.append(model.Meritev(meritev.replace("\n", " ").replace("\r\n", " ").strip()))
                 if loceno_besedilo_zacasno:
-                    loceno_besedilo.append(loceno_besedilo_zacasno)
+                    seznam_vseh_meritev.append(loceno_besedilo_zacasno)
                     seznam_ustreznih_poti_do_kock.append(pot_do_druzine_meritev)
 
-        return loceno_besedilo
+        return seznam_vseh_meritev
     
     # loceno_besedilo so vse meritve, ne glede na kocke (v eni kocki je lahko več meritev)
-    loceno_besedilo = ustvari_seznam_vseh_meritev()
-    slovar_kock_in_ustreznih_poti = dict(zip(range(len(loceno_besedilo)), seznam_ustreznih_poti_do_kock))
-    print("Število vseh meritev:", len(loceno_besedilo), "\nŠtevilo ustreznih poti do meritev:", len(seznam_ustreznih_poti_do_kock))
+    seznam_vseh_meritev = ustvari_seznam_vseh_meritev()
+    slovar_kock_in_ustreznih_poti = dict(zip(range(len(seznam_vseh_meritev)), seznam_ustreznih_poti_do_kock))
+    print("Število vseh meritev:", len(seznam_vseh_meritev), "\nŠtevilo ustreznih poti do meritev:", len(seznam_ustreznih_poti_do_kock))
     
     with open("csv_za_excel_datoteko.csv", "w", encoding='utf-8', newline='') as csvfile:
         csvfile.close()
-    for kocka in loceno_besedilo:
-        model.zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti)
-    
-    
-
+    for kocka in seznam_vseh_meritev:
+        model.zapisi_kocko_meritev_v_excel(kocka, seznam_vseh_meritev, slovar_kock_in_ustreznih_poti)
 
 print("-----------------------------------------------------------------")
 
