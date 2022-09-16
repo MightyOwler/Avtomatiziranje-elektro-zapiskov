@@ -1,4 +1,4 @@
-# datoteka za branje podatkov z datoteke
+# datoteka za branje podatkov z datoteke in generiranje ustrezne csv datoteke
 import model
 import re
 
@@ -18,7 +18,7 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     #tukaj se da še polepšati zapis datuma
     print("Meritve so bile opravljene od:", seznam_datumov_po_vrstnem_redu[0], "do:", seznam_datumov_po_vrstnem_redu[-1])
 
-    loceno_besedilo_brez_poti_na_koncu = []
+    seznam_vseh_meritev_brez_poti_na_koncu = []
     seznam_ustreznih_poti_do_kock = []
     
     def ustvari_seznam_vseh_meritev():
@@ -44,14 +44,14 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
                 
             else:
                 # sicer pa se moramo še malo potruditi
-                seznam_indeksov = []
-                loceno_besedilo_brez_poti_na_koncu = []
+                seznam_indeksov_posameznih_meritev = []
+                seznam_vseh_meritev_brez_poti_na_koncu = []
                 for key in slovar_meritev:  
-                    seznam_indeksov += [m.start() for m in re.finditer(key, kocka_teksta)]
-                seznam_indeksov.sort()    
-                loceno_besedilo_brez_poti_na_koncu += [kocka_teksta[i:j] for i,j in zip(seznam_indeksov, seznam_indeksov[1:]+[None])]
+                    seznam_indeksov_posameznih_meritev += [m.start() for m in re.finditer(key, kocka_teksta)]
+                seznam_indeksov_posameznih_meritev.sort()    
+                seznam_vseh_meritev_brez_poti_na_koncu += [kocka_teksta[i:j] for i,j in zip(seznam_indeksov_posameznih_meritev, seznam_indeksov_posameznih_meritev[1:]+[None])]
                 loceno_besedilo_zacasno = []
-                for meritev in loceno_besedilo_brez_poti_na_koncu:
+                for meritev in seznam_vseh_meritev_brez_poti_na_koncu:
                     if meritev.count("p//") == 0:
                         loceno_besedilo_zacasno.append(model.Meritev(meritev.replace("\n", " ").replace("\r\n", " ").strip()))
                 if loceno_besedilo_zacasno:
@@ -60,7 +60,7 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
 
         return seznam_vseh_meritev
     
-    # loceno_besedilo so vse meritve, ne glede na kocke (v eni kocki je lahko več meritev)
+    # seznam_vseh_meritev so vse meritve, ne glede na kocke (v eni kocki je lahko več meritev)
     seznam_vseh_meritev = ustvari_seznam_vseh_meritev()
     slovar_kock_in_ustreznih_poti = dict(zip(range(len(seznam_vseh_meritev)), seznam_ustreznih_poti_do_kock))
     print("Število vseh meritev:", len(seznam_vseh_meritev), "\nŠtevilo ustreznih poti do meritev:", len(seznam_ustreznih_poti_do_kock))

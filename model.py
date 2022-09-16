@@ -368,8 +368,8 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
 
                     
         if len(ustrezni_zline_3) != len(ustrezni_zloop_3) or len(ustrezni_zline_3) != 3 or len(ustrezni_zloop_3) != 3:
-            print("Napaka: Nekaj ni v redu s številom zloop/zlinov")
-            print("Pot problematične meritve:", pot)
+            print("\nNapaka: Nekaj ni v redu s številom zloop/zlinov")
+            print("Pot problematične meritve:", pot.strip())
             print("Dolžina zloop", len(ustrezni_zloop_3))
             print("Dolžina zline", len(ustrezni_zline_3))
 
