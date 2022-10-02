@@ -134,8 +134,8 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                             else:
                                 maxRplusRminus = f"{max(R_negativno_int, R_pozitivno_int)}"
                     R = meritev.najdi_R()
-                        
-                    array_ki_ga_zapisemo_v_csv = [ime, R, maxRplusRminus, komentar, pot]
+                    vrsta_meritve = meritev.doloci_vrsto_meritve()
+                    array_ki_ga_zapisemo_v_csv = [ime, R, maxRplusRminus, komentar, vrsta_meritve, pot]
                     writer.writerow(array_ki_ga_zapisemo_v_csv)
             csvfile.close()
             seznam_rlow4_meritev.sort(key = lambda x: float(velikost_stringa(x)))
@@ -204,7 +204,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 Aljaž: uredi izpisovanje za varistor!
                 """
                 
-                array_ki_ga_zapisemo_v_csv = [ime, uac, udc, komentar, pot]
+                array_ki_ga_zapisemo_v_csv = [ime, uac, udc, komentar, vrsta_meritve, pot]
                 writer.writerow(array_ki_ga_zapisemo_v_csv)
                 csvfile.close()
 
@@ -236,7 +236,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 
                 st_vnesenih_meritev += 1
                 array_ki_ga_zapisemo_v_csv = [st_vnesenih_meritev, ime, prazno, prazno, prazno, glavna_izenac_povezava, prazno, rlpe, tip_varovalke, I_varovalke, t_varovalke, f"{zlpe}/{ipsc_ln}", f"{zln}/{ipsc_lpe}/{dU}", 
-                                                prazno,  I_dN, prazno, t1x, t5x, Uc, prazno, komentar, uln, maxRplusRminus, isc_faktor, ia_psc_navidezni_stolpec, pot]
+                                                prazno,  I_dN, prazno, t1x, t5x, Uc, prazno, komentar, vrsta_meritve, uln, maxRplusRminus, isc_faktor, ia_psc_navidezni_stolpec, pot]
                 writer.writerow(array_ki_ga_zapisemo_v_csv)
                 csvfile.close()
 
@@ -291,6 +291,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                         I_varovalke = ustrezni_zloop_3[i].najdi_I_varovalke()
                         t_varovalke = ustrezni_zloop_3[i].najdi_t_varovalke()
                         isc_faktor = ustrezni_zloop_3[i].najdi_Isc_faktor()
+                        vrsta_meritve = "ZLOOP / ZLINE"
                         komentar = ustrezni_zloop_3[i].najdi_komentar()
                         
                         if not dU:
@@ -298,7 +299,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                         
                         st_vnesenih_meritev += 1
                         array_ki_ga_zapisemo_v_csv = [st_vnesenih_meritev, ime, prazno, prazno, prazno, glavna_izenac_povezava, prazno, rlpe, tip_varovalke, I_varovalke, t_varovalke, f"{z_zloop}/{ipsc_zloop}", f"{z_zline}/{ipsc_zline}/{dU}",
-                                                     prazno, I_dN, prazno, t1x, t5x, Uc, prazno, komentar, uln, maxRplusRminus, isc_faktor, ia_psc_navidezni_stolpec, pot]
+                                                     prazno, I_dN, prazno, t1x, t5x, Uc, prazno, komentar, vrsta_meritve, uln, maxRplusRminus, isc_faktor, ia_psc_navidezni_stolpec, pot]
                         writer.writerow(array_ki_ga_zapisemo_v_csv)
                         csvfile.close()
 
@@ -346,9 +347,11 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                     t1x = "X"
                     t5x = "X"
 
+                print("RCD autooooooo", vrsta_meritve)
+                
                 st_vnesenih_meritev_RCD += 1
                 array_ki_ga_zapisemo_v_csv = [st_vnesenih_meritev_RCD, ime, prazno, prazno, I_dN, tip_rcd, prazno, prazno, prazno,  
-                                              prazno, Uc, prazno, t1x, t5x, ozemljitveni_sistem, komentar, pot]
+                                              prazno, Uc, prazno, t1x, t5x, ozemljitveni_sistem, komentar, vrsta_meritve, pot]
                 writer.writerow(array_ki_ga_zapisemo_v_csv)
                 csvfile_RCD.close()
 
