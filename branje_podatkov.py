@@ -130,14 +130,24 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
             seznam_sekcij = []
 
             for i, vrstica in enumerate(vrstice):
-                stevec_sekcij = 0
+                #stevec_sekcij = 0
                 pot_locena_na_elemente = vrstica.replace(
                     "\n", " ").strip().split("//")
                 for element in pot_locena_na_elemente:
-                    if "Dist. Board" in element.strip() and "Dist. Board DOVOD" not in element.strip() and "Dist. Board OBREMENILNI PREIZKUS" not in element.strip():
-                        if stevec_sekcij == 0:
-                            sekcija = element.replace("Dist. Board ", "")
-                            stevec_sekcij += 1
+                    
+                    if "Sekcija:" in element.strip():
+                        sekcija = element[element.index("Pot:") + len("Pot:"):].replace("Sekcija: ", "")
+                    
+                    # To je stara verzija, kjer se določa stvari glede na Dist. Board
+                    
+                    # else:
+                    #     if "Dist. Board" in element.strip() and "Dist. Board OBREMENILNI PREIZKUS" not in element.strip():
+                    #         if stevec_sekcij == 0:
+                    #             sekcija = element[element.index("Pot:") + len("Pot:"):].replace("Dist. Board ", "")
+                    
+                    #             stevec_sekcij += 1
+                    
+                    
                     if sekcija != "" and sekcija not in seznam_sekcij:
                         seznam_sekcij.append(sekcija)
                         excel_delovni_list.append([f"{sekcija}"])
@@ -162,7 +172,7 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
                     exec(str_napake)
                     if napake:
                         for indeks, barva in napake.items():
-                            excel_delovni_list.cell(i  + visina_templata + len(seznam_sekcij) + 1, indeks + 1).fill = PatternFill(start_color=barva,
+                            excel_delovni_list.cell(i + visina_templata + len(seznam_sekcij) + 1, indeks + 1).fill = PatternFill(start_color=barva,
                             end_color=barva,
                             fill_type='solid')
 

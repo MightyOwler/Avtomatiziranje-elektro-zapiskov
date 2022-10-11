@@ -55,14 +55,25 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
     
     stevec_dist_board = 0
     for element in pot_locena_na_elemente:
-        if "Dist. Board" in element.strip() and "Dist. Board DOVOD" not in element.strip() and "Dist. Board OBREMENILNI PREIZKUS" not in element.strip():
+        if "Imenovanje: " in element.strip():
             if stevec_dist_board == 1:
-                ime = element.replace("Dist. Board ", "")
+                ime = element.replace("Imenovanje: ", "")
                 if "Circuit F" in ime:
                     ime = ime.replace("Circuit ", "")
                 elif re.search("Circuit\d", ime):
                     ime = ime.replace("Circuit", "F")
             stevec_dist_board += 1
+            
+        # To je stara verzija, kjer se določa stvari glede na Dist. Board
+            
+        # elif "Dist. Board" in element.strip() and "Dist. Board DOVOD" not in element.strip() and "Dist. Board OBREMENILNI PREIZKUS" not in element.strip():
+        #     if stevec_dist_board == 1:
+        #         ime = element.replace("Dist. Board ", "")
+        #         if "Circuit F" in ime:
+        #             ime = ime.replace("Circuit ", "")
+        #         elif re.search("Circuit\d", ime):
+        #             ime = ime.replace("Circuit", "F")
+        #     stevec_dist_board += 1
                 
     if stevec_dist_board != 2:
         print(f"Napaka: V poti **{pot}** se 'Dist. Board (brez DOVOD)' ne pojavi dvakrat, ampak {stevec_dist_board}-krat!")          
