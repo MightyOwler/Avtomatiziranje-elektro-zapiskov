@@ -56,13 +56,11 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
     stevec_dist_board = 0
     for element in pot_locena_na_elemente:
         if "Imenovanje: " in element.strip():
-            if stevec_dist_board == 1:
-                ime = element.replace("Imenovanje: ", "")
-                if "Circuit F" in ime:
-                    ime = ime.replace("Circuit ", "")
-                elif re.search("Circuit\d", ime):
-                    ime = ime.replace("Circuit", "F")
-            stevec_dist_board += 1
+            ime = element.replace("Imenovanje: ", "")
+            if "Circuit F" in ime:
+                ime = ime.replace("Circuit ", "")
+            elif re.search("Circuit\d", ime):
+                ime = ime.replace("Circuit", "F")
             
         # To je stara verzija, kjer se določa stvari glede na Dist. Board
             
@@ -75,8 +73,10 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
         #             ime = ime.replace("Circuit", "F")
         #     stevec_dist_board += 1
                 
-    if stevec_dist_board != 2:
-        print(f"Napaka: V poti **{pot}** se 'Dist. Board (brez DOVOD)' ne pojavi dvakrat, ampak {stevec_dist_board}-krat!")          
+        # if stevec_dist_board != 2:
+        #     print(f"Napaka: V poti **{pot}** se 'Dist. Board (brez DOVOD)' ne pojavi dvakrat, ampak {stevec_dist_board}-krat!")          
+    
+    
     if not ime:
         ime = "X"
         
@@ -357,8 +357,6 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                     print("\nNapaka: manjkajoči podatki t1x ali t5x pri", pot.strip())
                     t1x = "X"
                     t5x = "X"
-
-                print("RCD autooooooo", vrsta_meritve)
                 
                 st_vnesenih_meritev_RCD += 1
                 array_ki_ga_zapisemo_v_csv = [st_vnesenih_meritev_RCD, ime, prazno, prazno, I_dN, tip_rcd, prazno, prazno, prazno,  
