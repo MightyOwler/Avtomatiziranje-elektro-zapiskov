@@ -9,9 +9,9 @@ from openpyxl.styles import PatternFill, Font, Alignment
 
 
 # Če hočeš vklopiti debugganje, daš debug_mode na True
-debug_mode = False
+debug_mode = True
 
-# obstaja 7 osnovnih vrst meritev: AUTO TN, Zloop mΩ, Z LINE, RCD Auto, R low 4, Varistor, R iso, R IZO, ZLOOP 4W, ZLINE 4W
+# obstaja 7 osnovnih vrst meritev: AUTO TN, Zloop mΩ, Z LINE, RCD Auto, R low 4, Varistor, R iso, R IZO, ZLOOP 4W, Zline 4W
 
 trafo_postaja = bool(input("Ali je trafo postaja? Če je, napiši karkoli, če ni, pusti prazno! "))
 if trafo_postaja:
@@ -30,7 +30,7 @@ seznam_vrst_meritev = model.seznam_vrst_meritev
 
 with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     celotno_besedilo_z_merjenj = podatki.read().replace(
-        ", (+)", ",(+)").replace(", (-)", ",(-)").replace(";","-").replace("\n", " ").replace("Zloop 4W", "ZLOOP 4W").replace("Zline 4W", "ZLINE 4W")
+        ", (+)", ",(+)").replace(", (-)", ",(-)").replace(";","-").replace("\n", " ").replace("Z loop 4W", "ZLOOP 4W").replace("Z line 4W", "ZLINE 4W")
     loceno_besedilo_na_kocke_teksta = celotno_besedilo_z_merjenj.split(
         "Posamezne meritve")
 
