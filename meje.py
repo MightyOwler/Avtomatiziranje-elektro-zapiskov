@@ -176,9 +176,9 @@ def preveri_meje_RLOW4(seznam, trafo = True):
             
             if r == "X":
                 slovar_problematicnih_meritev[1] = "99FFFF"
-            elif meja_rlow > 1:
+            elif r > 1:
                 slovar_problematicnih_meritev[1] = "FF0000"
-            elif meja_rlow > 0.8: 
+            elif r > 0.8: 
                 slovar_problematicnih_meritev[1] = "FFA500"
             
     return slovar_problematicnih_meritev
