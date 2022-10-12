@@ -169,9 +169,12 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
     
     for meritev in kocka:
         vrsta_meritve = meritev.doloci_vrsto_meritve()
-
-        if vrsta_meritve == "R iso":
-            rlpe = meritev.najdi_Rlpe().replace(" MΩ", "")
+        #print(vrsta_meritve, vrsta_meritve == "R IZO")
+        if vrsta_meritve in ["R iso", "R IZO"]:
+            if vrsta_meritve == "R iso":
+                rlpe = meritev.najdi_Rlpe().replace(" MΩ", "")
+            else:
+                rlpe = meritev.najdi_Riso().replace(" MΩ", "")
                 
         if vrsta_meritve == "Padec napetosti":
             dU = meritev.najdi_dU()
