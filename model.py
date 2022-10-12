@@ -1,15 +1,8 @@
 import re
 from datetime import datetime
 import csv
-from Meritev import Meritev, pretvori_v_osnovne_enote
+from Meritev import Meritev, pretvori_v_osnovne_enote, seznam_vrst_meritev, seznam_enot_za_pretvorbe, seznam_predpon_za_pretvorbe
 from meje import *
-
-# R low je kvečjem 1 na kocko, se vpiše po celotni vrstici
-
-seznam_vrst_meritev = ["AUTO TN", "Zloop", "Z LINE",
-                       "RCD Auto", "R low 4", "Varistor", "R iso", "Padec napetosti", "R IZO", "ZLOOP 4W", "ZLINE 4W"]
-seznam_enot_za_pretvorbe = ["V", "A", "Ω", "s"]
-seznam_predpon_za_pretvorbe = ["m", "k"]
 
 st_vnesenih_meritev = 0
 st_vnesenih_meritev_RCD = 0
@@ -169,7 +162,6 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
     
     for meritev in kocka:
         vrsta_meritve = meritev.doloci_vrsto_meritve()
-        #print(vrsta_meritve, vrsta_meritve == "R IZO")
         if vrsta_meritve in ["R iso", "R IZO"]:
             if vrsta_meritve == "R iso":
                 rlpe = meritev.najdi_Rlpe().replace(" MΩ", "")
@@ -231,8 +223,6 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
     # Stvar je treba narediti v večih korakih, saj lahko podatki v posamezni meritvi vplivajo na celotno kocko ali kasnejše.
     # najprej odpravimo AUTO TN
     
-
-
     for meritev in kocka:
         vrsta_meritve = meritev.doloci_vrsto_meritve()
         

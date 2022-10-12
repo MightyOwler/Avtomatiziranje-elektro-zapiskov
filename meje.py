@@ -87,7 +87,6 @@ def preveri_meje_osnovne(seznam, trafo = True):
             indeks_ujemajoce_varovalke = 0
             slovar_problematicnih_meritev[9] = "FF0000"
         else:
-            print(i_varovalke, stolpec1)
             indeks_ujemajoce_varovalke = stolpec1.index(i_varovalke)            
         
     if tip_varovalke in ["B","D","C"]:

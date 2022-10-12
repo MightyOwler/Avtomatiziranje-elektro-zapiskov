@@ -1,5 +1,3 @@
-
-
 seznam_vrst_meritev = ["AUTO TN", "Zloop", "Z LINE",
                        "RCD Auto", "R low 4", "Varistor", "R iso", "Padec napetosti", "R IZO", "ZLOOP 4W", "ZLINE 4W"]
 seznam_enot_za_pretvorbe = ["V", "A", "Ω", "s"]
