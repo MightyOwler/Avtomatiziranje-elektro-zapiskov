@@ -60,9 +60,18 @@ def preveri_meje_osnovne(seznam, trafo = True):
 
     excel_delovna_datoteka = load_workbook("Meje za meritve.xlsx", data_only=True)
 
-    """
-    NUJNO: narediti še za NV meritve, saj so nekoliko drugačne od ostalih
-    """
+    t_varovalke_je_ustrezen = False
+    for vrednost in [0.1, 0.2, 0.4, 5.0]:
+        if t_varovalke == vrednost:
+            t_varovalke_je_ustrezen = True
+            break
+    
+    if not t_varovalke_je_ustrezen:
+        slovar_problematicnih_meritev[10] = "FF0000"
+        stolpec = 1
+            
+    
+    
     
     if tip_varovalke in ["gG", "NV", "gL"]:
         excel_delovni_list = excel_delovna_datoteka["gG"]
@@ -72,13 +81,14 @@ def preveri_meje_osnovne(seznam, trafo = True):
         if t_varovalke == 0.1:
             stolpec = 1
             zadnja_vrstica = 30
-        if t_varovalke == 0.2:
+        elif t_varovalke == 0.2:
             stolpec = 4
-        if t_varovalke == 0.4:
+        elif t_varovalke == 0.4:
             stolpec = 7 
-        if t_varovalke == 5.0:
+        elif t_varovalke == 5.0:
             stolpec = 10
-            
+
+                        
         stolpec1 = [excel_delovni_list.cell(row=i,column=stolpec).value for i in range(prva_vrstica, zadnja_vrstica + 1)]
         stolpec2 = [excel_delovni_list.cell(row=i,column=stolpec + 1).value for i in range(prva_vrstica, zadnja_vrstica + 1)]
         stolpec3 = [excel_delovni_list.cell(row=i,column=stolpec + 2).value for i in range(prva_vrstica, zadnja_vrstica + 1)]
@@ -122,7 +132,7 @@ def preveri_meje_osnovne(seznam, trafo = True):
         slovar_problematicnih_meritev[11] = "99FFFF"
     elif ik2 == "X":
         slovar_problematicnih_meritev[12] = "99FFFF"
-    else:
+    elif t_varovalke_je_ustrezen:
         if ik1 < stolpec2[indeks_ujemajoce_varovalke]: 
             slovar_problematicnih_meritev[11] = "FF0000"
         elif ik1 <= stolpec2[indeks_ujemajoce_varovalke] * faktor_za_oranzno_barvo_tok: 
@@ -139,7 +149,7 @@ def preveri_meje_osnovne(seznam, trafo = True):
         slovar_problematicnih_meritev[12] = "99FFFF"
     elif du == "X":
         slovar_problematicnih_meritev[12] = "99FFFF"
-    else:
+    elif t_varovalke_je_ustrezen:
         if zl > stolpec3[indeks_ujemajoce_varovalke]:
             slovar_problematicnih_meritev[12] = "FF0000"
         elif zl >= stolpec3[indeks_ujemajoce_varovalke] * faktor_za_oranzno_barvo_upornost:
