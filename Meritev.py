@@ -1,5 +1,7 @@
+
+
 seznam_vrst_meritev = ["AUTO TN", "Zloop", "Z LINE",
-                       "RCD Auto", "R low 4", "Varistor", "R iso", "Padec napetosti"]
+                       "RCD Auto", "R low 4", "Varistor", "R iso", "Padec napetosti", "R IZO", "ZLOOP 4W", "ZLINE 4W"]
 seznam_enot_za_pretvorbe = ["V", "A", "Ω", "s"]
 seznam_predpon_za_pretvorbe = ["m", "k"]
 
@@ -238,6 +240,9 @@ class Meritev():
 
     def najdi_MejaRln_Rlpe_Rnpe(self):
         return self.najdi_element('Meja(Rln, Rlpe, Rnpe):')
+    
+    def najdi_Riso(self):
+        return self.najdi_element("Riso:")
     
     
 def najdi_n_to_pojavitev_substringa(glavni_string, iskani_substring, n):

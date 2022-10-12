@@ -7,7 +7,7 @@ from meje import *
 # R low je kvečjem 1 na kocko, se vpiše po celotni vrstici
 
 seznam_vrst_meritev = ["AUTO TN", "Zloop", "Z LINE",
-                       "RCD Auto", "R low 4", "Varistor", "R iso", "Padec napetosti"]
+                       "RCD Auto", "R low 4", "Varistor", "R iso", "Padec napetosti", "R IZO", "ZLOOP 4W", "ZLINE 4W"]
 seznam_enot_za_pretvorbe = ["V", "A", "Ω", "s"]
 seznam_predpon_za_pretvorbe = ["m", "k"]
 
@@ -93,17 +93,17 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
     
     # tale spodnja kocka kode je zaenkrat še ne testirana, oziroma je možno, da bi se nahajal kak bug!!
     # znal bi biti kak problem z zapisovanjem ali kaj podobnega
-    if slovar_vrst_meritev["R iso"] > 1:
+    if slovar_vrst_meritev["R iso"]  + slovar_vrst_meritev["R IZO"] > 1:
         nova_kocka = []
         seznam_riso_meritev = []
         for meritev in kocka:
-            if meritev.doloci_vrsto_meritve() == "R iso":
+            if meritev.doloci_vrsto_meritve() in ["R iso", "R IZO"]:
                 # inšturment vedno izpiše v MΩ
                 seznam_riso_meritev.append(meritev.najdi_Rlpe().replace(" MΩ", "").replace(",","."))
         seznam_riso_meritev.sort(key = lambda x: velikost_stringa(x))
         riso_meritev_z_minimalno = seznam_riso_meritev[0]
         for idx, meritev in enumerate(kocka):
-            if meritev.doloci_vrsto_meritve() == "R iso":
+            if meritev.doloci_vrsto_meritve() in ["R iso", "R IZO"]:
                 if idx == seznam_riso_meritev.index(riso_meritev_z_minimalno):
                     nova_kocka.append(meritev)            
             else:
