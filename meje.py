@@ -60,6 +60,8 @@ def preveri_meje_osnovne(seznam, trafo = True):
 
     excel_delovna_datoteka = load_workbook("Meje za meritve.xlsx", data_only=True)
 
+    # Označimo z rdečo neobstoječe čase varovalk
+    
     t_varovalke_je_ustrezen = False
     for vrednost in [0.1, 0.2, 0.4, 5.0]:
         if t_varovalke == vrednost:
@@ -69,10 +71,7 @@ def preveri_meje_osnovne(seznam, trafo = True):
     if not t_varovalke_je_ustrezen:
         slovar_problematicnih_meritev[10] = "FF0000"
         stolpec = 1
-            
-    
-    
-    
+
     if tip_varovalke in ["gG", "NV", "gL"]:
         excel_delovni_list = excel_delovna_datoteka["gG"]
         prva_vrstica = 6
