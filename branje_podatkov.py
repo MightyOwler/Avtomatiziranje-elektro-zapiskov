@@ -9,7 +9,7 @@ from openpyxl.styles import PatternFill, Font, Alignment
 
 
 # Če hočeš vklopiti debugganje, daš debug_mode na True
-debug_mode = False
+debug_mode = True
 
 # obstaja 7 osnovnih vrst meritev: AUTO TN, Zloop mΩ, Z LINE, RCD Auto, R low 4, Varistor, R iso, R IZO, ZLOOP 4W, Zline 4W
 
@@ -134,9 +134,8 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
                 pot_locena_na_elemente = vrstica.replace(
                     "\n", " ").strip().split("//")
                 for element in pot_locena_na_elemente:
-                    
-                    if "Sekcija:" in element.strip():
-                        sekcija = element[element.index("Pot:") + len("Pot:"):].replace("Sekcija: ", "")
+                    if "Sekcija: " in element.strip():
+                        sekcija = element[element.index("Sekcija:") + len("Sekcija:"):].replace("Sekcija: ", "")
                     
                     # To je stara verzija, kjer se določa stvari glede na Dist. Board
                     
