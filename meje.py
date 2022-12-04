@@ -10,8 +10,8 @@ def preveri_meje_osnovne(seznam, trafo = True):
     faktor_za_oranzno_barvo_upornost = 0.7    #0.7 pomeni, da je barva oranžna v primeru, ko je rezultat večji od 0.7-kratnika najvišje dovoljene meje
     
     tip_varovalke = seznam[8]
-    i_varovalke = float(seznam[9].replace(",","."))
-    t_varovalke = float(seznam[10].replace(",","."))
+    i_varovalke = float(seznam[9].replace(",",".")) if seznam[9] != "X" else "X"
+    t_varovalke = float(seznam[10].replace(",",".")) if seznam[10] != "X" else "X"
     
     pot = seznam[25]
     if "lamp" in pot or "Lamp" in pot:

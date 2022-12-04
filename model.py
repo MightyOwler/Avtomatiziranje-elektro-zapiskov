@@ -17,6 +17,8 @@ def velikost_stringa(s):
     """
     if ">" in s:
         return 1000000000000
+    if "X" in s:
+        return 0
     else:
         return pretvori_v_osnovne_enote(s.replace(",","."))
 
