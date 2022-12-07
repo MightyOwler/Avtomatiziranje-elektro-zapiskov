@@ -49,9 +49,6 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
     pot = slovar_kock_in_ustreznih_poti[loceno_besedilo.index(
         kocka)].replace("\n", " ").strip()
     pot_locena_na_elemente = pot.replace("\n", " ").strip().split("//")
-
-    # Ta spodnja kocka zahteva, da se v vsaki poti Dist. Board pojavi natanko 2x !!
-    # Program ne določi sekcije tukaj, ampak v branje_podatkov.py. Zato sem izbrisal spremenljivko sekcija
     
     stevec_dist_board = 0
     for element in pot_locena_na_elemente:
@@ -61,22 +58,6 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 ime = ime.replace("Circuit ", "")
             elif re.search("Circuit\d", ime):
                 ime = ime.replace("Circuit", "F")
-            
-        # To je stara verzija, kjer se določa stvari glede na Dist. Board
-            
-        # elif "Dist. Board" in element.strip() and "Dist. Board DOVOD" not in element.strip() and "Dist. Board OBREMENILNI PREIZKUS" not in element.strip():
-        #     if stevec_dist_board == 1:
-        #         ime = element.replace("Dist. Board ", "")
-        #         if "Circuit F" in ime:
-        #             ime = ime.replace("Circuit ", "")
-        #         elif re.search("Circuit\d", ime):
-        #             ime = ime.replace("Circuit", "F")
-        #     stevec_dist_board += 1
-                
-        # if stevec_dist_board != 2:
-        #     print(f"Napaka: V poti **{pot}** se 'Dist. Board (brez DOVOD)' ne pojavi dvakrat, ampak {stevec_dist_board}-krat!")          
-    
-    
     if not ime:
         ime = "X"
         
@@ -122,6 +103,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
             
             for meritev in kocka:                
                 if meritev.doloci_vrsto_meritve() == "R low 4":
+                    komentar = meritev.najdi_komentar()
                     seznam_rlow4_meritev.append(meritev.najdi_R())
                     if ">1999" in meritev.najdi_R_pozitivno() or ">1999" in meritev.najdi_R_negativno():
                         maxRplusRminus = ">1999"
@@ -163,8 +145,10 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
     
     
     for meritev in kocka:
+        komentar = meritev.najdi_komentar()
         vrsta_meritve = meritev.doloci_vrsto_meritve()
         if vrsta_meritve in ["R iso", "R IZO"]:
+            
             if vrsta_meritve == "R iso":
                 rlpe = meritev.najdi_Rlpe().replace(" MΩ", "")
             else:
@@ -212,10 +196,6 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 
                 uac = meritev.najdi_Uac()
                 udc = meritev.najdi_Udc()
-                
-                """
-                Aljaž: uredi izpisovanje za varistor!
-                """
                 
                 array_ki_ga_zapisemo_v_csv = [ime, uac, udc, komentar, vrsta_meritve, pot]
                 writer.writerow(array_ki_ga_zapisemo_v_csv)
