@@ -46,7 +46,6 @@ def preveri_meje_osnovne(seznam, trafo = True):
         if ">" in rlow:
             slovar_problematicnih_meritev[5] = rdeca
         else:
-            # meja_rlow = 1
             rlow = float(rlow.replace(",","."))
             if rlow > 1:
                 slovar_problematicnih_meritev[5] = rdeca
@@ -55,7 +54,6 @@ def preveri_meje_osnovne(seznam, trafo = True):
             
     elif riso != "X":
         if not ">" in riso:
-            # meja_riso = 1
             riso = float(riso.replace(",","."))
             if riso < 1:
                 slovar_problematicnih_meritev[7] = rdeca
@@ -82,21 +80,20 @@ def preveri_meje_osnovne(seznam, trafo = True):
         zadnja_vrstica = 34
         
         slovar_t_varovalk_in_stolpcev = {0.1: 1, 0.2: 4, 0.4:7, 5.0:10}
-        
+        stolpec = slovar_t_varovalk_in_stolpcev[t_varovalke]
+    
         if t_varovalke == 0.1:
             zadnja_vrstica = 30
         
-        stolpec = slovar_problematicnih_meritev.get(t_varovalke, 0)
+        stolpec_1 = [excel_delovni_list.cell(row=i,column=stolpec).value for i in range(prva_vrstica, zadnja_vrstica + 1)]
+        stolpec_2 = [excel_delovni_list.cell(row=i,column=stolpec + 1).value for i in range(prva_vrstica, zadnja_vrstica + 1)]
+        stolpec_3 = [excel_delovni_list.cell(row=i,column=stolpec + 2).value for i in range(prva_vrstica, zadnja_vrstica + 1)]
         
-        stolpec1 = [excel_delovni_list.cell(row=i,column=stolpec).value for i in range(prva_vrstica, zadnja_vrstica + 1)]
-        stolpec2 = [excel_delovni_list.cell(row=i,column=stolpec + 1).value for i in range(prva_vrstica, zadnja_vrstica + 1)]
-        stolpec3 = [excel_delovni_list.cell(row=i,column=stolpec + 2).value for i in range(prva_vrstica, zadnja_vrstica + 1)]
-        
-        if i_varovalke not in stolpec1:
+        if i_varovalke not in stolpec_1:
             indeks_ujemajoce_varovalke = 0
             slovar_problematicnih_meritev[9] = rdeca
         else:
-            indeks_ujemajoce_varovalke = stolpec1.index(i_varovalke)            
+            indeks_ujemajoce_varovalke = stolpec_1.index(i_varovalke)            
         
     if tip_varovalke in ["B","D","C"]:
         excel_delovni_list = excel_delovna_datoteka["BCD"]
@@ -107,29 +104,29 @@ def preveri_meje_osnovne(seznam, trafo = True):
         slovar_tipov_varovalk_in_stolpcev = {"B": 2, "C": 4, "D": 6}
         stolpec = slovar_tipov_varovalk_in_stolpcev[tip_varovalke]
 
-        stolpec1 = [excel_delovni_list.cell(row=i,column=1).value for i in range(prva_vrstica, zadnja_vrstica + 1)]
-        stolpec2 = [excel_delovni_list.cell(row=i,column=stolpec).value for i in range(prva_vrstica, zadnja_vrstica + 1)]
-        stolpec3 = [excel_delovni_list.cell(row=i,column=stolpec + 1).value for i in range(prva_vrstica, zadnja_vrstica + 1)]
+        stolpec_1 = [excel_delovni_list.cell(row=i,column=1).value for i in range(prva_vrstica, zadnja_vrstica + 1)]
+        stolpec_2 = [excel_delovni_list.cell(row=i,column=stolpec).value for i in range(prva_vrstica, zadnja_vrstica + 1)]
+        stolpec_3 = [excel_delovni_list.cell(row=i,column=stolpec + 1).value for i in range(prva_vrstica, zadnja_vrstica + 1)]
         
-        if i_varovalke not in stolpec1:
+        if i_varovalke not in stolpec_1:
             indeks_ujemajoce_varovalke = 0
             slovar_problematicnih_meritev[9] = rdeca
         else:
-            indeks_ujemajoce_varovalke = stolpec1.index(i_varovalke)
+            indeks_ujemajoce_varovalke = stolpec_1.index(i_varovalke)
         
     if ik1 == "X":
         slovar_problematicnih_meritev[11] = modra
     elif ik2 == "X":
         slovar_problematicnih_meritev[12] = modra
     elif t_varovalke_je_ustrezen:
-        if ik1 < stolpec2[indeks_ujemajoce_varovalke]: 
+        if ik1 < stolpec_2[indeks_ujemajoce_varovalke]: 
             slovar_problematicnih_meritev[11] = rdeca
-        elif ik1 <= stolpec2[indeks_ujemajoce_varovalke] * faktor_za_oranzno_barvo_tok: 
+        elif ik1 <= stolpec_2[indeks_ujemajoce_varovalke] * faktor_za_oranzno_barvo_tok: 
             slovar_problematicnih_meritev[11] = oranzna
         
-        if ik2 < stolpec2[indeks_ujemajoce_varovalke]:
+        if ik2 < stolpec_2[indeks_ujemajoce_varovalke]:
             slovar_problematicnih_meritev[12] = rdeca
-        elif ik2 == stolpec2[indeks_ujemajoce_varovalke] * faktor_za_oranzno_barvo_tok:
+        elif ik2 == stolpec_2[indeks_ujemajoce_varovalke] * faktor_za_oranzno_barvo_tok:
             slovar_problematicnih_meritev[12] = oranzna
     
     if zs == "X":
@@ -139,16 +136,15 @@ def preveri_meje_osnovne(seznam, trafo = True):
     elif du == "X":
         slovar_problematicnih_meritev[12] = modra
     elif t_varovalke_je_ustrezen:
-        if zl > stolpec3[indeks_ujemajoce_varovalke]:
+        if zl > stolpec_3[indeks_ujemajoce_varovalke]:
             slovar_problematicnih_meritev[12] = rdeca
-        elif zl >= stolpec3[indeks_ujemajoce_varovalke] * faktor_za_oranzno_barvo_upornost:
+        elif zl >= stolpec_3[indeks_ujemajoce_varovalke] * faktor_za_oranzno_barvo_upornost:
             if slovar_problematicnih_meritev.get(12, "") != rdeca:
-                slovar_problematicnih_meritev[12] = oranzna   
+                slovar_problematicnih_meritev[12] = oranzna
             
-            
-        if zs > stolpec3[indeks_ujemajoce_varovalke]:
+        if zs > stolpec_3[indeks_ujemajoce_varovalke]:
             slovar_problematicnih_meritev[11] = rdeca
-        elif zs >= stolpec3[indeks_ujemajoce_varovalke] * faktor_za_oranzno_barvo_upornost:
+        elif zs >= stolpec_3[indeks_ujemajoce_varovalke] * faktor_za_oranzno_barvo_upornost:
             if slovar_problematicnih_meritev.get(11, "") != rdeca:
                 slovar_problematicnih_meritev[11] = oranzna
             
