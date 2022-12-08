@@ -1,14 +1,13 @@
 import re
 from datetime import datetime
 import csv
-from Meritev import Meritev, pretvori_v_osnovne_enote, seznam_vrst_meritev, seznam_enot_za_pretvorbe, seznam_predpon_za_pretvorbe
+from Meritev import Meritev, pretvori_v_osnovne_enote, SEZNAM_VRST_MERITEV, SEZNAM_ENOT_ZA_PRETVORBE, SEZNAM_PREDPON_ZA_PRETVORBE
 from meje import *
 
 st_vnesenih_meritev = 0
 st_vnesenih_meritev_RCD = 0
 
 def pretvori_string_milisekund_v_ustrezen_format(string):
-    # tole je pomembno, če hočemo string pretvoriti v float
     return string.replace(",", ".").replace(" ms", "").replace(">", "")
 
 def velikost_stringa(s):
@@ -33,8 +32,8 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
     global st_vnesenih_meritev
     global st_vnesenih_meritev_RCD
     
-    ipsc_vrednosti_zloop4w = 1000000000000000000
-    ipsc_vrednosti_zline4w = 1000000000000000000
+    ipsc_vrednosti_zloop4w = 10**18
+    ipsc_vrednosti_zline4w = 10**18
     ustrezna_meritev_zloop4w = None
     ustrezna_meritev_zline4w = None
     
@@ -49,8 +48,6 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
     pot = slovar_kock_in_ustreznih_poti[loceno_besedilo.index(
         kocka)].replace("\n", " ").strip()
     pot_locena_na_elemente = pot.replace("\n", " ").strip().split("//")
-    
-    stevec_dist_board = 0
     for element in pot_locena_na_elemente:
         if "Imenovanje: " in element.strip():
             ime = element.replace("Imenovanje: ", "")
@@ -69,7 +66,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
     vrste_meritev_v_kocki = [meritev.doloci_vrsto_meritve()
                              for meritev in kocka]
     slovar_vrst_meritev = {i: vrste_meritev_v_kocki.count(
-        i) for i in seznam_vrst_meritev}
+        i) for i in SEZNAM_VRST_MERITEV}
 
     
     # tale spodnja kocka kode je zaenkrat še ne testirana, oziroma je možno, da bi se nahajal kak bug!!
@@ -166,20 +163,20 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
             t5x_neg = pretvori_string_milisekund_v_ustrezen_format(meritev.najdi_t_IΔN_x5_minus())
 
             # V primeru, da vse količine obstajajo
-            if t1x_plus != "X" and t1x_neg != "X" and t5x_plus != "X" and t1x_neg != "X":
+            if not "X" in [t1x_plus, t1x_neg, t5x_plus, t5x_neg]:
                 t1x_plus = float(t1x_plus)
                 t1x_neg = float(t1x_neg)
                 t5x_plus = float(t5x_plus)
                 t5x_neg = float(t5x_neg)
 
-                # Pri kateri velikosti spremenimo v int? Ideja je okoli 100
+                # Pri kateri velikosti zaokrožimo v int? Ideja je okoli 100
                 if max(t1x_plus, t1x_neg) >= 100:
                     t1x = f"{int(max(t1x_plus, t1x_neg))}".replace(
                         ".", ",")
                 else:
                     t1x = f"{max(t1x_plus, t1x_neg)}".replace(".", ",")
 
-                # Pri kateri velikosti spremenimo v int?
+                # Pri kateri velikosti zaokrožimo v int?
                 if max(t5x_plus, t5x_neg) >= 100:
                     t5x = f"{int(max(t5x_plus, t5x_neg))}".replace(".", ",")
                 else:
@@ -368,8 +365,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 t5x_neg = pretvori_string_milisekund_v_ustrezen_format(meritev.najdi_t_IΔN_x5_minus())
 
                 # V primeru, da vse količine obstajajo
-                if t1x_plus != "X" and t1x_neg != "X" and t5x_plus != "X" and t1x_neg != "X":
-
+                if not "X" in [t1x_plus, t1x_neg, t5x_plus, t5x_neg]:
                     t1x_plus = float(t1x_plus)
                     t1x_neg = float(t1x_neg)
                     t5x_plus = float(t5x_plus)

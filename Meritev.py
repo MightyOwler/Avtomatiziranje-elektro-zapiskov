@@ -1,7 +1,7 @@
-seznam_vrst_meritev = ["AUTO TN", "Zloop", "Z LINE",
+SEZNAM_VRST_MERITEV = ["AUTO TN", "Zloop", "Z LINE",
                        "RCD Auto", "R low 4", "Varistor", "R iso", "Padec napetosti", "R IZO", "ZLOOP 4W", "ZLINE 4W"]
-seznam_enot_za_pretvorbe = ["V", "A", "Ω", "s"]
-seznam_predpon_za_pretvorbe = ["m", "k"]
+SEZNAM_ENOT_ZA_PRETVORBE = ["V", "A", "Ω", "s"]
+SEZNAM_PREDPON_ZA_PRETVORBE = ["m", "k"]
 
 class Meritev():
     def __init__(self, besedilo_meritve):
@@ -12,7 +12,7 @@ class Meritev():
         self.vrsta_meritve = self.doloci_vrsto_meritve
 
     def doloci_vrsto_meritve(self):
-        for vrsta_meritve in seznam_vrst_meritev:
+        for vrsta_meritve in SEZNAM_VRST_MERITEV:
             if vrsta_meritve in self.besedilo:
                 return vrsta_meritve
 
@@ -256,8 +256,8 @@ def pretvori_v_osnovne_enote(besedilo_ki_ga_pretvarjamo):
     Funkcija, ki pretvarja iz mili ali kilo enot v osnovne
     """
 
-    for predpona in seznam_predpon_za_pretvorbe:
-        for enota in seznam_enot_za_pretvorbe:
+    for predpona in SEZNAM_PREDPON_ZA_PRETVORBE:
+        for enota in SEZNAM_ENOT_ZA_PRETVORBE:
             if predpona + enota in besedilo_ki_ga_pretvarjamo:
                 besedilo_ki_ga_pretvarjamo = besedilo_ki_ga_pretvarjamo.replace(
                     " " + predpona + enota, "").replace(",", ".")
@@ -274,7 +274,7 @@ def pretvori_v_osnovne_enote(besedilo_ki_ga_pretvarjamo):
                         besedilo_ki_ga_pretvarjamo = int(besedilo_ki_ga_pretvarjamo)
 
                 return f"{besedilo_ki_ga_pretvarjamo}".replace(".", ",")
-    for enota in seznam_enot_za_pretvorbe:
+    for enota in SEZNAM_ENOT_ZA_PRETVORBE:
         if enota in besedilo_ki_ga_pretvarjamo:
             return f"{besedilo_ki_ga_pretvarjamo}".replace(" " + enota, "").replace(".", ",")
     

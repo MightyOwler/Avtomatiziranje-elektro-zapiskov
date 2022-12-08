@@ -26,7 +26,7 @@ else:
     print("|| Objekt nima svoje trafo postaje. || ")
     print("--------------------------------------" + Fore.WHITE)
     
-seznam_vrst_meritev = model.seznam_vrst_meritev
+seznam_vrst_meritev = model.SEZNAM_VRST_MERITEV
 
 with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     celotno_besedilo_z_merjenj = podatki.read().replace(
@@ -101,9 +101,9 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     print("Število vseh meritev:", len(seznam_vseh_meritev),
           "\nŠtevilo ustreznih poti do meritev:", len(seznam_ustreznih_poti_do_kock), "" + Fore.WHITE)
 
-    vse_pripone_datotek = ["osnovne", "RCD", "RLOW4", "VARISTOR"]
+    VSE_PRIPONE_DATOTEK = ["osnovne", "RCD", "RLOW4", "VARISTOR"]
 
-    for pripona in vse_pripone_datotek:
+    for pripona in VSE_PRIPONE_DATOTEK:
         with open(f"Csvji//csv_za_excel_datoteko_{pripona}.csv", "w", encoding='utf-8', newline='') as csvfile:
             csvfile.close()
 
@@ -116,7 +116,7 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
             model.zapisi_kocko_meritev_v_excel(
                 kocka, seznam_vseh_meritev, slovar_kock_in_ustreznih_poti)
 
-    for pripona in vse_pripone_datotek:
+    for pripona in VSE_PRIPONE_DATOTEK:
 
         with open(f"Csvji//csv_za_excel_datoteko_{pripona}.csv", "r", encoding='utf-8', newline='') as csvfile:
             vrstice = csvfile.readlines()
@@ -130,29 +130,17 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
             seznam_sekcij = []
 
             for i, vrstica in enumerate(vrstice):
-                #stevec_sekcij = 0
                 pot_locena_na_elemente = vrstica.replace(
                     "\n", " ").strip().split("//")
                 for element in pot_locena_na_elemente:
                     if "Sekcija: " in element.strip():
                         sekcija = element[element.index("Sekcija:") + len("Sekcija:"):].replace("Sekcija: ", "")
                     
-                    # To je stara verzija, kjer se določa stvari glede na Dist. Board
-                    
-                    # else:
-                    #     if "Dist. Board" in element.strip() and "Dist. Board OBREMENILNI PREIZKUS" not in element.strip():
-                    #         if stevec_sekcij == 0:
-                    #             sekcija = element[element.index("Pot:") + len("Pot:"):].replace("Dist. Board ", "")
-                    
-                    #             stevec_sekcij += 1
-                    
-                    
                     if sekcija != "" and sekcija not in seznam_sekcij:
                         seznam_sekcij.append(sekcija)
                         excel_delovni_list.append([f"{sekcija}"])
                         excel_delovni_list.merge_cells(
                             start_row= i  + visina_templata + len(seznam_sekcij), start_column= 1, end_row= i  + visina_templata + len(seznam_sekcij), end_column= dolzina_templata)
-                            #f'A{i + dolzina_templata + len(seznam_sekcij)}:T{i + dolzina_templata + len(seznam_sekcij)}')
                         top_cell = excel_delovni_list[f'A{i  + visina_templata + len(seznam_sekcij)}']
                         top_cell.alignment = Alignment(
                             horizontal="center", vertical="center")

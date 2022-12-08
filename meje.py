@@ -1,8 +1,8 @@
 from openpyxl import load_workbook
 
-rdeca = "FF0000"
-oranzna = "FFA500"
-modra = "99FFFF"
+RDECA = "FF0000"
+ORANZNA = "FFA500"
+MODRA = "99FFFF"
 
 def preberi_float_z_mesta_v_seznamu(seznam, mesto, pomozno_mesto = None):
     if pomozno_mesto:
@@ -44,21 +44,21 @@ def preveri_meje_osnovne(seznam, trafo = True):
     
     if rlow != "X":
         if ">" in rlow:
-            slovar_problematicnih_meritev[5] = rdeca
+            slovar_problematicnih_meritev[5] = RDECA
         else:
             rlow = float(rlow.replace(",","."))
             if rlow > 1:
-                slovar_problematicnih_meritev[5] = rdeca
+                slovar_problematicnih_meritev[5] = RDECA
             elif rlow > 0.8: 
-                slovar_problematicnih_meritev[5] = oranzna
+                slovar_problematicnih_meritev[5] = ORANZNA
             
     elif riso != "X":
         if not ">" in riso:
             riso = float(riso.replace(",","."))
             if riso < 1:
-                slovar_problematicnih_meritev[7] = rdeca
+                slovar_problematicnih_meritev[7] = RDECA
             elif riso < 2: 
-                slovar_problematicnih_meritev[7] = oranzna
+                slovar_problematicnih_meritev[7] = ORANZNA
 
     excel_delovna_datoteka = load_workbook("Meje za meritve.xlsx", data_only=True)
 
@@ -71,7 +71,7 @@ def preveri_meje_osnovne(seznam, trafo = True):
             break
     
     if not t_varovalke_je_ustrezen:
-        slovar_problematicnih_meritev[10] = rdeca
+        slovar_problematicnih_meritev[10] = RDECA
         stolpec = 1
 
     if tip_varovalke in ["gG", "NV", "gL"]:
@@ -91,7 +91,7 @@ def preveri_meje_osnovne(seznam, trafo = True):
         
         if i_varovalke not in stolpec_1:
             indeks_ujemajoce_varovalke = 0
-            slovar_problematicnih_meritev[9] = rdeca
+            slovar_problematicnih_meritev[9] = RDECA
         else:
             indeks_ujemajoce_varovalke = stolpec_1.index(i_varovalke)            
         
@@ -110,49 +110,48 @@ def preveri_meje_osnovne(seznam, trafo = True):
         
         if i_varovalke not in stolpec_1:
             indeks_ujemajoce_varovalke = 0
-            slovar_problematicnih_meritev[9] = rdeca
+            slovar_problematicnih_meritev[9] = RDECA
         else:
             indeks_ujemajoce_varovalke = stolpec_1.index(i_varovalke)
         
     if ik1 == "X":
-        slovar_problematicnih_meritev[11] = modra
+        slovar_problematicnih_meritev[11] = MODRA
     elif ik2 == "X":
-        slovar_problematicnih_meritev[12] = modra
+        slovar_problematicnih_meritev[12] = MODRA
     elif t_varovalke_je_ustrezen:
         if ik1 < stolpec_2[indeks_ujemajoce_varovalke]: 
-            slovar_problematicnih_meritev[11] = rdeca
+            slovar_problematicnih_meritev[11] = RDECA
         elif ik1 <= stolpec_2[indeks_ujemajoce_varovalke] * faktor_za_oranzno_barvo_tok: 
-            slovar_problematicnih_meritev[11] = oranzna
+            slovar_problematicnih_meritev[11] = ORANZNA
         
         if ik2 < stolpec_2[indeks_ujemajoce_varovalke]:
-            slovar_problematicnih_meritev[12] = rdeca
+            slovar_problematicnih_meritev[12] = RDECA
         elif ik2 == stolpec_2[indeks_ujemajoce_varovalke] * faktor_za_oranzno_barvo_tok:
-            slovar_problematicnih_meritev[12] = oranzna
+            slovar_problematicnih_meritev[12] = ORANZNA
     
     if zs == "X":
-        slovar_problematicnih_meritev[11] = modra
+        slovar_problematicnih_meritev[11] = MODRA
     elif zl == "X":
-        slovar_problematicnih_meritev[12] = modra
+        slovar_problematicnih_meritev[12] = MODRA
     elif du == "X":
-        slovar_problematicnih_meritev[12] = modra
+        slovar_problematicnih_meritev[12] = MODRA
     elif t_varovalke_je_ustrezen:
         if zl > stolpec_3[indeks_ujemajoce_varovalke]:
-            slovar_problematicnih_meritev[12] = rdeca
+            slovar_problematicnih_meritev[12] = RDECA
         elif zl >= stolpec_3[indeks_ujemajoce_varovalke] * faktor_za_oranzno_barvo_upornost:
-            if slovar_problematicnih_meritev.get(12, "") != rdeca:
-                slovar_problematicnih_meritev[12] = oranzna
-            
+            if slovar_problematicnih_meritev.get(12, "") != RDECA:
+                slovar_problematicnih_meritev[12] = ORANZNA
         if zs > stolpec_3[indeks_ujemajoce_varovalke]:
-            slovar_problematicnih_meritev[11] = rdeca
+            slovar_problematicnih_meritev[11] = RDECA
         elif zs >= stolpec_3[indeks_ujemajoce_varovalke] * faktor_za_oranzno_barvo_upornost:
-            if slovar_problematicnih_meritev.get(11, "") != rdeca:
-                slovar_problematicnih_meritev[11] = oranzna
+            if slovar_problematicnih_meritev.get(11, "") != RDECA:
+                slovar_problematicnih_meritev[11] = ORANZNA
             
         if du > meja_du:
-            slovar_problematicnih_meritev[12] = rdeca
+            slovar_problematicnih_meritev[12] = RDECA
         elif du >= meja_du * faktor_za_oranzno_barvo_upornost:
-            if slovar_problematicnih_meritev.get(12, "") != rdeca:
-                slovar_problematicnih_meritev[12] = oranzna
+            if slovar_problematicnih_meritev.get(12, "") != RDECA:
+                slovar_problematicnih_meritev[12] = ORANZNA
     
     return slovar_problematicnih_meritev
 
@@ -163,15 +162,15 @@ def preveri_meje_RLOW4(seznam, trafo = True):
     
     if r != "":
         if ">" in r:
-            slovar_problematicnih_meritev[1] = rdeca
+            slovar_problematicnih_meritev[1] = RDECA
         else:
             r = float(r) if r != "X" else "X"
             
             if r == "X":
-                slovar_problematicnih_meritev[1] = modra
+                slovar_problematicnih_meritev[1] = MODRA
             elif r > 1:
-                slovar_problematicnih_meritev[1] = rdeca
+                slovar_problematicnih_meritev[1] = RDECA
             elif r > 0.8: 
-                slovar_problematicnih_meritev[1] = oranzna
+                slovar_problematicnih_meritev[1] = ORANZNA
             
     return slovar_problematicnih_meritev
