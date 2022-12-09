@@ -1,14 +1,7 @@
 import re
 from datetime import datetime
 import csv
-from Meritev import (
-    Meritev,
-    pretvori_v_osnovne_enote,
-    SEZNAM_VRST_MERITEV,
-    SEZNAM_ENOT_ZA_PRETVORBE,
-    SEZNAM_PREDPON_ZA_PRETVORBE,
-)
-from meje import *
+from Meritev import pretvori_v_osnovne_enote, SEZNAM_VRST_MERITEV
 
 st_vnesenih_meritev = 0
 st_vnesenih_meritev_RCD = 0
@@ -20,7 +13,8 @@ def pretvori_string_milisekund_v_ustrezen_format(string):
 
 def velikost_stringa(s):
     """
-    Funkcija, ki nam omogoča da razvrstimo meritve po velikosti kljub znaku > (to je konkretno pomembno pri RISO in RLOW4)
+    Funkcija, ki nam omogoča da razvrstimo meritve po velikosti kljub znaku >
+    (to je konkretno pomembno pri RISO in RLOW4)
     """
     if ">" in s:
         return 1000000000000
@@ -84,8 +78,6 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
         i: vrste_meritev_v_kocki.count(i) for i in SEZNAM_VRST_MERITEV
     }
 
-    # tale spodnja kocka kode je zaenkrat še ne testirana, oziroma je možno, da bi se nahajal kak bug!!
-    # znal bi biti kak problem z zapisovanjem ali kaj podobnega
     if slovar_vrst_meritev["R iso"] + slovar_vrst_meritev["R IZO"] > 1:
         nova_kocka = []
         seznam_riso_meritev = []
@@ -104,7 +96,8 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
             else:
                 nova_kocka.append(meritev)
 
-        # na tej točki se je treba vprašati, ali je res smiselno ustvariti novo kocko (izbirsati nekatere RISO meritve)
+        # na tej točki se je treba vprašati, ali je res smiselno ustvariti
+        # novo kocko (izbirsati nekatere RISO meritve)
         kocka = nova_kocka
 
     if slovar_vrst_meritev["R low 4"] > 0:
@@ -211,7 +204,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
             )
 
             # V primeru, da vse količine obstajajo
-            if not "X" in [t1x_plus, t1x_neg, t5x_plus, t5x_neg]:
+            if "X" not in [t1x_plus, t1x_neg, t5x_plus, t5x_neg]:
                 t1x_plus = float(t1x_plus)
                 t1x_neg = float(t1x_neg)
                 t5x_plus = float(t5x_plus)
@@ -562,7 +555,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 )
 
                 # V primeru, da vse količine obstajajo
-                if not "X" in [t1x_plus, t1x_neg, t5x_plus, t5x_neg]:
+                if "X" not in [t1x_plus, t1x_neg, t5x_plus, t5x_neg]:
                     t1x_plus = float(t1x_plus)
                     t1x_neg = float(t1x_neg)
                     t5x_plus = float(t5x_plus)
@@ -612,9 +605,9 @@ def najdi_po_vrsti_urejen_seznam_datumov(vse_besedilo):
     loceno_besedilo_po_presledkih = vse_besedilo.split()
     seznam_stringov_z_datumi = []
     for i in loceno_besedilo_po_presledkih:
-        # \d\d\.\d\d\.\d\d\d\d je pravi regex expression za to obliko datuma
         if re.search(r"\d{2}\.\d{2}\.\d{4}", i):
-            # vsi datumi so pravilne oblike (zraven so zapisane odvečne ničle), zato je upravičeno tole
+            # vsi datumi so pravilne oblike (zraven so zapisane odvečne ničle),
+            # zato je upravičeno tole
             string_datuma = i[9:]
             datum = datetime.strptime(string_datuma, "%d.%m.%Y")
             seznam_stringov_z_datumi.append(datum)

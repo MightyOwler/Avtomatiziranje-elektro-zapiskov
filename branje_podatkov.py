@@ -1,10 +1,11 @@
 # datoteka za branje podatkov z datoteke in generiranje ustrezne csv datoteke
 import model
+import Meritev
 from colorama import Fore
 from meje import *
 import re
 
-from openpyxl import Workbook, load_workbook
+from openpyxl import load_workbook
 from openpyxl.styles import PatternFill, Font, Alignment
 
 
@@ -73,11 +74,12 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
 
             stevilo_meritev_v_trenutni_kocki = sum(slovar_meritev.values())
             if stevilo_meritev_v_trenutni_kocki == 1:
-                # v primeru, da je v kocki teksta samo ena meritev, ni problemov, saj je meritev kar celotna kocka
+                # v primeru, da je v kocki teksta samo ena meritev, ni problemov,
+                # saj je meritev kar celotna kocka
                 if kocka_teksta.count("p//") == 0:
                     seznam_vseh_meritev.append(
                         [
-                            model.Meritev(
+                            Meritev.Meritev(
                                 kocka_teksta.replace("\n", " ")
                                 .replace("\r\n", " ")
                                 .strip()
@@ -106,14 +108,14 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
                 for meritev in seznam_vseh_meritev_brez_poti_na_koncu:
                     if meritev.count("p//") == 0:
                         loceno_besedilo_zacasno.append(
-                            model.Meritev(
+                            Meritev.Meritev(
                                 meritev.replace("\n", " ").replace("\r\n", " ").strip()
                             )
                         )
                     # To zna biti malenkost nevarno, ampak se zdi da deluje
                     elif meritev.count("p//") > 0 and meritev.count("Z LINE") > 0:
                         loceno_besedilo_zacasno.append(
-                            model.Meritev(
+                            Meritev.Meritev(
                                 meritev.replace("\n", " ").replace("\r\n", " ").strip()
                             )
                         )
@@ -124,7 +126,8 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
 
         return seznam_vseh_meritev
 
-    # seznam_vseh_meritev so vse meritve, vsaki kocki lahko priprada 1 ali več meritev
+    # seznam_vseh_meritev so vse meritve,
+    # vsaki kocki lahko priprada 1 ali več meritev
     seznam_vseh_meritev = ustvari_seznam_vseh_meritev()
     slovar_kock_in_ustreznih_poti = dict(
         zip(range(len(seznam_vseh_meritev)), seznam_ustreznih_poti_do_kock)

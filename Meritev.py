@@ -18,8 +18,9 @@ SEZNAM_PREDPON_ZA_PRETVORBE = ["m", "k"]
 class Meritev:
     def __init__(self, besedilo_meritve):
         self.besedilo = besedilo_meritve
+        loceno_besedilo = besedilo_meritve.split(", ")
         self.besedilo_po_elementih = [
-            i.replace("Pot:", "Pot: ").strip() for i in besedilo_meritve.split(", ")
+            i.replace("Pot:", "Pot: ").strip() for i in loceno_besedilo
         ]
 
         self.vrsta_meritve = self.doloci_vrsto_meritve
@@ -153,35 +154,43 @@ class Meritev:
         return self.najdi_element("Ozemljitveni sistem:")
 
     def najdi_t_IΔN_x1_plus(self):
-        # pri tej meritvi pogledaš za isto meritev samo da je - namesto + in pogledaš katera vrednost je večja, tista vrednost je pomembna
+        # pri tej meritvi pogledaš za isto meritev samo da je - namesto +
+        # in pogledaš katera vrednost je večja, tista vrednost je pomembna
         return self.najdi_element("t IΔN x1,(+):", pretvori_v_osnovne=False)
 
     def najdi_t_IΔN_x1_minus(self):
-        # pri tev meritvi pogledaš zgornjo, ki ima x1 (+) in pogledaš katera ot teh dveh je večja. to vrednost uporabiš kot rezultat
+        # pri tev meritvi pogledaš zgornjo, ki ima x1 (+) in pogledaš,
+        # katera od teh dveh je večja. to vrednost uporabiš kot rezultat
         return self.najdi_element("t IΔN x1,(-):", pretvori_v_osnovne=False)
 
     def najdi_t_IΔN_x5_plus(self):
-        # pri tej meritvi pogledaš za isto meritev samo da je - namesto + in pogledaš katera vrednost je večja, tista vrednost je pomembna
+        # pri tej meritvi pogledaš za isto meritev samo da je - namesto +
+        # in pogledaš, katera vrednost je večja, tista vrednost je pomembna
         return self.najdi_element("t IΔN x5,(+):", pretvori_v_osnovne=False)
 
     def najdi_t_IΔN_x5_minus(self):
-        # pri tev meritvi pogledaš zgornjo, ki ima x1 (+) in pogledaš katera ot teh dveh je večja. to vrednost uporabiš kot rezultat
+        # pri tev meritvi pogledaš zgornjo, ki ima x1 (+) in pogledaš,
+        # katera od teh dveh je večja. to vrednost uporabiš kot rezultat
         return self.najdi_element("t IΔN x5,(-):", pretvori_v_osnovne=False)
 
     def najdi_t_IΔN_x05_plus(self):
-        # pri tej meritvi pogledaš za isto meritev samo da je - namesto + in pogledaš katera vrednost je večja, tista vrednost je pomembna
+        # pri tej meritvi pogledaš za isto meritev samo da je - namesto +
+        # in pogledaš, katera vrednost je večja, tista vrednost je pomembna
         return self.najdi_element("t IΔN x0.5,(+):", pretvori_v_osnovne=False)
 
     def najdi_t_IΔN_x05_minus(self):
-        # pri tev meritvi pogledaš zgornjo, ki ima x1 (+) in pogledaš katera ot teh dveh je večja. to vrednost uporabiš kot rezultat
+        # pri tev meritvi pogledaš zgornjo, ki ima x1 (+) in pogledaš,
+        # katera ot teh dveh je večja. to vrednost uporabiš kot rezultat
         return self.najdi_element("t IΔN x0.5,(-):", pretvori_v_osnovne=False)
 
     def najdi_IΔ_plus(self):
-        # pri tej meritvi pogledaš za isto meritev samo da je - namesto + in pogledaš katera vrednost je večja, tista vrednost je pomembna
+        # pri tej meritvi pogledaš za isto meritev samo da je - namesto +
+        # in pogledaš, katera vrednost je večja, tista vrednost je pomembna
         return self.najdi_element("IΔ,(+):")
 
     def najdi_IΔ_minus(self):
-        # pri tev meritvi pogledaš zgornjo, ki ima x1 (+) in pogledaš katera ot teh dveh je večja. to vrednost uporabiš kot rezultat
+        # pri tev meritvi pogledaš zgornjo, ki ima x1 (+) in pogledaš,
+        # katera od teh dveh je večja. to vrednost uporabiš kot rezultat
         return self.najdi_element("IΔ,(-):")
 
     def najdi_Uc(self):
@@ -257,40 +266,36 @@ class Meritev:
         return self.najdi_element("Riso:")
 
 
-def najdi_n_to_pojavitev_substringa(glavni_string, iskani_substring, n):
-    start = glavni_string.find(iskani_substring)
+def najdi_n_to_pojavitev_substringa(seno, igla, n):
+    start = seno.find(igla)
     while start >= 0 and n > 1:
-        start = glavni_string.find(iskani_substring, start + len(iskani_substring))
+        start = seno.find(igla, start + len(igla))
         n -= 1
     return start
 
 
-def pretvori_v_osnovne_enote(besedilo_ki_ga_pretvarjamo):
+def pretvori_v_osnovne_enote(niz):
     """
     Funkcija, ki pretvarja iz mili ali kilo enot v osnovne
     """
 
     for predpona in SEZNAM_PREDPON_ZA_PRETVORBE:
         for enota in SEZNAM_ENOT_ZA_PRETVORBE:
-            if predpona + enota in besedilo_ki_ga_pretvarjamo:
-                besedilo_ki_ga_pretvarjamo = besedilo_ki_ga_pretvarjamo.replace(
-                    " " + predpona + enota, ""
-                ).replace(",", ".")
-                besedilo_ki_ga_pretvarjamo = float(besedilo_ki_ga_pretvarjamo)
+            if predpona + enota in niz:
+                niz = niz.replace(" " + predpona + enota, "").replace(",", ".")
+                niz = float(niz)
                 if predpona == "m":
-                    besedilo_ki_ga_pretvarjamo /= 1000
-                    besedilo_ki_ga_pretvarjamo = round(besedilo_ki_ga_pretvarjamo, 3)
+                    niz /= 1000
+                    niz = round(niz, 3)
                 else:
-                    besedilo_ki_ga_pretvarjamo *= 1000
-                    besedilo_ki_ga_pretvarjamo = round(besedilo_ki_ga_pretvarjamo, 3)
-                    if besedilo_ki_ga_pretvarjamo >= 100:
-                        besedilo_ki_ga_pretvarjamo = int(besedilo_ki_ga_pretvarjamo)
+                    niz *= 1000
+                    niz = round(niz, 3)
+                    if niz >= 100:
+                        niz = int(niz)
 
-                return f"{besedilo_ki_ga_pretvarjamo}".replace(".", ",")
+                return f"{niz}".replace(".", ",")
     for enota in SEZNAM_ENOT_ZA_PRETVORBE:
-        if enota in besedilo_ki_ga_pretvarjamo:
-            return f"{besedilo_ki_ga_pretvarjamo}".replace(" " + enota, "").replace(
-                ".", ","
-            )
+        if enota in niz:
+            return f"{niz}".replace(" " + enota, "").replace(".", ",")
 
-    return besedilo_ki_ga_pretvarjamo
+    return niz
