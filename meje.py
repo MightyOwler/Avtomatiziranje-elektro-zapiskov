@@ -6,7 +6,7 @@ MODRA = "99FFFF"
 
 
 def preberi_float_z_mesta_v_seznamu(seznam, mesto, pomozno_mesto=None):
-    if pomozno_mesto:
+    if pomozno_mesto is not None:
         return (
             float(seznam[mesto].split("/")[pomozno_mesto].replace(",", "."))
             if seznam[mesto].split("/")[pomozno_mesto] != "X"
@@ -22,8 +22,12 @@ def preveri_meje_osnovne(seznam, trafo=True):
     slovar_problematicnih_meritev = dict()
 
     # faktorja, ki določata občutljivost oranžne barve
-    faktor_za_oranzno_barvo_tok = 1.5  # 1.5 pomeni, da je barva oranžna v primeru, ko je rezultat manjši od 1.5-kratnika najnižje dovoljene meje
-    faktor_za_oranzno_barvo_upornost = 0.7  # 0.7 pomeni, da je barva oranžna v primeru, ko je rezultat večji od 0.7-kratnika najvišje dovoljene meje
+    faktor_za_oranzno_barvo_tok = 1.5
+    # 1.5 pomeni, da je barva oranžna v primeru,
+    # ko je rezultat manjši od 1.5-kratnika najnižje dovoljene meje
+    faktor_za_oranzno_barvo_upornost = 0.7
+    # 0.7 pomeni, da je barva oranžna v primeru,
+    # ko je rezultat večji od 0.7-kratnika najvišje dovoljene meje
 
     tip_varovalke = seznam[8]
     i_varovalke = preberi_float_z_mesta_v_seznamu(seznam, 9)
@@ -37,10 +41,12 @@ def preveri_meje_osnovne(seznam, trafo=True):
     else:
         meja_du = 0.07 if trafo else 0.05
 
-    ik1 = preberi_float_z_mesta_v_seznamu(seznam, 11, pomozno_mesto=1)
-    ik2 = preberi_float_z_mesta_v_seznamu(seznam, 12, pomozno_mesto=1)
+    # Tukaj preimenuj spremenljivke, da bodo bolj opisne
+
     zs = preberi_float_z_mesta_v_seznamu(seznam, 11, pomozno_mesto=0)
-    zl = preberi_float_z_mesta_v_seznamu(seznam, 11, pomozno_mesto=0)
+    ik1 = preberi_float_z_mesta_v_seznamu(seznam, 11, pomozno_mesto=1)
+    zl = preberi_float_z_mesta_v_seznamu(seznam, 12, pomozno_mesto=0)
+    ik2 = preberi_float_z_mesta_v_seznamu(seznam, 12, pomozno_mesto=1)
     du = preberi_float_z_mesta_v_seznamu(seznam, 12, pomozno_mesto=2)
     if type(du) == float:
         du /= 100
