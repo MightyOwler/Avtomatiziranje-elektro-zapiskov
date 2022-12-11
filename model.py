@@ -2,9 +2,16 @@ import re
 from datetime import datetime
 import csv
 from Meritev import pretvori_v_osnovne_enote, SEZNAM_VRST_MERITEV
+import os
 
 st_vnesenih_meritev = 0
 st_vnesenih_meritev_RCD = 0
+
+
+CSVFILE_RLOW4 = os.path.join("Csvji", "csv_za_excel_datoteko_RLOW4.csv")
+CSVFILE_VARISTOR = os.path.join("Csvji", "csv_za_excel_datoteko_VARISTOR.csv")
+CSVFILE_OSNOVNE = os.path.join("Csvji", "csv_za_excel_datoteko_osnovne.csv")
+CSVFILE_RCD = os.path.join("Csvji", "csv_za_excel_datoteko_RCD.csv")
 
 
 def pretvori_string_milisekund_v_ustrezen_format(string):
@@ -40,18 +47,29 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
     ustrezna_meritev_zline4w = None
 
     prazno = " "
-    uln, zln, ipsc_ln, ipsc_lpe = "X", "X", "X", "X"
-    rlpe, dU, zlpe, glavna_izenac_povezava = "X", "X", "X", "X"
-    ia_psc_navidezni_stolpec, maxRplusRminus, tip_varovalke = "X", "X", "X"
-    I_varovalke, t_varovalke, isc_faktor = "X", "X", "X"
-    I_dN, t1x, t5x, Uc, = (
-        "X",
-        "X",
-        "X",
-        "X",
-    )
     komentar = ""
-    ime = "X"
+    (
+        uln,
+        zln,
+        ipsc_ln,
+        ipsc_lpe,
+        rlpe,
+        dU,
+        zlpe,
+        glavna_izenac_povezava,
+        I_dN,
+        t1x,
+        t5x,
+        Uc,
+        ia_psc_navidezni_stolpec,
+        maxRplusRminus,
+        tip_varovalke,
+        I_varovalke,
+        t_varovalke,
+        isc_faktor,
+        ime,
+    ) = ("X" for _ in range(19))
+
     pot = (
         slovar_kock_in_ustreznih_poti[loceno_besedilo.index(kocka)]
         .replace("\n", " ")
@@ -63,7 +81,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
             ime = element.replace("Imenovanje: ", "")
             if "Circuit F" in ime:
                 ime = ime.replace("Circuit ", "")
-            elif re.search("Circuit\d", ime):
+            elif re.search(r"Circuit\d", ime):
                 ime = ime.replace("Circuit", "F")
     if not ime:
         ime = "X"
@@ -96,14 +114,10 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
             else:
                 nova_kocka.append(meritev)
 
-        # na tej točki se je treba vprašati, ali je res smiselno ustvariti
-        # novo kocko (izbirsati nekatere RISO meritve)
         kocka = nova_kocka
 
     if slovar_vrst_meritev["R low 4"] > 0:
-        with open(
-            "Csvji//csv_za_excel_datoteko_RLOW4.csv", "a", encoding="utf-8", newline=""
-        ) as csvfile:
+        with open(CSVFILE_RLOW4, "a", encoding="utf-8", newline="") as csvfile:
 
             writer = csv.writer(
                 csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
@@ -170,7 +184,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
 
         for idx, vrednost_meritve in enumerate(seznam_rlow4_meritev):
             if idx == seznam_rlow4_meritev.index(rlow4_meritev_z_minimalno):
-                # glavno izenačitveno povezavo potrebujemo samo pri eni meritvi
+                # Glavno izenačitveno povezavo potrebujemo samo pri eni meritvi
                 glavna_izenac_povezava = vrednost_meritve
                 break
 
@@ -209,25 +223,26 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 t1x_neg = float(t1x_neg)
                 t5x_plus = float(t5x_plus)
                 t5x_neg = float(t5x_neg)
+                max_t1 = max(t1x_plus, t1x_neg)
+                max_t5 = max(t5x_plus, t5x_neg)
 
-                # Pri kateri velikosti zaokrožimo v int? Ideja je okoli 100
-                if max(t1x_plus, t1x_neg) >= 100:
-                    t1x = f"{int(max(t1x_plus, t1x_neg))}".replace(".", ",")
+                # Pri vrednosti večji ali enaki 100 rezultat zaokrožimo
+                if max_t1 >= 100:
+                    t1x = f"{int(max_t1)}".replace(".", ",")
                 else:
-                    t1x = f"{max(t1x_plus, t1x_neg)}".replace(".", ",")
+                    t1x = f"{max_t1}".replace(".", ",")
 
-                # Pri kateri velikosti zaokrožimo v int?
-                if max(t5x_plus, t5x_neg) >= 100:
-                    t5x = f"{int(max(t5x_plus, t5x_neg))}".replace(".", ",")
+                if max_t5 >= 100:
+                    t5x = f"{int(max_t5)}".replace(".", ",")
                 else:
-                    t5x = f"{max(t5x_plus, t5x_neg)}".replace(".", ",")
+                    t5x = f"{max_t5}".replace(".", ",")
             else:
                 t1x = "X"
                 t5x = "X"
 
         if vrsta_meritve == "Varistor":
             with open(
-                "Csvji//csv_za_excel_datoteko_VARISTOR.csv",
+                CSVFILE_VARISTOR,
                 "a",
                 encoding="utf-8",
                 newline="",
@@ -258,8 +273,9 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
         vrsta_meritve = meritev.doloci_vrsto_meritve()
 
         if vrsta_meritve == "AUTO TN":
+
             with open(
-                "Csvji//csv_za_excel_datoteko_osnovne.csv",
+                CSVFILE_OSNOVNE,
                 "a",
                 encoding="utf-8",
                 newline="",
@@ -328,7 +344,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
 
     if "ZLOOP 4W" in vrste_meritev_v_kocki or "ZLINE 4W" in vrste_meritev_v_kocki:
         with open(
-            "Csvji//csv_za_excel_datoteko_osnovne.csv",
+            CSVFILE_OSNOVNE,
             "a",
             encoding="utf-8",
             newline="",
@@ -350,8 +366,9 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 not ustrezna_meritev_zloop4w
                 or ustrezna_meritev_zloop4w.besedilo.count("p//") > 0
             ):
-                ipsc_zloop, z_zloop = "X", "X"
                 (
+                    ipsc_zloop,
+                    z_zloop,
                     uln,
                     ipsc_lpe,
                     zlpe,
@@ -361,7 +378,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                     t_varovalke,
                     isc_faktor,
                     komentar,
-                ) = ("X", "X", "X", "X", "X", "X", "X", "X", "X")
+                ) = ("X" for _ in range(11))
 
             else:
                 ipsc_zloop = ustrezna_meritev_zloop4w.najdi_Ipsc()
@@ -440,7 +457,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
         else:
             for i in range(3):
                 with open(
-                    "Csvji//csv_za_excel_datoteko_osnovne.csv",
+                    CSVFILE_OSNOVNE,
                     "a",
                     encoding="utf-8",
                     newline="",
@@ -527,7 +544,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
         vrsta_meritve = meritev.doloci_vrsto_meritve()
         if vrsta_meritve == "RCD Auto":
             with open(
-                "Csvji//csv_za_excel_datoteko_RCD.csv",
+                CSVFILE_RCD,
                 "a",
                 encoding="utf-8",
                 newline="",

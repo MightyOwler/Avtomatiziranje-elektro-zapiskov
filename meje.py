@@ -65,7 +65,7 @@ def preveri_meje_osnovne(seznam, trafo=True):
                 slovar_problematicnih_meritev[5] = ORANZNA
 
     elif riso != "X":
-        if not ">" in riso:
+        if ">" not in riso:
             riso = float(riso.replace(",", "."))
             if riso < 1:
                 slovar_problematicnih_meritev[7] = RDECA

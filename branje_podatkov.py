@@ -4,6 +4,7 @@ import Meritev
 from colorama import Fore
 from meje import *
 import re
+import os
 
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill, Font, Alignment
@@ -149,7 +150,7 @@ VSE_PRIPONE_DATOTEK = ["osnovne", "RCD", "RLOW4", "VARISTOR"]
 
 for pripona in VSE_PRIPONE_DATOTEK:
     with open(
-        f"Csvji//csv_za_excel_datoteko_{pripona}.csv",
+        os.path.join("Csvji", f"csv_za_excel_datoteko_{pripona}.csv"),
         "w",
         encoding="utf-8",
         newline="",
@@ -157,9 +158,11 @@ for pripona in VSE_PRIPONE_DATOTEK:
         csvfile.close()
 
     excel_delovna_datoteka = load_workbook(
-        f"Templati//template_za_{pripona}_meritve.xlsx"
+        os.path.join("Templati", f"template_za_{pripona}_meritve.xlsx")
     )
-    excel_delovna_datoteka.save(f"Porocila//excel_datoteka_{pripona}.xlsx")
+    excel_delovna_datoteka.save(
+        os.path.join("Porocila", f"excel_datoteka_{pripona}.xlsx")
+    )
     excel_delovna_datoteka.close()
 
 for kocka in seznam_vseh_meritev:
@@ -170,14 +173,16 @@ for kocka in seznam_vseh_meritev:
 for pripona in VSE_PRIPONE_DATOTEK:
 
     with open(
-        f"Csvji//csv_za_excel_datoteko_{pripona}.csv",
+        os.path.join("Csvji", f"csv_za_excel_datoteko_{pripona}.csv"),
         "r",
         encoding="utf-8",
         newline="",
     ) as csvfile:
         vrstice = csvfile.readlines()
 
-    excel_delovna_datoteka = load_workbook(f"Porocila//excel_datoteka_{pripona}.xlsx")
+    excel_delovna_datoteka = load_workbook(
+        os.path.join("Porocila", f"excel_datoteka_{pripona}.xlsx")
+    )
     excel_delovni_list = excel_delovna_datoteka.active
     dolzina_templata = excel_delovni_list.max_column
     visina_templata = excel_delovni_list.max_row
@@ -227,6 +232,8 @@ for pripona in VSE_PRIPONE_DATOTEK:
                         start_color=barva, end_color=barva, fill_type="solid"
                     )
 
-    excel_delovna_datoteka.save(f"Porocila//excel_datoteka_{pripona}.xlsx")
+    excel_delovna_datoteka.save(
+        os.path.join("Porocila", f"excel_datoteka_{pripona}.xlsx")
+    )
 
 print("-----------------------------------------------------------------")

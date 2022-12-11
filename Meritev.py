@@ -294,6 +294,7 @@ def pretvori_v_osnovne_enote(niz):
                         niz = int(niz)
 
                 return f"{niz}".replace(".", ",")
+
     for enota in SEZNAM_ENOT_ZA_PRETVORBE:
         if enota in niz:
             return f"{niz}".replace(" " + enota, "").replace(".", ",")
