@@ -113,7 +113,7 @@ class Meritev:
         return self.najdi_element("Toleranca:")
 
     def najdi_Ipsc(self):
-        return self.najdi_element("Ipsc:")
+        return self.najdi_element("Ipsc:").replace(",",".")
 
     def najdi_Z(self):
         return self.najdi_element("Z:")

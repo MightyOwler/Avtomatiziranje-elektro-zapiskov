@@ -334,7 +334,10 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
         if vrsta_meritve in ["ZLOOP 4W", "Zline 4W"]:
             if vrsta_meritve == "ZLOOP 4W":
                 # print(meritev.najdi_Ipsc())
-                if float(meritev.najdi_Ipsc()) < ipsc_vrednosti_zloop4w:
+                if meritev.najdi_Ipsc() == "X":
+                    ustrezna_meritev_zloop4w = meritev
+                    ipsc_vrednosti_zloop4w = "X"
+                elif float(meritev.najdi_Ipsc()) < ipsc_vrednosti_zloop4w:
                     ustrezna_meritev_zloop4w = meritev
                     ipsc_vrednosti_zloop4w = float(meritev.najdi_Ipsc())
             else:
@@ -626,6 +629,7 @@ def najdi_po_vrsti_urejen_seznam_datumov(vse_besedilo):
             # vsi datumi so pravilne oblike (zraven so zapisane odvečne ničle),
             # zato je upravičeno tole
             string_datuma = i[9:]
+            #print(string_datuma)
             datum = datetime.strptime(string_datuma, "%d.%m.%Y")
             seznam_stringov_z_datumi.append(datum)
     return [
