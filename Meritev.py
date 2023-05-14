@@ -90,8 +90,8 @@ class Meritev:
 
     def najdi_Ipsc_LPE(self):
         return self.najdi_element("Ipsc (LPE):")
-
-    def najdi_R(self):
+    
+    def najdi_R(self): # To je glavna izenačitvena povezava
         return self.najdi_element("R:")
 
     def najdi_Zref(self):

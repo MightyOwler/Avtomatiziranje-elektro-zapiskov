@@ -284,7 +284,9 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 writer = csv.writer(
                     csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
                 )
-
+                
+                # Tole je treba izboljšati
+                glavna_izenac_povezava = meritev.najdi_R()
                 uln = meritev.najdi_Uln()
                 zln = meritev.najdi_Z_LN()
                 ipsc_ln = meritev.najdi_Ipsc_LN()
