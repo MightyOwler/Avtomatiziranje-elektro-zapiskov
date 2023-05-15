@@ -46,7 +46,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
     ustrezna_meritev_zloop4w = None
     ustrezna_meritev_zline4w = None
 
-    prazno = " "
+    PRAZNO = " "
     komentar = ""
     (
         uln,
@@ -123,12 +123,15 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
             )
             seznam_rlow4_meritev = []
+            
+            # Spodnji loop se da močno izboljšati, veliko stvari je nekoliko nenavadnih
 
             for meritev in kocka:
                 if meritev.doloci_vrsto_meritve() == "R low 4":
                     komentar = meritev.najdi_komentar()
                     seznam_rlow4_meritev.append(meritev.najdi_R())
                     if (
+                        #>1999 je zgornja meja, nastavljena na napravi
                         ">1999" in meritev.najdi_R_pozitivno()
                         or ">1999" in meritev.najdi_R_negativno()
                     ):
@@ -280,7 +283,6 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 encoding="utf-8",
                 newline="",
             ) as csvfile:
-
                 writer = csv.writer(
                     csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
                 )
@@ -304,24 +306,24 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 array_ki_ga_zapisemo_v_csv = [
                     st_vnesenih_meritev,
                     ime,
-                    prazno,
-                    prazno,
-                    prazno,
+                    PRAZNO,
+                    PRAZNO,
+                    PRAZNO,
                     glavna_izenac_povezava,
-                    prazno,
+                    PRAZNO,
                     rlpe,
                     tip_varovalke,
                     I_varovalke,
                     t_varovalke,
                     f"{zlpe}/{ipsc_ln}",
                     f"{zln}/{ipsc_lpe}/{dU}",
-                    prazno,
+                    PRAZNO,
                     I_dN,
-                    prazno,
+                    PRAZNO,
                     t1x,
                     t5x,
                     Uc,
-                    prazno,
+                    PRAZNO,
                     komentar,
                     vrsta_meritve,
                     uln,
@@ -406,24 +408,24 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 array_ki_ga_zapisemo_v_csv = [
                     st_vnesenih_meritev,
                     ime,
-                    prazno,
-                    prazno,
-                    prazno,
+                    PRAZNO,
+                    PRAZNO,
+                    PRAZNO,
                     glavna_izenac_povezava,
-                    prazno,
+                    PRAZNO,
                     rlpe,
                     tip_varovalke,
                     I_varovalke,
                     t_varovalke,
                     f"{z_zloop}/{ipsc_zloop}",
                     f"{z_zline}/{ipsc_zline}/{dU}",
-                    prazno,
+                    PRAZNO,
                     I_dN,
-                    prazno,
+                    PRAZNO,
                     t1x,
                     t5x,
                     Uc,
-                    prazno,
+                    PRAZNO,
                     komentar,
                     vrsta_meritve,
                     uln,
@@ -514,24 +516,24 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                         array_ki_ga_zapisemo_v_csv = [
                             st_vnesenih_meritev,
                             ime,
-                            prazno,
-                            prazno,
-                            prazno,
+                            PRAZNO,
+                            PRAZNO,
+                            PRAZNO,
                             glavna_izenac_povezava,
-                            prazno,
+                            PRAZNO,
                             rlpe,
                             tip_varovalke,
                             I_varovalke,
                             t_varovalke,
                             f"{z_zloop}/{ipsc_zloop}",
                             f"{z_zline}/{ipsc_zline}/{dU}",
-                            prazno,
+                            PRAZNO,
                             I_dN,
-                            prazno,
+                            PRAZNO,
                             t1x,
                             t5x,
                             Uc,
-                            prazno,
+                            PRAZNO,
                             komentar,
                             vrsta_meritve,
                             uln,
@@ -602,16 +604,16 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 array_ki_ga_zapisemo_v_csv = [
                     st_vnesenih_meritev_RCD,
                     ime,
-                    prazno,
-                    prazno,
+                    PRAZNO,
+                    PRAZNO,
                     I_dN,
                     tip_rcd,
-                    prazno,
-                    prazno,
-                    prazno,
-                    prazno,
+                    PRAZNO,
+                    PRAZNO,
+                    PRAZNO,
+                    PRAZNO,
                     Uc,
-                    prazno,
+                    PRAZNO,
                     t1x,
                     t5x,
                     ozemljitveni_sistem,
