@@ -2,7 +2,7 @@
 import model
 import Meritev
 from colorama import Fore
-from meje import *
+from meje_instalacije import *
 import re
 import os
 
@@ -14,6 +14,13 @@ from openpyxl.styles import PatternFill, Font, Alignment
 debug_mode = True
 
 # obstaja 7 osnovnih vrst meritev: AUTO TN, Zloop mΩ, Z LINE, RCD Auto, R low 4, Varistor, R iso, R IZO, ZLOOP 4W, Zline 4W
+
+slovar_strojev = {1: "električna omara", 2: "inštalacija", 3: "stroj"}
+
+vrsta_stroja = slovar_strojev.get(
+    int(input("1: električna omara, 2: inštalacija, 3: stroj\n"))
+)
+print(f"Tvoja odločitev {vrsta_stroja}")
 
 trafo_postaja = bool(
     input("Ali je trafo postaja? Če je, napiši karkoli, če ni, pusti prazno! ")
@@ -145,93 +152,152 @@ print(
     "" + Fore.WHITE,
 )
 
-VSE_PRIPONE_DATOTEK = ["osnovne", "RCD", "RLOW4", "VARISTOR"]
+# tukaj zapiše v csv
 
-for pripona in VSE_PRIPONE_DATOTEK:
-    with open(
-        os.path.join("Csvji", f"csv_za_excel_datoteko_{pripona}.csv"),
-        "w",
-        encoding="utf-8",
-        newline="",
-    ) as csvfile:
-        csvfile.close()
+match vrsta_stroja:
+    case "električna omara":
+        VSE_PRIPONE_DATOTEK = ["osnovne", "RCD", "RLOW4", "VARISTOR"]
+        pass
 
-    excel_delovna_datoteka = load_workbook(
-        os.path.join("Templati", f"template_za_{pripona}_meritve.xlsx")
-    )
-    excel_delovna_datoteka.save(
-        os.path.join("Porocila", f"excel_datoteka_{pripona}.xlsx")
-    )
-    excel_delovna_datoteka.close()
+    # ---------------------------------------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------------------------------------
 
-for kocka in seznam_vseh_meritev:
-    model.zapisi_kocko_meritev_v_excel(
-        kocka, seznam_vseh_meritev, slovar_kock_in_ustreznih_poti
-    )
+    case "inštalacija":
+        VSE_PRIPONE_DATOTEK = ["osnovne", "RCD", "RLOW4", "VARISTOR"]
+        for pripona in VSE_PRIPONE_DATOTEK:
+            with open(
+                os.path.join(
+                    "Csvji", "Instalacije", f"csv_za_excel_datoteko_{pripona}.csv"
+                ),
+                "w",
+                encoding="utf-8",
+                newline="",
+            ) as csvfile:
+                csvfile.close()
 
-for pripona in VSE_PRIPONE_DATOTEK:
-    with open(
-        os.path.join("Csvji", f"csv_za_excel_datoteko_{pripona}.csv"),
-        "r",
-        encoding="utf-8",
-        newline="",
-    ) as csvfile:
-        vrstice = csvfile.readlines()
-
-    excel_delovna_datoteka = load_workbook(
-        os.path.join("Porocila", f"excel_datoteka_{pripona}.xlsx")
-    )
-    excel_delovni_list = excel_delovna_datoteka.active
-    dolzina_templata = excel_delovni_list.max_column
-    visina_templata = excel_delovni_list.max_row
-
-    sekcija = ""
-    seznam_sekcij = []
-
-    for i, vrstica in enumerate(vrstice):
-        pot_locena_na_elemente = vrstica.replace("\n", " ").strip().split("//")
-        for element in pot_locena_na_elemente:
-            if "Sekcija: " in element.strip():
-                sekcija = element[
-                    element.index("Sekcija:") + len("Sekcija:") :
-                ].replace("Sekcija: ", "")
-
-            if sekcija != "" and sekcija not in seznam_sekcij:
-                seznam_sekcij.append(sekcija)
-                excel_delovni_list.append([f"{sekcija}"])
-                excel_delovni_list.merge_cells(
-                    start_row=i + visina_templata + len(seznam_sekcij),
-                    start_column=1,
-                    end_row=i + visina_templata + len(seznam_sekcij),
-                    end_column=dolzina_templata,
+            excel_delovna_datoteka = load_workbook(
+                os.path.join(
+                    "Templati", "Instalacije", f"template_za_{pripona}_meritve.xlsx"
                 )
-                top_cell = excel_delovni_list[
-                    f"A{i  + visina_templata + len(seznam_sekcij)}"
-                ]
-                top_cell.alignment = Alignment(horizontal="center", vertical="center")
-                top_cell.font = Font(b=True)
-                top_cell.fill = PatternFill(
-                    start_color="F5C77E", end_color="F5C77E", fill_type="solid"
+            )
+            excel_delovna_datoteka.save(
+                os.path.join(
+                    "Porocila", "Instalacije", f"excel_datoteka_{pripona}.xlsx"
                 )
-        excel_delovni_list.append(vrstica.split(";"))
+            )
+            excel_delovna_datoteka.close()
 
-        # avtomatično barvanje je samo v primeru, ko ni VARISTOR
-        if pripona not in ["RCD", "VARISTOR"]:
-            napake = ""
-            str_napake = f'napake = preveri_meje_{pripona}(vrstica.split(";"), trafo=trafo_postaja)'
-            if debug_mode:  # Zelo uporabno pri debugganju.
-                print(pot_locena_na_elemente)
-            exec(str_napake)
-            if napake:
-                for indeks, barva in napake.items():
-                    excel_delovni_list.cell(
-                        i + visina_templata + len(seznam_sekcij) + 1, indeks + 1
-                    ).fill = PatternFill(
-                        start_color=barva, end_color=barva, fill_type="solid"
-                    )
+        for kocka in seznam_vseh_meritev:
+            model.zapisi_kocko_meritev_v_excel_instalacije(
+                kocka, seznam_vseh_meritev, slovar_kock_in_ustreznih_poti
+            )
 
-    excel_delovna_datoteka.save(
-        os.path.join("Porocila", f"excel_datoteka_{pripona}.xlsx")
-    )
+        for pripona in VSE_PRIPONE_DATOTEK:
+            with open(
+                os.path.join(
+                    "Csvji", "Instalacije", f"csv_za_excel_datoteko_{pripona}.csv"
+                ),
+                "r",
+                encoding="utf-8",
+                newline="",
+            ) as csvfile:
+                vrstice = csvfile.readlines()
 
-print("-----------------------------------------------------------------")
+            excel_delovna_datoteka = load_workbook(
+                os.path.join(
+                    "Porocila", "Instalacije", f"excel_datoteka_{pripona}.xlsx"
+                )
+            )
+            excel_delovni_list = excel_delovna_datoteka.active
+            dolzina_templata = excel_delovni_list.max_column
+            visina_templata = excel_delovni_list.max_row
+
+            sekcija = ""
+            seznam_sekcij = []
+
+            for i, vrstica in enumerate(vrstice):
+                pot_locena_na_elemente = vrstica.replace("\n", " ").strip().split("//")
+                for element in pot_locena_na_elemente:
+                    if "Sekcija: " in element.strip():
+                        sekcija = element[
+                            element.index("Sekcija:") + len("Sekcija:") :
+                        ].replace("Sekcija: ", "")
+
+                    if sekcija != "" and sekcija not in seznam_sekcij:
+                        seznam_sekcij.append(sekcija)
+                        excel_delovni_list.append([f"{sekcija}"])
+                        excel_delovni_list.merge_cells(
+                            start_row=i + visina_templata + len(seznam_sekcij),
+                            start_column=1,
+                            end_row=i + visina_templata + len(seznam_sekcij),
+                            end_column=dolzina_templata,
+                        )
+                        top_cell = excel_delovni_list[
+                            f"A{i  + visina_templata + len(seznam_sekcij)}"
+                        ]
+                        top_cell.alignment = Alignment(
+                            horizontal="center", vertical="center"
+                        )
+                        top_cell.font = Font(b=True)
+                        top_cell.fill = PatternFill(
+                            start_color="F5C77E", end_color="F5C77E", fill_type="solid"
+                        )
+                excel_delovni_list.append(vrstica.split(";"))
+
+                # avtomatično barvanje je samo v primeru, ko ni VARISTOR
+                if pripona not in ["RCD", "VARISTOR"]:
+                    napake = ""
+                    str_napake = f'napake = preveri_meje_{pripona}(vrstica.split(";"), trafo=trafo_postaja)'
+                    if debug_mode:  # Zelo uporabno pri debugganju.
+                        print(pot_locena_na_elemente)
+                    exec(str_napake)
+                    if napake:
+                        for indeks, barva in napake.items():
+                            excel_delovni_list.cell(
+                                i + visina_templata + len(seznam_sekcij) + 1, indeks + 1
+                            ).fill = PatternFill(
+                                start_color=barva, end_color=barva, fill_type="solid"
+                            )
+
+            excel_delovna_datoteka.save(
+                os.path.join(
+                    "Porocila", "Instalacije", f"excel_datoteka_{pripona}.xlsx"
+                )
+            )
+
+        print("-----------------------------------------------------------------")
+
+    # ---------------------------------------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------------------------------------
+
+    case "stroj":
+        VSE_PRIPONE_DATOTEK = ["ZLOOP", "R ISO", "DISCHARGE TIME"]
+        for pripona in VSE_PRIPONE_DATOTEK:
+            with open(
+                os.path.join("Csvji", "Stroji", f"csv_za_excel_datoteko_{pripona}.csv"),
+                "w",
+                encoding="utf-8",
+                newline="",
+            ) as csvfile:
+                csvfile.close()
+
+        excel_delovna_datoteka = load_workbook(
+            os.path.join("Templati", "Stroji", f"template_za_{pripona}_meritve.xlsx")
+        )
+        excel_delovna_datoteka.save(
+            os.path.join("Porocila", "Stroji", f"excel_datoteka_{pripona}.xlsx")
+        )
+        excel_delovna_datoteka.close()
+
+        for kocka in seznam_vseh_meritev:
+            model.zapisi_kocko_meritev_v_excel_stroji(
+                kocka, seznam_vseh_meritev, slovar_kock_in_ustreznih_poti
+            )
+
+    # ---------------------------------------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------------------------------------
+    case _:
+        print("Nekaj moraš izbrati!")

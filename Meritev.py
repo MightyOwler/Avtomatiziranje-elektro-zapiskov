@@ -23,6 +23,7 @@ class Meritev:
     def __init__(self, besedilo_meritve):
         self.besedilo = besedilo_meritve
         loceno_besedilo_po_vejicah = besedilo_meritve.split(", ")
+
         # TODO izboljšaj tole z regexom
         self.besedilo_po_elementih = [
             i.replace("Pot:", "Pot: ").strip() for i in loceno_besedilo_po_vejicah
@@ -44,10 +45,9 @@ class Meritev:
 
     def najdi_element(self, ime_elementa, pretvori_v_osnovne=True):
         element = "X"
-        # TODO izboljšaj tole z regexom
-        for i in self.besedilo_po_elementih:
-            if ime_elementa in i:
-                element = i[len(ime_elementa) + 1 :]
+        for el in self.besedilo_po_elementih:
+            if ime_elementa in el:
+                element = el[len(ime_elementa) + 1 :]
                 if pretvori_v_osnovne:
                     return pretvori_v_osnovne_enote(element)
                 else:
@@ -134,6 +134,9 @@ class Meritev:
 
     def najdi_Un(self):
         return self.najdi_element("Un:")
+
+    def najdi_Ulpe(self):
+        return self.najdi_element("Ulpe:")
 
     # spodnji elementi so za meritve ki se začnejo z RCD Auto
 

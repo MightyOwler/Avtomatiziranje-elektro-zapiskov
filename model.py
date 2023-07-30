@@ -3,22 +3,20 @@ from datetime import datetime
 import csv
 from Meritev import pretvori_v_osnovne_enote, SEZNAM_VRST_MERITEV
 import os
+from openpyxl import load_workbook
+
+
+PRAZNO = " "
 
 st_vnesenih_meritev = 0
 st_vnesenih_meritev_RCD = 0
-
-
-CSVFILE_RLOW4 = os.path.join("Csvji", "csv_za_excel_datoteko_RLOW4.csv")
-CSVFILE_VARISTOR = os.path.join("Csvji", "csv_za_excel_datoteko_VARISTOR.csv")
-CSVFILE_OSNOVNE = os.path.join("Csvji", "csv_za_excel_datoteko_osnovne.csv")
-CSVFILE_RCD = os.path.join("Csvji", "csv_za_excel_datoteko_RCD.csv")
 
 
 def pretvori_string_milisekund_v_ustrezen_format(string):
     return string.replace(",", ".").replace(" ms", "").replace(">", "")
 
 
-def velikost_stringa(s):
+def vrednoti_string(s):
     """
     Funkcija, ki nam omogoča da razvrstimo meritve po velikosti kljub znaku >
     (to je konkretno pomembno pri RISO in RLOW4)
@@ -31,12 +29,25 @@ def velikost_stringa(s):
         return pretvori_v_osnovne_enote(s.replace(",", "."))
 
 
-def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti):
+def zapisi_kocko_meritev_v_excel_instalacije(
+    kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti
+):
     """
     Zapiše meritev v csv datoteko, ki je primerna za obdelavo v csv-ju
 
     Args: kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti
     """
+
+    CSVFILE_RLOW4 = os.path.join(
+        "Csvji", "Instalacije", "csv_za_excel_datoteko_RLOW4.csv"
+    )
+    CSVFILE_VARISTOR = os.path.join(
+        "Csvji", "Instalacije", "csv_za_excel_datoteko_VARISTOR.csv"
+    )
+    CSVFILE_OSNOVNE = os.path.join(
+        "Csvji", "Instalacije", "csv_za_excel_datoteko_osnovne.csv"
+    )
+    CSVFILE_RCD = os.path.join("Csvji", "Instalacije", "csv_za_excel_datoteko_RCD.csv")
 
     global st_vnesenih_meritev
     global st_vnesenih_meritev_RCD
@@ -46,7 +57,6 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
     ustrezna_meritev_zloop4w = None
     ustrezna_meritev_zline4w = None
 
-    PRAZNO = " "
     komentar = ""
     (
         uln,
@@ -96,6 +106,8 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
         i: vrste_meritev_v_kocki.count(i) for i in SEZNAM_VRST_MERITEV
     }
 
+    # Najprej pogleda za R iso
+
     if slovar_vrst_meritev["R iso"] + slovar_vrst_meritev["R IZO"] > 1:
         nova_kocka = []
         seznam_riso_meritev = []
@@ -105,7 +117,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 seznam_riso_meritev.append(
                     meritev.najdi_Rlpe().replace(" MΩ", "").replace(",", ".")
                 )
-        seznam_riso_meritev.sort(key=lambda x: velikost_stringa(x))
+        seznam_riso_meritev.sort(key=lambda x: vrednoti_string(x))
         riso_meritev_z_minimalno = seznam_riso_meritev[0]
         for idx, meritev in enumerate(kocka):
             if meritev.doloci_vrsto_meritve() in ["R iso", "R IZO"]:
@@ -118,26 +130,26 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
 
     if slovar_vrst_meritev["R low 4"] > 0:
         with open(CSVFILE_RLOW4, "a", encoding="utf-8", newline="") as csvfile:
-
             writer = csv.writer(
                 csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
             )
-            seznam_rlow4_meritev = []
-            
+            seznam_Rjev_za_rlow4_meritve = []
+
             # Spodnji loop se da močno izboljšati, veliko stvari je nekoliko nenavadnih
 
             for meritev in kocka:
                 if meritev.doloci_vrsto_meritve() == "R low 4":
                     komentar = meritev.najdi_komentar()
-                    seznam_rlow4_meritev.append(meritev.najdi_R())
+                    seznam_Rjev_za_rlow4_meritve.append(meritev.najdi_R())
                     if (
-                        #>1999 je zgornja meja, nastavljena na napravi
+                        # >1999 je zgornja meja, nastavljena na napravi
                         ">1999" in meritev.najdi_R_pozitivno()
                         or ">1999" in meritev.najdi_R_negativno()
                     ):
                         maxRplusRminus = ">1999"
                     else:
                         R_pozitivno_int = (
+                            # TODO ali se res ne da lepše manipulirati s temi številkami?
                             meritev.najdi_R_pozitivno()
                             .replace(",", ".")
                             .replace(" Ω", "")
@@ -179,14 +191,14 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                     ]
                     writer.writerow(array_ki_ga_zapisemo_v_csv)
             csvfile.close()
-            seznam_rlow4_meritev.sort(key=lambda x: float(velikost_stringa(x)))
-            rlow4_meritev_z_minimalno = seznam_rlow4_meritev[0]
+            seznam_Rjev_za_rlow4_meritve.sort(key=lambda x: float(vrednoti_string(x)))
+            rlow4_meritev_z_minimalno = seznam_Rjev_za_rlow4_meritve[0]
 
         if slovar_vrst_meritev["RCD Auto"] > 1:
             print("Napaka: Imamo 2 ali več RCD Auto meritvi v eni kocki!")
 
-        for idx, vrednost_meritve in enumerate(seznam_rlow4_meritev):
-            if idx == seznam_rlow4_meritev.index(rlow4_meritev_z_minimalno):
+        for idx, vrednost_meritve in enumerate(seznam_Rjev_za_rlow4_meritve):
+            if idx == seznam_Rjev_za_rlow4_meritve.index(rlow4_meritev_z_minimalno):
                 # Glavno izenačitveno povezavo potrebujemo samo pri eni meritvi
                 glavna_izenac_povezava = vrednost_meritve
                 break
@@ -195,7 +207,6 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
         komentar = meritev.najdi_komentar()
         vrsta_meritve = meritev.doloci_vrsto_meritve()
         if vrsta_meritve in ["R iso", "R IZO"]:
-
             if vrsta_meritve == "R iso":
                 rlpe = meritev.najdi_Rlpe().replace(" MΩ", "")
             else:
@@ -250,7 +261,6 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 encoding="utf-8",
                 newline="",
             ) as csvfile:
-
                 writer = csv.writer(
                     csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
                 )
@@ -276,7 +286,6 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
         vrsta_meritve = meritev.doloci_vrsto_meritve()
 
         if vrsta_meritve == "AUTO TN":
-
             with open(
                 CSVFILE_OSNOVNE,
                 "a",
@@ -286,7 +295,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 writer = csv.writer(
                     csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
                 )
-                
+
                 # Tole je treba izboljšati
                 glavna_izenac_povezava = meritev.najdi_R()
                 uln = meritev.najdi_Uln()
@@ -496,7 +505,7 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                             t_varovalke,
                             isc_faktor,
                             komentar,
-                        ) = ("X", "X", "X", "X", "X", "X", "X", "X", "X")
+                        ) = ("X" for _ in range(9))
                     else:
                         uln = ustrezni_zloop_3[i].najdi_Uln()
                         ipsc_lpe = ustrezni_zloop_3[i].najdi_Ipsc_LPE()
@@ -625,6 +634,182 @@ def zapisi_kocko_meritev_v_excel(kocka, loceno_besedilo, slovar_kock_in_ustrezni
                 csvfile_RCD.close()
 
 
+def zapisi_kocko_meritev_v_excel_elektricne_omare(
+    kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti
+):
+    pass
+
+
+def zapisi_kocko_meritev_v_excel_stroji(
+    kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti
+):
+    CSVFILE_ZLOOP = os.path.join("Csvji", "Stroji", "csv_za_excel_datoteko_ZLOOP.csv")
+
+    global st_vnesenih_meritev
+    global st_vnesenih_meritev_RCD
+
+    komentar = ""
+    ime = "X"
+
+    pot = (
+        slovar_kock_in_ustreznih_poti[loceno_besedilo.index(kocka)]
+        .replace("\n", " ")
+        .strip()
+    )
+    pot_locena_na_elemente = pot.replace("\n", " ").strip().split("//")
+    for element in pot_locena_na_elemente:
+        if "Imenovanje: " in element.strip():
+            ime = element.replace("Imenovanje: ", "")
+            if "Circuit F" in ime:
+                ime = ime.replace("Circuit ", "")
+            elif re.search(r"Circuit\d", ime):
+                ime = ime.replace("Circuit", "F")
+    if not ime:
+        ime = "X"
+
+    if pot is None:
+        pot = "X"
+        print("Napaka: Ni poti v slovarju poti", slovar_kock_in_ustreznih_poti)
+
+    vrste_meritev_v_kocki = [meritev.doloci_vrsto_meritve() for meritev in kocka]
+    slovar_vrst_meritev = {
+        i: vrste_meritev_v_kocki.count(i) for i in SEZNAM_VRST_MERITEV
+    }
+
+    # Kako razvejiva tukaj meritve?
+
+    if slovar_vrst_meritev["Zloop"] > 0:
+        with open(CSVFILE_ZLOOP, "a", encoding="utf-8", newline="") as csvfile:
+            writer = csv.writer(
+                csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
+            )
+
+            for meritev in kocka:
+                if meritev.doloci_vrsto_meritve() == "Zloop":
+                    komentar = meritev.najdi_komentar()
+
+                # dodaj specifične atribute
+
+                tip_varovalke = meritev.najdi_tip_varovalke()
+                t_varovalke = float(
+                    meritev.najdi_t_varovalke().replace(" s", "").replace(",", ".")
+                )
+                i_varovalke = float(
+                    meritev.najdi_I_varovalke().replace(" A", "").replace(",", ".")
+                )
+
+                Un = int(meritev.najdi_Un().replace(" V", ""))
+                Ipsc = meritev.najdi_Ia_Ipsc()
+                Z = meritev.najdi_Z()
+
+                ##
+
+                excel_delovna_datoteka = load_workbook(
+                    "Meje za meritve.xlsx", data_only=True
+                )
+
+                t_varovalke_je_ustrezen = False
+                for vrednost in [0.1, 0.2, 0.4, 5.0]:
+                    if t_varovalke == vrednost:
+                        t_varovalke_je_ustrezen = True
+                        break
+
+                if not t_varovalke_je_ustrezen:
+                    tok_zascite = "X"
+                    izracun = "X"
+
+                if tip_varovalke in ["gG", "gL"]:
+                    excel_delovni_list = excel_delovna_datoteka["gG"]
+                    prva_vrstica = 6
+                    zadnja_vrstica = 34
+
+                    slovar_t_varovalk_in_stolpcev = {0.1: 1, 0.2: 4, 0.4: 7, 5.0: 10}
+                    stolpec = slovar_t_varovalk_in_stolpcev[t_varovalke]
+
+                    if t_varovalke == 0.1:
+                        zadnja_vrstica = 30
+
+                    stolpec_1 = [
+                        excel_delovni_list.cell(row=i, column=stolpec).value
+                        for i in range(prva_vrstica, zadnja_vrstica + 1)
+                    ]
+
+                    if i_varovalke not in stolpec_1:
+                        tok_zascite = "X"
+                        izracun = "X"
+                    else:
+                        tok_zascite = excel_delovni_list.cell(
+                            row=stolpec_1.index(i_varovalke) + 6, column=stolpec + 1
+                        ).value
+                        izracun = 2 / 3 * (Un / tok_zascite)
+
+                if tip_varovalke in ["B", "D", "C"]:
+                    excel_delovni_list = excel_delovna_datoteka["BCD"]
+
+                    prva_vrstica = 6
+                    zadnja_vrstica = 17
+
+                    slovar_tipov_varovalk_in_stolpcev = {"B": 2, "C": 4, "D": 6}
+                    stolpec = slovar_tipov_varovalk_in_stolpcev[tip_varovalke]
+
+                    stolpec_1 = [
+                        excel_delovni_list.cell(row=i, column=1).value
+                        for i in range(prva_vrstica, zadnja_vrstica + 1)
+                    ]
+
+                    if i_varovalke not in stolpec_1:
+                        tok_zascite = "X"
+                        izracun = "X"
+                    else:
+                        vrednost_vrst = {"B": 1, "C": 3, "D": 5}
+                        tok_zascite = excel_delovni_list.cell(
+                            row=stolpec_1.index(i_varovalke) + 6,
+                            column=stolpec + vrednost_vrst[tip_varovalke],
+                        ).value
+                        izracun = 2 / 3 * (Un / tok_zascite)
+
+                ##
+
+                if tip_varovalke in ["NV"]:
+                    excel_delovni_list = excel_delovna_datoteka["NV"]
+
+                    # TODO, ko dobiva naslednje tabele
+
+                    prva_vrstica = 6
+                    zadnja_vrstica = 17
+
+                    slovar_tipov_varovalk_in_stolpcev = {"B": 2, "C": 4, "D": 6}
+                    stolpec = slovar_tipov_varovalk_in_stolpcev[tip_varovalke]
+
+                    stolpec_1 = [
+                        excel_delovni_list.cell(row=i, column=1).value
+                        for i in range(prva_vrstica, zadnja_vrstica + 1)
+                    ]
+
+                    if i_varovalke not in stolpec_1:
+                        tok_zascite = "X"
+                        izracun = "X"
+                    else:
+                        vrednost_vrst = {"B": 1, "C": 3, "D": 5}
+                        tok_zascite = excel_delovni_list.cell(
+                            row=stolpec_1.index(i_varovalke) + 6,
+                            column=stolpec + vrednost_vrst[tip_varovalke],
+                        ).value
+                        izracun = 2 / 3 * (Un / tok_zascite)
+
+                array_ki_ga_zapisemo_v_csv = [
+                    komentar,
+                    PRAZNO,
+                    Un,
+                    tok_zascite,
+                    izracun,
+                    f"{Ipsc}/{Z}",
+                    pot,
+                ]
+                writer.writerow(array_ki_ga_zapisemo_v_csv)
+            csvfile.close()
+
+
 def najdi_po_vrsti_urejen_seznam_datumov(vse_besedilo):
     loceno_besedilo_po_presledkih = vse_besedilo.split()
     seznam_stringov_z_datumi = []
@@ -633,7 +818,7 @@ def najdi_po_vrsti_urejen_seznam_datumov(vse_besedilo):
             # vsi datumi so pravilne oblike (zraven so zapisane odvečne ničle),
             # zato je upravičeno tole
             string_datuma = i[9:]
-            #print(string_datuma)
+            # print(string_datuma)
             datum = datetime.strptime(string_datuma, "%d.%m.%Y")
             seznam_stringov_z_datumi.append(datum)
     return [
