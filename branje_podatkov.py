@@ -19,13 +19,11 @@ trafo_postaja = bool(
     input("Ali je trafo postaja? Če je, napiši karkoli, če ni, pusti prazno! ")
 )
 if trafo_postaja:
-
     print(Fore.GREEN + "--------------------------------------")
     print("|| Objekt ima svojo trafo postajo. || ")
     print("--------------------------------------" + Fore.WHITE)
 
 else:
-
     print(Fore.RED + "--------------------------------------")
     print("|| Objekt nima svoje trafo postaje. || ")
     print("--------------------------------------" + Fore.WHITE)
@@ -109,6 +107,7 @@ def ustvari_seznam_vseh_meritev():
                     seznam_indeksov_posameznih_meritev[1:] + [None],
                 )
             ]
+            # TODO izboljšaj tole z regexom
             loceno_besedilo_zacasno = []
             for meritev in seznam_vseh_meritev_brez_poti_na_koncu:
                 if meritev.count("p//") == 0:
@@ -171,7 +170,6 @@ for kocka in seznam_vseh_meritev:
     )
 
 for pripona in VSE_PRIPONE_DATOTEK:
-
     with open(
         os.path.join("Csvji", f"csv_za_excel_datoteko_{pripona}.csv"),
         "r",

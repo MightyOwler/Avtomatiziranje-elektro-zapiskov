@@ -22,10 +22,10 @@ def preveri_meje_osnovne(seznam, trafo=True):
     slovar_problematicnih_meritev = dict()
 
     # faktorja, ki določata občutljivost oranžne barve
-    faktor_za_oranzno_barvo_tok = 1.5
+    FAKTOR_ZA_ORANZNO_BARVO = 1.5
     # 1.5 pomeni, da je barva oranžna v primeru,
     # ko je rezultat manjši od 1.5-kratnika najnižje dovoljene meje
-    faktor_za_oranzno_barvo_upornost = 0.7
+    FAKTOR_ZA_ORANZNO_BARVO_UPORNOST = 0.7
     # 0.7 pomeni, da je barva oranžna v primeru,
     # ko je rezultat večji od 0.7-kratnika najvišje dovoljene meje
 
@@ -151,12 +151,12 @@ def preveri_meje_osnovne(seznam, trafo=True):
     elif t_varovalke_je_ustrezen:
         if ik1 < stolpec_2[indeks_ujemajoce_varovalke]:
             slovar_problematicnih_meritev[11] = RDECA
-        elif ik1 <= stolpec_2[indeks_ujemajoce_varovalke] * faktor_za_oranzno_barvo_tok:
+        elif ik1 <= stolpec_2[indeks_ujemajoce_varovalke] * FAKTOR_ZA_ORANZNO_BARVO:
             slovar_problematicnih_meritev[11] = ORANZNA
 
         if ik2 < stolpec_2[indeks_ujemajoce_varovalke]:
             slovar_problematicnih_meritev[12] = RDECA
-        elif ik2 == stolpec_2[indeks_ujemajoce_varovalke] * faktor_za_oranzno_barvo_tok:
+        elif ik2 == stolpec_2[indeks_ujemajoce_varovalke] * FAKTOR_ZA_ORANZNO_BARVO:
             slovar_problematicnih_meritev[12] = ORANZNA
 
     if zs == "X":
@@ -170,7 +170,7 @@ def preveri_meje_osnovne(seznam, trafo=True):
             slovar_problematicnih_meritev[12] = RDECA
         elif (
             zl
-            >= stolpec_3[indeks_ujemajoce_varovalke] * faktor_za_oranzno_barvo_upornost
+            >= stolpec_3[indeks_ujemajoce_varovalke] * FAKTOR_ZA_ORANZNO_BARVO_UPORNOST
         ):
             if slovar_problematicnih_meritev.get(12, "") != RDECA:
                 slovar_problematicnih_meritev[12] = ORANZNA
@@ -178,14 +178,14 @@ def preveri_meje_osnovne(seznam, trafo=True):
             slovar_problematicnih_meritev[11] = RDECA
         elif (
             zs
-            >= stolpec_3[indeks_ujemajoce_varovalke] * faktor_za_oranzno_barvo_upornost
+            >= stolpec_3[indeks_ujemajoce_varovalke] * FAKTOR_ZA_ORANZNO_BARVO_UPORNOST
         ):
             if slovar_problematicnih_meritev.get(11, "") != RDECA:
                 slovar_problematicnih_meritev[11] = ORANZNA
 
         if du > meja_du:
             slovar_problematicnih_meritev[12] = RDECA
-        elif du >= meja_du * faktor_za_oranzno_barvo_upornost:
+        elif du >= meja_du * FAKTOR_ZA_ORANZNO_BARVO_UPORNOST:
             if slovar_problematicnih_meritev.get(12, "") != RDECA:
                 slovar_problematicnih_meritev[12] = ORANZNA
 
@@ -193,7 +193,6 @@ def preveri_meje_osnovne(seznam, trafo=True):
 
 
 def preveri_meje_RLOW4(seznam, trafo=True):
-
     slovar_problematicnih_meritev = dict()
     r = seznam[1].replace(",", ".")
 
