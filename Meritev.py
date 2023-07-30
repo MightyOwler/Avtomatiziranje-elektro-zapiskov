@@ -12,6 +12,8 @@ SEZNAM_VRST_MERITEV = [
     "R IZO",
     "ZLOOP 4W",
     "ZLINE 4W",
+    "Čas praznjenja",
+    "Discharge time",
 ]
 SEZNAM_ENOT_ZA_PRETVORBE = ["V", "A", "Ω", "s"]
 SEZNAM_PREDPON_ZA_PRETVORBE = ["m", "k"]
@@ -269,6 +271,14 @@ class Meritev:
 
     def najdi_Riso(self):
         return self.najdi_element("Riso:")
+
+    # discharge time
+
+    def najdi_t(self):
+        return self.najdi_element("t:")
+
+    def najdi_meja_t(self):
+        return self.najdi_element("Meja(t):")
 
 
 def pretvori_v_osnovne_enote(niz):

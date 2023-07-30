@@ -644,6 +644,10 @@ def zapisi_kocko_meritev_v_excel_stroji(
     kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti
 ):
     CSVFILE_ZLOOP = os.path.join("Csvji", "Stroji", "csv_za_excel_datoteko_ZLOOP.csv")
+    CSVFILE_RISO = os.path.join("Csvji", "Stroji", "csv_za_excel_datoteko_R ISO.csv")
+    CSVFILE_DISCHARGE_TIME = os.path.join(
+        "Csvji", "Stroji", "csv_za_excel_datoteko_DISCHARGE TIME.csv"
+    )
 
     global st_vnesenih_meritev
     global st_vnesenih_meritev_RCD
@@ -688,125 +692,176 @@ def zapisi_kocko_meritev_v_excel_stroji(
                 if meritev.doloci_vrsto_meritve() == "Zloop":
                     komentar = meritev.najdi_komentar()
 
-                # dodaj specifične atribute
+                    # dodaj specifične atribute
 
-                tip_varovalke = meritev.najdi_tip_varovalke()
-                t_varovalke = float(
-                    meritev.najdi_t_varovalke().replace(" s", "").replace(",", ".")
-                )
-                i_varovalke = float(
-                    meritev.najdi_I_varovalke().replace(" A", "").replace(",", ".")
-                )
+                    tip_varovalke = meritev.najdi_tip_varovalke()
+                    t_varovalke = float(
+                        meritev.najdi_t_varovalke().replace(" s", "").replace(",", ".")
+                    )
+                    i_varovalke = float(
+                        meritev.najdi_I_varovalke().replace(" A", "").replace(",", ".")
+                    )
 
-                Un = int(meritev.najdi_Un().replace(" V", ""))
-                Ipsc = meritev.najdi_Ia_Ipsc()
-                Z = meritev.najdi_Z()
+                    Un = int(meritev.najdi_Un().replace(" V", ""))
+                    Ipsc = meritev.najdi_Ia_Ipsc()
+                    Z = meritev.najdi_Z()
 
-                ##
+                    ##
 
-                excel_delovna_datoteka = load_workbook(
-                    "Meje za meritve.xlsx", data_only=True
-                )
+                    excel_delovna_datoteka = load_workbook(
+                        "Meje za meritve.xlsx", data_only=True
+                    )
 
-                t_varovalke_je_ustrezen = False
-                for vrednost in [0.1, 0.2, 0.4, 5.0]:
-                    if t_varovalke == vrednost:
-                        t_varovalke_je_ustrezen = True
-                        break
+                    t_varovalke_je_ustrezen = False
+                    for vrednost in [0.1, 0.2, 0.4, 5.0]:
+                        if t_varovalke == vrednost:
+                            t_varovalke_je_ustrezen = True
+                            break
 
-                if not t_varovalke_je_ustrezen:
-                    tok_zascite = "X"
-                    izracun = "X"
-
-                if tip_varovalke in ["gG", "gL"]:
-                    excel_delovni_list = excel_delovna_datoteka["gG"]
-                    prva_vrstica = 6
-                    zadnja_vrstica = 34
-
-                    slovar_t_varovalk_in_stolpcev = {0.1: 1, 0.2: 4, 0.4: 7, 5.0: 10}
-                    stolpec = slovar_t_varovalk_in_stolpcev[t_varovalke]
-
-                    if t_varovalke == 0.1:
-                        zadnja_vrstica = 30
-
-                    stolpec_1 = [
-                        excel_delovni_list.cell(row=i, column=stolpec).value
-                        for i in range(prva_vrstica, zadnja_vrstica + 1)
-                    ]
-
-                    if i_varovalke not in stolpec_1:
+                    if not t_varovalke_je_ustrezen:
                         tok_zascite = "X"
                         izracun = "X"
-                    else:
-                        tok_zascite = excel_delovni_list.cell(
-                            row=stolpec_1.index(i_varovalke) + 6, column=stolpec + 1
-                        ).value
-                        izracun = 2 / 3 * (Un / tok_zascite)
 
-                if tip_varovalke in ["B", "D", "C"]:
-                    excel_delovni_list = excel_delovna_datoteka["BCD"]
+                    if tip_varovalke in ["gG", "gL"]:
+                        excel_delovni_list = excel_delovna_datoteka["gG"]
+                        prva_vrstica = 6
+                        zadnja_vrstica = 34
 
-                    prva_vrstica = 6
-                    zadnja_vrstica = 17
+                        slovar_t_varovalk_in_stolpcev = {
+                            0.1: 1,
+                            0.2: 4,
+                            0.4: 7,
+                            5.0: 10,
+                        }
+                        stolpec = slovar_t_varovalk_in_stolpcev[t_varovalke]
 
-                    slovar_tipov_varovalk_in_stolpcev = {"B": 2, "C": 4, "D": 6}
-                    stolpec = slovar_tipov_varovalk_in_stolpcev[tip_varovalke]
+                        if t_varovalke == 0.1:
+                            zadnja_vrstica = 30
 
-                    stolpec_1 = [
-                        excel_delovni_list.cell(row=i, column=1).value
-                        for i in range(prva_vrstica, zadnja_vrstica + 1)
+                        stolpec_1 = [
+                            excel_delovni_list.cell(row=i, column=stolpec).value
+                            for i in range(prva_vrstica, zadnja_vrstica + 1)
+                        ]
+
+                        if i_varovalke not in stolpec_1:
+                            tok_zascite = "X"
+                            izracun = "X"
+                        else:
+                            tok_zascite = excel_delovni_list.cell(
+                                row=stolpec_1.index(i_varovalke) + 6, column=stolpec + 1
+                            ).value
+                            izracun = 2 / 3 * (Un / tok_zascite)
+
+                    if tip_varovalke in ["B", "D", "C"]:
+                        excel_delovni_list = excel_delovna_datoteka["BCD"]
+
+                        prva_vrstica = 6
+                        zadnja_vrstica = 17
+
+                        slovar_tipov_varovalk_in_stolpcev = {"B": 2, "C": 4, "D": 6}
+                        stolpec = slovar_tipov_varovalk_in_stolpcev[tip_varovalke]
+
+                        stolpec_1 = [
+                            excel_delovni_list.cell(row=i, column=1).value
+                            for i in range(prva_vrstica, zadnja_vrstica + 1)
+                        ]
+
+                        if i_varovalke not in stolpec_1:
+                            tok_zascite = "X"
+                            izracun = "X"
+                        else:
+                            vrednost_vrst = {"B": 1, "C": 3, "D": 5}
+                            tok_zascite = excel_delovni_list.cell(
+                                row=stolpec_1.index(i_varovalke) + 6,
+                                column=stolpec + vrednost_vrst[tip_varovalke],
+                            ).value
+                            izracun = 2 / 3 * (Un / tok_zascite)
+
+                    ##
+
+                    if tip_varovalke in ["NV"]:
+                        excel_delovni_list = excel_delovna_datoteka["NV"]
+
+                        # TODO, ko dobiva naslednje tabele
+
+                        prva_vrstica = 6
+                        zadnja_vrstica = 17
+
+                        slovar_tipov_varovalk_in_stolpcev = {"B": 2, "C": 4, "D": 6}
+                        stolpec = slovar_tipov_varovalk_in_stolpcev[tip_varovalke]
+
+                        stolpec_1 = [
+                            excel_delovni_list.cell(row=i, column=1).value
+                            for i in range(prva_vrstica, zadnja_vrstica + 1)
+                        ]
+
+                        if i_varovalke not in stolpec_1:
+                            tok_zascite = "X"
+                            izracun = "X"
+                        else:
+                            vrednost_vrst = {"B": 1, "C": 3, "D": 5}
+                            tok_zascite = excel_delovni_list.cell(
+                                row=stolpec_1.index(i_varovalke) + 6,
+                                column=stolpec + vrednost_vrst[tip_varovalke],
+                            ).value
+                            izracun = 2 / 3 * (Un / tok_zascite)
+
+                    array_ki_ga_zapisemo_v_csv = [
+                        komentar,
+                        PRAZNO,
+                        Un,
+                        tok_zascite,
+                        izracun,
+                        f"{Ipsc}/{Z}",
+                        pot,
                     ]
+                    writer.writerow(array_ki_ga_zapisemo_v_csv)
+            csvfile.close()
 
-                    if i_varovalke not in stolpec_1:
-                        tok_zascite = "X"
-                        izracun = "X"
+    if slovar_vrst_meritev["R iso"] + slovar_vrst_meritev["R IZO"] > 0:
+        with open(CSVFILE_RISO, "a", encoding="utf-8", newline="") as csvfile:
+            writer = csv.writer(
+                csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
+            )
+
+            for meritev in kocka:
+                if meritev.doloci_vrsto_meritve() in ["R iso", "R IZO"]:
+                    komentar = meritev.najdi_komentar()
+                    riso = meritev.najdi_Riso()
+
+                    array_ki_ga_zapisemo_v_csv = [PRAZNO, PRAZNO, riso, komentar]
+                    writer.writerow(array_ki_ga_zapisemo_v_csv)
+            csvfile.close()
+
+    if (
+        slovar_vrst_meritev["Discharge time"] + slovar_vrst_meritev["Čas praznjenja"]
+        > 0
+    ):
+        with open(CSVFILE_DISCHARGE_TIME, "a", encoding="utf-8", newline="") as csvfile:
+            writer = csv.writer(
+                csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
+            )
+
+            for meritev in kocka:
+                if meritev.doloci_vrsto_meritve() in [
+                    "Discharge time",
+                    "Čas praznjenja",
+                ]:
+                    komentar = meritev.najdi_komentar()
+
+                    t = float(meritev.najdi_t().replace(",", "."))
+                    meja_t = meritev.najdi_meja_t()
+
+                    if meja_t == "5":
+                        drugi_tretji = [t, PRAZNO]
+                    elif meja_t == "1":
+                        drugi_tretji = [PRAZNO, t]
                     else:
-                        vrednost_vrst = {"B": 1, "C": 3, "D": 5}
-                        tok_zascite = excel_delovni_list.cell(
-                            row=stolpec_1.index(i_varovalke) + 6,
-                            column=stolpec + vrednost_vrst[tip_varovalke],
-                        ).value
-                        izracun = 2 / 3 * (Un / tok_zascite)
+                        drugi_tretji = ["X", "X"]
+                        print("meja_t ni niti 1s ali 5s")
 
-                ##
-
-                if tip_varovalke in ["NV"]:
-                    excel_delovni_list = excel_delovna_datoteka["NV"]
-
-                    # TODO, ko dobiva naslednje tabele
-
-                    prva_vrstica = 6
-                    zadnja_vrstica = 17
-
-                    slovar_tipov_varovalk_in_stolpcev = {"B": 2, "C": 4, "D": 6}
-                    stolpec = slovar_tipov_varovalk_in_stolpcev[tip_varovalke]
-
-                    stolpec_1 = [
-                        excel_delovni_list.cell(row=i, column=1).value
-                        for i in range(prva_vrstica, zadnja_vrstica + 1)
-                    ]
-
-                    if i_varovalke not in stolpec_1:
-                        tok_zascite = "X"
-                        izracun = "X"
-                    else:
-                        vrednost_vrst = {"B": 1, "C": 3, "D": 5}
-                        tok_zascite = excel_delovni_list.cell(
-                            row=stolpec_1.index(i_varovalke) + 6,
-                            column=stolpec + vrednost_vrst[tip_varovalke],
-                        ).value
-                        izracun = 2 / 3 * (Un / tok_zascite)
-
-                array_ki_ga_zapisemo_v_csv = [
-                    komentar,
-                    PRAZNO,
-                    Un,
-                    tok_zascite,
-                    izracun,
-                    f"{Ipsc}/{Z}",
-                    pot,
-                ]
-                writer.writerow(array_ki_ga_zapisemo_v_csv)
+                    array_ki_ga_zapisemo_v_csv = [PRAZNO, *drugi_tretji, komentar]
+                    writer.writerow(array_ki_ga_zapisemo_v_csv)
             csvfile.close()
 
 

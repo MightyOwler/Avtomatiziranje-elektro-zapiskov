@@ -283,18 +283,75 @@ match vrsta_stroja:
             ) as csvfile:
                 csvfile.close()
 
-        excel_delovna_datoteka = load_workbook(
-            os.path.join("Templati", "Stroji", f"template_za_{pripona}_meritve.xlsx")
-        )
-        excel_delovna_datoteka.save(
-            os.path.join("Porocila", "Stroji", f"excel_datoteka_{pripona}.xlsx")
-        )
-        excel_delovna_datoteka.close()
+            excel_delovna_datoteka = load_workbook(
+                os.path.join(
+                    "Templati", "Stroji", f"template_za_{pripona}_meritve.xlsx"
+                )
+            )
+            excel_delovna_datoteka.save(
+                os.path.join("Porocila", "Stroji", f"excel_datoteka_{pripona}.xlsx")
+            )
+            excel_delovna_datoteka.close()
 
         for kocka in seznam_vseh_meritev:
             model.zapisi_kocko_meritev_v_excel_stroji(
                 kocka, seznam_vseh_meritev, slovar_kock_in_ustreznih_poti
             )
+
+        for pripona in VSE_PRIPONE_DATOTEK:
+            with open(
+                os.path.join("Csvji", "Stroji", f"csv_za_excel_datoteko_{pripona}.csv"),
+                "r",
+                encoding="utf-8",
+                newline="",
+            ) as csvfile:
+                vrstice = csvfile.readlines()
+
+            excel_delovna_datoteka = load_workbook(
+                os.path.join("Porocila", "Stroji", f"excel_datoteka_{pripona}.xlsx")
+            )
+
+            excel_delovni_list = excel_delovna_datoteka.active
+            dolzina_templata = excel_delovni_list.max_column
+            visina_templata = excel_delovni_list.max_row
+
+            sekcija = ""
+            seznam_sekcij = []
+
+            for i, vrstica in enumerate(vrstice):
+                pot_locena_na_elemente = vrstica.replace("\n", " ").strip().split("//")
+                for element in pot_locena_na_elemente:
+                    if "Sekcija: " in element.strip():
+                        sekcija = element[
+                            element.index("Sekcija:") + len("Sekcija:") :
+                        ].replace("Sekcija: ", "")
+
+                    if sekcija != "" and sekcija not in seznam_sekcij:
+                        seznam_sekcij.append(sekcija)
+                        excel_delovni_list.append([f"{sekcija}"])
+                        excel_delovni_list.merge_cells(
+                            start_row=i + visina_templata + len(seznam_sekcij),
+                            start_column=1,
+                            end_row=i + visina_templata + len(seznam_sekcij),
+                            end_column=dolzina_templata,
+                        )
+                        top_cell = excel_delovni_list[
+                            f"A{i  + visina_templata + len(seznam_sekcij)}"
+                        ]
+                        top_cell.alignment = Alignment(
+                            horizontal="center", vertical="center"
+                        )
+                        top_cell.font = Font(b=True)
+                        top_cell.fill = PatternFill(
+                            start_color="F5C77E", end_color="F5C77E", fill_type="solid"
+                        )
+                excel_delovni_list.append(vrstica.split(";"))
+
+            excel_delovna_datoteka.save(
+                os.path.join("Porocila", "Stroji", f"excel_datoteka_{pripona}.xlsx")
+            )
+
+        print("-----------------------------------------------------------------")
 
     # ---------------------------------------------------------------------------------------------------------------------------
     # ---------------------------------------------------------------------------------------------------------------------------
