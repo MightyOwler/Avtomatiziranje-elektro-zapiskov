@@ -649,9 +649,6 @@ def zapisi_kocko_meritev_v_excel_stroji(
         "Csvji", "Stroji", "csv_za_excel_datoteko_DISCHARGE TIME.csv"
     )
 
-    global st_vnesenih_meritev
-    global st_vnesenih_meritev_RCD
-
     komentar = ""
     ime = "X"
 
@@ -863,6 +860,55 @@ def zapisi_kocko_meritev_v_excel_stroji(
                     array_ki_ga_zapisemo_v_csv = [PRAZNO, *drugi_tretji, komentar]
                     writer.writerow(array_ki_ga_zapisemo_v_csv)
             csvfile.close()
+
+
+def zapisi_kocko_meritev_v_excel_elektricne_omare(
+    kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti
+):
+    CSVFILE_ELEKTRICNE_OMARE = os.path.join(
+        "Csvji", "ElektricneOmare", "csv_za_excel_datoteko_elektricne_omare.csv"
+    )
+
+    komentar = ""
+
+    pot = (
+        slovar_kock_in_ustreznih_poti[loceno_besedilo.index(kocka)]
+        .replace("\n", " ")
+        .strip()
+    )
+    pot_locena_na_elemente = pot.replace("\n", " ").strip().split("//")
+    for element in pot_locena_na_elemente:
+        if "Imenovanje: " in element.strip():
+            ime = element.replace("Imenovanje: ", "")
+            if "Circuit F" in ime:
+                ime = ime.replace("Circuit ", "")
+            elif re.search(r"Circuit\d", ime):
+                ime = ime.replace("Circuit", "F")
+
+    if pot is None:
+        pot = "X"
+        print("Napaka: Ni poti v slovarju poti", slovar_kock_in_ustreznih_poti)
+
+    vrste_meritev_v_kocki = [meritev.doloci_vrsto_meritve() for meritev in kocka]
+    slovar_vrst_meritev = {
+        i: vrste_meritev_v_kocki.count(i) for i in SEZNAM_VRST_MERITEV
+    }
+
+    if slovar_vrst_meritev["R low 4"] > 0:
+        with open(
+            CSVFILE_ELEKTRICNE_OMARE, "a", encoding="utf-8", newline=""
+        ) as csvfile:
+            writer = csv.writer(
+                csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
+            )
+            for meritev in kocka:
+                komentar = meritev.najdi_komentar()
+                R = meritev.najdi_R()
+                oknok = "OK" if float(R.replace(",", ".")) < 0.1 else "NOK"
+
+                array_ki_ga_zapisemo_v_csv = [komentar, R, oknok, pot]
+                writer.writerow(array_ki_ga_zapisemo_v_csv)
+        csvfile.close()
 
 
 def najdi_po_vrsti_urejen_seznam_datumov(vse_besedilo):

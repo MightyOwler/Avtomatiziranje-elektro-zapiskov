@@ -15,10 +15,10 @@ debug_mode = True
 
 # obstaja 7 osnovnih vrst meritev: AUTO TN, Zloop mΩ, Z LINE, RCD Auto, R low 4, Varistor, R iso, R IZO, ZLOOP 4W, Zline 4W
 
-slovar_strojev = {1: "električna omara", 2: "inštalacija", 3: "stroj"}
+slovar_strojev = {1: "elektricna omara", 2: "inštalacija", 3: "stroj"}
 
 vrsta_stroja = slovar_strojev.get(
-    int(input("1: električna omara, 2: inštalacija, 3: stroj\n"))
+    int(input("1: elektricna omara, 2: inštalacija, 3: stroj\n"))
 )
 print(f"Tvoja odločitev {vrsta_stroja}")
 
@@ -155,9 +155,99 @@ print(
 # tukaj zapiše v csv
 
 match vrsta_stroja:
-    case "električna omara":
-        VSE_PRIPONE_DATOTEK = ["osnovne", "RCD", "RLOW4", "VARISTOR"]
-        pass
+    case "elektricna omara":
+        with open(
+            os.path.join(
+                "Csvji",
+                "ElektricneOmare",
+                f"csv_za_excel_datoteko_elektricne_omare.csv",
+            ),
+            "w",
+            encoding="utf-8",
+            newline="",
+        ) as csvfile:
+            csvfile.close()
+
+        excel_delovna_datoteka = load_workbook(
+            os.path.join(
+                "Templati",
+                "ElektricneOmare",
+                f"template_za_elektricne_omare_meritve.xlsx",
+            )
+        )
+        excel_delovna_datoteka.save(
+            os.path.join(
+                "Porocila", "ElektricneOmare", f"excel_datoteka_elektricne_omare.xlsx"
+            )
+        )
+        excel_delovna_datoteka.close()
+
+        for kocka in seznam_vseh_meritev:
+            model.zapisi_kocko_meritev_v_excel_elektricne_omare(
+                kocka, seznam_vseh_meritev, slovar_kock_in_ustreznih_poti
+            )
+
+        with open(
+            os.path.join(
+                "Csvji",
+                "ElektricneOmare",
+                f"csv_za_excel_datoteko_elektricne_omare.csv",
+            ),
+            "r",
+            encoding="utf-8",
+            newline="",
+        ) as csvfile:
+            vrstice = csvfile.readlines()
+
+        excel_delovna_datoteka = load_workbook(
+            os.path.join(
+                "Porocila", "ElektricneOmare", f"excel_datoteka_elektricne_omare.xlsx"
+            )
+        )
+
+        excel_delovni_list = excel_delovna_datoteka.active
+        dolzina_templata = excel_delovni_list.max_column
+        visina_templata = excel_delovni_list.max_row
+
+        sekcija = ""
+        seznam_sekcij = []
+
+        for i, vrstica in enumerate(vrstice):
+            pot_locena_na_elemente = vrstica.replace("\n", " ").strip().split("//")
+            for element in pot_locena_na_elemente:
+                if "Sekcija: " in element.strip():
+                    sekcija = element[
+                        element.index("Sekcija:") + len("Sekcija:") :
+                    ].replace("Sekcija: ", "")
+
+                if sekcija != "" and sekcija not in seznam_sekcij:
+                    seznam_sekcij.append(sekcija)
+                    excel_delovni_list.append([f"{sekcija}"])
+                    excel_delovni_list.merge_cells(
+                        start_row=i + visina_templata + len(seznam_sekcij),
+                        start_column=1,
+                        end_row=i + visina_templata + len(seznam_sekcij),
+                        end_column=dolzina_templata,
+                    )
+                    top_cell = excel_delovni_list[
+                        f"A{i  + visina_templata + len(seznam_sekcij)}"
+                    ]
+                    top_cell.alignment = Alignment(
+                        horizontal="center", vertical="center"
+                    )
+                    top_cell.font = Font(b=True)
+                    top_cell.fill = PatternFill(
+                        start_color="F5C77E", end_color="F5C77E", fill_type="solid"
+                    )
+            excel_delovni_list.append(vrstica.split(";"))
+
+        excel_delovna_datoteka.save(
+            os.path.join(
+                "Porocila", "ElektricneOmare", f"excel_datoteka_elektricne_omare.xlsx"
+            )
+        )
+
+        print("-----------------------------------------------------------------")
 
     # ---------------------------------------------------------------------------------------------------------------------------
     # ---------------------------------------------------------------------------------------------------------------------------
