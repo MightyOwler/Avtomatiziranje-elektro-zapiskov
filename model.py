@@ -21,6 +21,8 @@ def vrednoti_string(s):
     Funkcija, ki nam omogoča da razvrstimo meritve po velikosti kljub znaku >
     (to je konkretno pomembno pri RISO in RLOW4)
     """
+
+    # TODO ta funkcija lahko vrne string ali int!!
     if ">" in s:
         return 1000000000000
     if "X" in s:
@@ -634,12 +636,6 @@ def zapisi_kocko_meritev_v_excel_instalacije(
                 csvfile_RCD.close()
 
 
-def zapisi_kocko_meritev_v_excel_elektricne_omare(
-    kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti
-):
-    pass
-
-
 def zapisi_kocko_meritev_v_excel_stroji(
     kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti
 ):
@@ -904,9 +900,114 @@ def zapisi_kocko_meritev_v_excel_elektricne_omare(
             for meritev in kocka:
                 komentar = meritev.najdi_komentar()
                 R = meritev.najdi_R()
-                oknok = "OK" if float(R.replace(",", ".")) < 0.1 else "NOK"
+                if R == "X":
+                    oknok = "X"
+                else:
+                    oknok = (
+                        "OK"
+                        if float(str(vrednoti_string(R)).replace(",", ".")) < 0.1
+                        else "NOK"
+                    )
 
                 array_ki_ga_zapisemo_v_csv = [komentar, R, oknok, pot]
+                writer.writerow(array_ki_ga_zapisemo_v_csv)
+        csvfile.close()
+
+
+def zapisi_kocko_meritev_v_excel_strelovodi(
+    kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti
+):
+    CSVFILE_STRELOVODE = os.path.join(
+        "Csvji", "Strelovodi", "csv_za_excel_datoteko_strelovodi.csv"
+    )
+
+    komentar = ""
+
+    pot = (
+        slovar_kock_in_ustreznih_poti[loceno_besedilo.index(kocka)]
+        .replace("\n", " ")
+        .strip()
+    )
+    pot_locena_na_elemente = pot.replace("\n", " ").strip().split("//")
+    for element in pot_locena_na_elemente:
+        if "Imenovanje: " in element.strip():
+            ime = element.replace("Imenovanje: ", "")
+            if "Circuit F" in ime:
+                ime = ime.replace("Circuit ", "")
+            elif re.search(r"Circuit\d", ime):
+                ime = ime.replace("Circuit", "F")
+
+    if pot is None:
+        pot = "X"
+        print("Napaka: Ni poti v slovarju poti", slovar_kock_in_ustreznih_poti)
+
+    vrste_meritev_v_kocki = [meritev.doloci_vrsto_meritve() for meritev in kocka]
+    slovar_vrst_meritev = {
+        i: vrste_meritev_v_kocki.count(i) for i in SEZNAM_VRST_MERITEV
+    }
+
+    if slovar_vrst_meritev["R low 4"] > 0:
+        with open(CSVFILE_STRELOVODE, "a", encoding="utf-8", newline="") as csvfile:
+            writer = csv.writer(
+                csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
+            )
+            for meritev in kocka:
+                komentar = meritev.najdi_komentar()
+                R = meritev.najdi_R()
+                dane = (
+                    "DA"
+                    if float(str(vrednoti_string(R)).replace(",", ".")) < 10
+                    else "NE"
+                )
+
+                vzorec = r"MS\d+"
+                prva_vrstica = (
+                    re.search(vzorec, komentar) if "MS" in komentar else PRAZNO
+                )
+
+                array_ki_ga_zapisemo_v_csv = [
+                    prva_vrstica,
+                    komentar,
+                    R,
+                    PRAZNO,
+                    PRAZNO,
+                    PRAZNO,
+                    PRAZNO,
+                    dane,
+                    pot,
+                ]
+                writer.writerow(array_ki_ga_zapisemo_v_csv)
+        csvfile.close()
+
+    if slovar_vrst_meritev["Ozemljitvena upornost"] > 0:
+        with open(CSVFILE_STRELOVODE, "a", encoding="utf-8", newline="") as csvfile:
+            writer = csv.writer(
+                csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
+            )
+            for meritev in kocka:
+                komentar = meritev.najdi_komentar()
+                Re = meritev.najdi_Re()
+                if Re == "X":
+                    dane = "X"
+                else:
+                    dane = "DA" if float(Re.replace(",", ".")) < 10 else "NE"
+
+                vzorec = r"MS\d+"
+                prva_vrstica = (
+                    re.search(vzorec, komentar).group() if "MS" in komentar else PRAZNO
+                )
+
+                array_ki_ga_zapisemo_v_csv = [
+                    prva_vrstica,
+                    komentar,
+                    Re,
+                    PRAZNO,
+                    PRAZNO,
+                    PRAZNO,
+                    PRAZNO,
+                    dane,
+                    pot,
+                ]
                 writer.writerow(array_ki_ga_zapisemo_v_csv)
         csvfile.close()
 
