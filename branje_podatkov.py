@@ -457,32 +457,26 @@ match vrsta_stroja:
                         )
                 excel_delovni_list.append(vrstica.split(";"))
 
-            excel_delovna_datoteka.save(
-                os.path.join("Porocila", "Stroji", f"excel_datoteka_{pripona}.xlsx")
-            )
+                # DISCHARGE TIME na roko
+                if pripona in ["R_ISO", "ZLOOP", "NEPREKINJENOST"]:
+                    napake = ""
+                    if debug_mode:
+                        print(pot_locena_na_elemente)
+                    str_napake = f'napake = preveri_meje_{pripona}(vrstica.split(";"), trafo=trafo_postaja)'
+                    exec(str_napake)
+                    if napake:
+                        for indeks, barva in napake.items():
+                            excel_delovni_list.cell(
+                                i + visina_templata + len(seznam_sekcij) + 1, indeks + 1
+                            ).fill = PatternFill(
+                                start_color=barva, end_color=barva, fill_type="solid"
+                            )
 
-            # DISCHARGE TIME na roko
-            if pripona not in ["R_ISO", "ZLOOP", "NEPREKINJENOST"]:
-                napake = ""
-                str_napake = f'napake = preveri_meje_{pripona}(vrstica.split(";"), trafo=trafo_postaja)'
-                if debug_mode:  # Zelo uporabno pri debugganju.
-                    print(pot_locena_na_elemente)
-                exec(str_napake)
-                if napake:
-                    for indeks, barva in napake.items():
-                        excel_delovni_list.cell(
-                            i + visina_templata + len(seznam_sekcij) + 1, indeks + 1
-                        ).fill = PatternFill(
-                            start_color=barva, end_color=barva, fill_type="solid"
-                        )
-
-            excel_delovna_datoteka.save(
-                os.path.join(
-                    "Porocila", "Instalacije", f"excel_datoteka_{pripona}.xlsx"
+                excel_delovna_datoteka.save(
+                    os.path.join("Porocila", "Stroji", f"excel_datoteka_{pripona}.xlsx")
                 )
-            )
 
-        print("-----------------------------------------------------------------")
+            print("-----------------------------------------------------------------")
 
     # ---------------------------------------------------------------------------------------------------------------------------
     # ---------------------------------------------------------------------------------------------------------------------------

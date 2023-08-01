@@ -23,3 +23,21 @@ def preveri_meje_R_ISO(seznam, trafo=True):
 
     print(len(seznam))
     print(seznam)
+
+
+def preveri_meje_ZLOOP(seznam, trafo=True):
+    # funkcija prejme seznam s 25 elementi, ter binarno vrendost trafo
+
+    slovar_problematicnih_meritev = dict()
+
+    print(len(seznam))
+    print(seznam)
+
+
+def preveri_meje_NEPREKINJENOST(seznam, trafo=True):
+    # funkcija prejme seznam s 25 elementi, ter binarno vrendost trafo
+
+    slovar_problematicnih_meritev = dict()
+
+    print(len(seznam))
+    print(seznam)

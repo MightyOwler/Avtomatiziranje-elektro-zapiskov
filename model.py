@@ -16,15 +16,15 @@ SLOVAR = json.load(jsonfile)
 #     input("Ali naj prevede v angleščino? Če ja, napiši karkoli, če ni, pusti prazno!")
 # )
 
-# vrednost_testnega_toka = float(input("Navedi testni tok v amperih od 0.2 do 25!"))
-# napetost_dotika = int(input("Navedi števlo voltov, na izbiro imaš 15, 25, 50."))
+vrednost_testnega_toka = float(input("Navedi testni tok v amperih od 0.2 do 25!"))
+napetost_dotika = int(input("Navedi števlo voltov, na izbiro imaš 15, 25, 50."))
 
-# meja_izolacijske_upornosti_rdeca = float(
-#     input("Določi rdečo mejo izoacijske upornosti v MOhm")
-# )
-# meja_izolacijske_upornosti_oranzna = float(
-#     input("Določi oranzna mejo izoacijske upornosti v MOhm")
-# )
+meja_izolacijske_upornosti_rdeca = float(
+    input("Določi rdečo mejo izoacijske upornosti v MOhm")
+)
+meja_izolacijske_upornosti_oranzna = float(
+    input("Določi oranzna mejo izoacijske upornosti v MOhm")
+)
 
 
 def prevedi_s_slovarjem(string):
@@ -749,7 +749,7 @@ def zapisi_kocko_meritev_v_excel_stroji(
                         tok_zascite = "X"
                         izracun = "X"
 
-                    if tip_varovalke in ["gG", "gL"]:
+                    if tip_varovalke in ["gG", "gL", "NV"]:
                         excel_delovni_list = excel_delovna_datoteka["gG"]
                         prva_vrstica = 6
                         zadnja_vrstica = 34
@@ -806,43 +806,43 @@ def zapisi_kocko_meritev_v_excel_stroji(
 
                     ##
 
-                    if tip_varovalke in ["NV"]:
-                        excel_delovni_list = excel_delovna_datoteka["NV"]
+                    # if tip_varovalke in ["NV"]:
+                    #     excel_delovni_list = excel_delovna_datoteka["NV"]
 
-                        # TODO, ko dobiva naslednje tabele
+                    #     # TODO, ko dobiva naslednje tabele
 
-                        prva_vrstica = 6
-                        zadnja_vrstica = 17
+                    #     prva_vrstica = 6
+                    #     zadnja_vrstica = 17
 
-                        slovar_tipov_varovalk_in_stolpcev = {"B": 2, "C": 4, "D": 6}
-                        stolpec = slovar_tipov_varovalk_in_stolpcev[tip_varovalke]
+                    #     slovar_tipov_varovalk_in_stolpcev = {"B": 2, "C": 4, "D": 6}
+                    #     stolpec = slovar_tipov_varovalk_in_stolpcev[tip_varovalke]
 
-                        stolpec_1 = [
-                            excel_delovni_list.cell(row=i, column=1).value
-                            for i in range(prva_vrstica, zadnja_vrstica + 1)
-                        ]
+                    #     stolpec_1 = [
+                    #         excel_delovni_list.cell(row=i, column=1).value
+                    #         for i in range(prva_vrstica, zadnja_vrstica + 1)
+                    #     ]
 
-                        if i_varovalke not in stolpec_1:
-                            tok_zascite = "X"
-                            izracun = "X"
-                        else:
-                            vrednost_vrst = {"B": 1, "C": 3, "D": 5}
-                            tok_zascite = excel_delovni_list.cell(
-                                row=stolpec_1.index(i_varovalke) + 6,
-                                column=stolpec + vrednost_vrst[tip_varovalke],
-                            ).value
-                            izracun = 2 / 3 * (Un / tok_zascite)
+                    #     if i_varovalke not in stolpec_1:
+                    #         tok_zascite = "X"
+                    #         izracun = "X"
+                    #     else:
+                    #         vrednost_vrst = {"B": 1, "C": 3, "D": 5}
+                    #         tok_zascite = excel_delovni_list.cell(
+                    #             row=stolpec_1.index(i_varovalke) + 6,
+                    #             column=stolpec + vrednost_vrst[tip_varovalke],
+                    #         ).value
+                    #         izracun = 2 / 3 * (Un / tok_zascite)
 
-                    array_ki_ga_zapisemo_v_csv = [
-                        komentar,
-                        PRAZNO,
-                        Un,
-                        tok_zascite,
-                        izracun,
-                        f"{Ipsc}/{Z}",
-                        pot,
-                    ]
-                    writer.writerow(array_ki_ga_zapisemo_v_csv)
+                    # array_ki_ga_zapisemo_v_csv = [
+                    #     komentar,
+                    #     PRAZNO,
+                    #     Un,
+                    #     tok_zascite,
+                    #     izracun,
+                    #     f"{Ipsc}/{Z}",
+                    #     pot,
+                    # ]
+                    # writer.writerow(array_ki_ga_zapisemo_v_csv)
             csvfile.close()
 
     if slovar_vrst_meritev["R iso"] + slovar_vrst_meritev["R IZO"] > 0:
