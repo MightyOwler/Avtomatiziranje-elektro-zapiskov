@@ -35,7 +35,7 @@ else:
     print("|| Objekt nima svoje trafo postaje. || ")
     print("--------------------------------------" + Fore.WHITE)
 
-seznam_vrst_meritev = model.SEZNAM_VRST_MERITEV
+SEZNAM_VRST_MERITEV = model.SEZNAM_VRST_MERITEV
 
 with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
     celotno_besedilo_z_merjenj = (
@@ -46,11 +46,11 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
         .replace("\n", " ")
         .replace("Z loop 4W", "ZLOOP 4W")
         .replace("Z line 4W", "ZLINE 4W")
+        .replace("Pot:", "🙈Pot:")
     )
 
-    loceno_besedilo_na_kocke_teksta = celotno_besedilo_z_merjenj.split(
-        "Posamezne meritve"
-    )
+    # prvi string v seznamu e vedno prazen, zato geldaš samo naprej
+    loceno_besedilo_na_kocke_teksta = celotno_besedilo_z_merjenj.split("🙈")[1:]
 
     seznam_datumov_po_vrstnem_redu = model.najdi_po_vrsti_urejen_seznam_datumov(
         celotno_besedilo_z_merjenj
@@ -74,16 +74,16 @@ def ustvari_seznam_vseh_meritev():
     seznam_vseh_meritev = []
 
     for kocka_teksta in loceno_besedilo_na_kocke_teksta:
-        slovar_meritev = {i: 0 for i in seznam_vrst_meritev}
+        slovar_meritev = {i: 0 for i in SEZNAM_VRST_MERITEV}
         pot_do_druzine_meritev = model.najdi_pot_izven_razreda_Meritev(kocka_teksta)
-        idx_poti = kocka_teksta.find("Pot:")
-        kocka_teksta = kocka_teksta[:idx_poti]
+        print(pot_do_druzine_meritev)
 
-        for vrsta_meritve in seznam_vrst_meritev:
+        for vrsta_meritve in SEZNAM_VRST_MERITEV:
             if vrsta_meritve in kocka_teksta:
                 slovar_meritev[vrsta_meritve] = kocka_teksta.count(vrsta_meritve)
 
         stevilo_meritev_v_trenutni_kocki = sum(slovar_meritev.values())
+        print(stevilo_meritev_v_trenutni_kocki)
         if stevilo_meritev_v_trenutni_kocki == 1:
             # Ločimo primere glede na število meritev v kocki
             if kocka_teksta.count("p//") == 0:
@@ -135,8 +135,8 @@ def ustvari_seznam_vseh_meritev():
                 seznam_vseh_meritev.append(loceno_besedilo_zacasno)
                 seznam_ustreznih_poti_do_kock.append(pot_do_druzine_meritev)
 
-    print(seznam_vseh_meritev_brez_poti_na_koncu)
-    print(seznam_vseh_meritev)
+    # print(seznam_vseh_meritev_brez_poti_na_koncu)
+    # print(seznam_vseh_meritev)
     return seznam_vseh_meritev
 
 
