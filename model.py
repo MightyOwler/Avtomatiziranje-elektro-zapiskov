@@ -890,7 +890,7 @@ def zapisi_kocko_meritev_v_excel_elektricne_omare(
         i: vrste_meritev_v_kocki.count(i) for i in SEZNAM_VRST_MERITEV
     }
 
-    if slovar_vrst_meritev["R low 4"] > 0:
+    if slovar_vrst_meritev["R low 4"] + slovar_vrst_meritev["Neprekinjenost"] > 0:
         with open(
             CSVFILE_ELEKTRICNE_OMARE, "a", encoding="utf-8", newline=""
         ) as csvfile:

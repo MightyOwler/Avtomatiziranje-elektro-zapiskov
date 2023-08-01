@@ -15,6 +15,7 @@ SEZNAM_VRST_MERITEV = [
     "Čas praznjenja",
     "Discharge time",
     "Ozemljitvena upornost",
+    "Neprekinjenost",
 ]
 SEZNAM_ENOT_ZA_PRETVORBE = ["V", "A", "Ω", "s"]
 SEZNAM_PREDPON_ZA_PRETVORBE = ["m", "k"]
@@ -49,7 +50,7 @@ class Meritev:
     def najdi_element(self, ime_elementa, pretvori_v_osnovne=True):
         element = "X"
         for el in self.besedilo_po_elementih:
-            if ime_elementa in el:
+            if el.startswith(ime_elementa):
                 element = el[len(ime_elementa) + 1 :]
                 if pretvori_v_osnovne:
                     return pretvori_v_osnovne_enote(element)

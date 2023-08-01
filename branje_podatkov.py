@@ -114,7 +114,7 @@ def ustvari_seznam_vseh_meritev():
                     seznam_indeksov_posameznih_meritev[1:] + [None],
                 )
             ]
-            # TODO izboljšaj tole z regexom
+
             loceno_besedilo_zacasno = []
             for meritev in seznam_vseh_meritev_brez_poti_na_koncu:
                 if meritev.count("p//") == 0:
@@ -135,6 +135,8 @@ def ustvari_seznam_vseh_meritev():
                 seznam_vseh_meritev.append(loceno_besedilo_zacasno)
                 seznam_ustreznih_poti_do_kock.append(pot_do_druzine_meritev)
 
+    print(seznam_vseh_meritev_brez_poti_na_koncu)
+    print(seznam_vseh_meritev)
     return seznam_vseh_meritev
 
 
@@ -145,9 +147,9 @@ slovar_kock_in_ustreznih_poti = dict(
     zip(range(len(seznam_vseh_meritev)), seznam_ustreznih_poti_do_kock)
 )
 print(
-    "Število vseh meritev:",
+    "Število vseh kock:",
     len(seznam_vseh_meritev),
-    "\nŠtevilo ustreznih poti do meritev:",
+    "\nŠtevilo ustreznih poti do kock:",
     len(seznam_ustreznih_poti_do_kock),
     "" + Fore.WHITE,
 )
@@ -211,6 +213,7 @@ match vrsta_stroja:
 
         sekcija = ""
         seznam_sekcij = []
+        st_vrstic = 0
 
         for i, vrstica in enumerate(vrstice):
             pot_locena_na_elemente = vrstica.replace("\n", " ").strip().split("//")
@@ -240,6 +243,7 @@ match vrsta_stroja:
                         start_color="F5C77E", end_color="F5C77E", fill_type="solid"
                     )
             excel_delovni_list.append(vrstica.split(";"))
+            st_vrstic += 1
 
         excel_delovna_datoteka.save(
             os.path.join(
@@ -247,6 +251,7 @@ match vrsta_stroja:
             )
         )
 
+        print(f"Število vseh meritev: {st_vrstic}")
         print("-----------------------------------------------------------------")
 
     # ---------------------------------------------------------------------------------------------------------------------------
