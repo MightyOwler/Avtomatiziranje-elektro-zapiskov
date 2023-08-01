@@ -4,6 +4,20 @@ import csv
 from Meritev import pretvori_v_osnovne_enote, SEZNAM_VRST_MERITEV
 import os
 from openpyxl import load_workbook
+import json
+
+
+# V slovarju so na levi strani slovenske besede, na desni pa algeške.
+
+jsonfile = open("slovar_besed.json")
+SLOVAR = json.load(jsonfile)
+
+
+def prevedi_s_slovarjem(string):
+    for beseda in SLOVAR:
+        string = string.replace(beseda, SLOVAR[beseda])
+        string = string.replace(beseda.upper(), SLOVAR[beseda].upper())
+    return string
 
 
 PRAZNO = " "
@@ -683,7 +697,7 @@ def zapisi_kocko_meritev_v_excel_stroji(
 
             for meritev in kocka:
                 if meritev.doloci_vrsto_meritve() == "Zloop":
-                    komentar = meritev.najdi_komentar()
+                    komentar = prevedi_s_slovarjem(meritev.najdi_komentar())
 
                     # dodaj specifične atribute
 
@@ -898,7 +912,7 @@ def zapisi_kocko_meritev_v_excel_elektricne_omare(
                 csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
             )
             for meritev in kocka:
-                komentar = meritev.najdi_komentar()
+                komentar = prevedi_s_slovarjem(meritev.najdi_komentar())
                 R = meritev.najdi_R()
                 if R == "X":
                     oknok = "X"
