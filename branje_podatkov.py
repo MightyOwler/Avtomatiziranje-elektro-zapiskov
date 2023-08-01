@@ -3,6 +3,8 @@ import model
 import Meritev
 from colorama import Fore
 from meje_instalacije import *
+from meje_stroji import *
+from meje_strelovodi import *
 import re
 import os
 
@@ -25,6 +27,7 @@ print(f"Tvoja odločitev {vrsta_stroja}")
 trafo_postaja = bool(
     input("Ali je trafo postaja? Če je, napiši karkoli, če ni, pusti prazno! ")
 )
+
 if trafo_postaja:
     print(Fore.GREEN + "--------------------------------------")
     print("|| Objekt ima svojo trafo postajo. || ")
@@ -323,7 +326,11 @@ match vrsta_stroja:
                             element.index("Sekcija:") + len("Sekcija:") :
                         ].replace("Sekcija: ", "")
 
-                    if seznam_sekcij == [] or sekcija != "" and sekcija != seznam_sekcij[-1]:
+                    if (
+                        seznam_sekcij == []
+                        or sekcija != ""
+                        and sekcija != seznam_sekcij[-1]
+                    ):
                         seznam_sekcij.append(sekcija)
                         excel_delovni_list.append([f"{sekcija}"])
                         excel_delovni_list.merge_cells(
@@ -372,7 +379,7 @@ match vrsta_stroja:
     # ---------------------------------------------------------------------------------------------------------------------------
 
     case "stroj":
-        VSE_PRIPONE_DATOTEK = ["ZLOOP", "R ISO", "DISCHARGE TIME"]
+        VSE_PRIPONE_DATOTEK = ["ZLOOP", "R ISO", "DISCHARGE TIME", "NEPREKINJENOST"]
         for pripona in VSE_PRIPONE_DATOTEK:
             with open(
                 os.path.join("Csvji", "Stroji", f"csv_za_excel_datoteko_{pripona}.csv"),
@@ -425,7 +432,11 @@ match vrsta_stroja:
                             element.index("Sekcija:") + len("Sekcija:") :
                         ].replace("Sekcija: ", "")
 
-                    if seznam_sekcij == [] or sekcija != "" and sekcija != seznam_sekcij[-1]:
+                    if (
+                        seznam_sekcij == []
+                        or sekcija != ""
+                        and sekcija != seznam_sekcij[-1]
+                    ):
                         seznam_sekcij.append(sekcija)
                         excel_delovni_list.append([f"{sekcija}"])
                         excel_delovni_list.merge_cells(
@@ -448,6 +459,27 @@ match vrsta_stroja:
 
             excel_delovna_datoteka.save(
                 os.path.join("Porocila", "Stroji", f"excel_datoteka_{pripona}.xlsx")
+            )
+
+            # DISCHARGE TIME na roko
+            if pripona not in ["R_ISO", "ZLOOP", "NEPREKINJENOST"]:
+                napake = ""
+                str_napake = f'napake = preveri_meje_{pripona}(vrstica.split(";"), trafo=trafo_postaja)'
+                if debug_mode:  # Zelo uporabno pri debugganju.
+                    print(pot_locena_na_elemente)
+                exec(str_napake)
+                if napake:
+                    for indeks, barva in napake.items():
+                        excel_delovni_list.cell(
+                            i + visina_templata + len(seznam_sekcij) + 1, indeks + 1
+                        ).fill = PatternFill(
+                            start_color=barva, end_color=barva, fill_type="solid"
+                        )
+
+            excel_delovna_datoteka.save(
+                os.path.join(
+                    "Porocila", "Instalacije", f"excel_datoteka_{pripona}.xlsx"
+                )
             )
 
         print("-----------------------------------------------------------------")
@@ -540,6 +572,19 @@ match vrsta_stroja:
                         start_color="F5C77E", end_color="F5C77E", fill_type="solid"
                     )
             excel_delovni_list.append(vrstica.split(";"))
+
+            napake = ""
+            str_napake = f'napake = preveri_meje_strelovodi(vrstica.split(";"))'
+            if debug_mode:  # Zelo uporabno pri debugganju.
+                print(pot_locena_na_elemente)
+            exec(str_napake)
+            if napake:
+                for indeks, barva in napake.items():
+                    excel_delovni_list.cell(
+                        i + visina_templata + len(seznam_sekcij) + 1, indeks + 1
+                    ).fill = PatternFill(
+                        start_color=barva, end_color=barva, fill_type="solid"
+                    )
 
         excel_delovna_datoteka.save(
             os.path.join("Porocila", "Strelovodi", f"excel_datoteka_strelovodi.xlsx")

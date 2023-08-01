@@ -12,12 +12,29 @@ import json
 jsonfile = open("slovar_besed.json")
 SLOVAR = json.load(jsonfile)
 
+# prevedi_v_anglescino = bool(
+#     input("Ali naj prevede v angleščino? Če ja, napiši karkoli, če ni, pusti prazno!")
+# )
+
+# vrednost_testnega_toka = float(input("Navedi testni tok v amperih od 0.2 do 25!"))
+# napetost_dotika = int(input("Navedi števlo voltov, na izbiro imaš 15, 25, 50."))
+
+# meja_izolacijske_upornosti_rdeca = float(
+#     input("Določi rdečo mejo izoacijske upornosti v MOhm")
+# )
+# meja_izolacijske_upornosti_oranzna = float(
+#     input("Določi oranzna mejo izoacijske upornosti v MOhm")
+# )
+
 
 def prevedi_s_slovarjem(string):
-    for beseda in SLOVAR:
-        string = string.replace(beseda, SLOVAR[beseda])
-        string = string.replace(beseda.upper(), SLOVAR[beseda].upper())
-    return string
+    if prevedi_v_anglescino:
+        for beseda in SLOVAR:
+            string = string.replace(beseda, SLOVAR[beseda])
+            string = string.replace(beseda.upper(), SLOVAR[beseda].upper())
+        return string
+    else:
+        return string
 
 
 PRAZNO = " "
@@ -658,6 +675,9 @@ def zapisi_kocko_meritev_v_excel_stroji(
     CSVFILE_DISCHARGE_TIME = os.path.join(
         "Csvji", "Stroji", "csv_za_excel_datoteko_DISCHARGE TIME.csv"
     )
+    CSVFILE_NEPREKINJENOST = os.path.join(
+        "Csvji", "Stroji", "csv_za_excel_datoteko_NEPREKINJENOST.csv"
+    )
 
     komentar = ""
     ime = "X"
@@ -868,6 +888,29 @@ def zapisi_kocko_meritev_v_excel_stroji(
                         print("meja_t ni niti 1s ali 5s")
 
                     array_ki_ga_zapisemo_v_csv = [PRAZNO, *drugi_tretji, komentar]
+                    writer.writerow(array_ki_ga_zapisemo_v_csv)
+            csvfile.close()
+
+    if slovar_vrst_meritev["Neprekinjenost"] > 0 + slovar_vrst_meritev["R low 4"]:
+        with open(CSVFILE_NEPREKINJENOST, "a", encoding="utf-8", newline="") as csvfile:
+            writer = csv.writer(
+                csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
+            )
+
+            for meritev in kocka:
+                if meritev.doloci_vrsto_meritve() in ["Neprekinjenost", "R low"]:
+                    komentar = meritev.najdi_komentar()
+                    R = meritev.najdi_R()
+
+                    # TODO dodaj tok zaščite s pomočjo tabele
+
+                    array_ki_ga_zapisemo_v_csv = [
+                        komentar,
+                        vrednost_testnega_toka,
+                        R,
+                        PRAZNO,
+                        pot,
+                    ]
                     writer.writerow(array_ki_ga_zapisemo_v_csv)
             csvfile.close()
 
