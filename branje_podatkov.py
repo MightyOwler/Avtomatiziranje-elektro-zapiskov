@@ -223,7 +223,11 @@ match vrsta_stroja:
                         element.index("Sekcija:") + len("Sekcija:") :
                     ].replace("Sekcija: ", "")
 
-                if sekcija != "" and sekcija not in seznam_sekcij:
+                if (
+                    seznam_sekcij == []
+                    or sekcija != ""
+                    and sekcija != seznam_sekcij[-1]
+                ):
                     seznam_sekcij.append(sekcija)
                     excel_delovni_list.append([f"{sekcija}"])
                     excel_delovni_list.merge_cells(
@@ -319,7 +323,7 @@ match vrsta_stroja:
                             element.index("Sekcija:") + len("Sekcija:") :
                         ].replace("Sekcija: ", "")
 
-                    if sekcija != "" and sekcija not in seznam_sekcij:
+                    if seznam_sekcij == [] or sekcija != "" and sekcija != seznam_sekcij[-1]:
                         seznam_sekcij.append(sekcija)
                         excel_delovni_list.append([f"{sekcija}"])
                         excel_delovni_list.merge_cells(
@@ -421,7 +425,7 @@ match vrsta_stroja:
                             element.index("Sekcija:") + len("Sekcija:") :
                         ].replace("Sekcija: ", "")
 
-                    if sekcija != "" and sekcija not in seznam_sekcij:
+                    if seznam_sekcij == [] or sekcija != "" and sekcija != seznam_sekcij[-1]:
                         seznam_sekcij.append(sekcija)
                         excel_delovni_list.append([f"{sekcija}"])
                         excel_delovni_list.merge_cells(
@@ -512,7 +516,11 @@ match vrsta_stroja:
                         element.index("Sekcija:") + len("Sekcija:") :
                     ].replace("Sekcija: ", "")
 
-                if sekcija != "" and sekcija not in seznam_sekcij:
+                if (
+                    seznam_sekcij == []
+                    or sekcija != ""
+                    and sekcija != seznam_sekcij[-1]
+                ):
                     seznam_sekcij.append(sekcija)
                     excel_delovni_list.append([f"{sekcija}"])
                     excel_delovni_list.merge_cells(
