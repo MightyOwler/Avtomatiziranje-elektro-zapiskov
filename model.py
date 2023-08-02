@@ -371,6 +371,63 @@ def zapisi_kocko_meritev_v_excel_instalacije(
                 writer.writerow(array_ki_ga_zapisemo_v_csv)
                 csvfile.close()
 
+        if vrsta_meritve == "Z auto":
+            with open(
+                CSVFILE_OSNOVNE,
+                "a",
+                encoding="utf-8",
+                newline="",
+            ) as csvfile:
+                writer = csv.writer(
+                    csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
+                )
+
+                # TODO popravi če ne dela
+
+                tip_varovalke = meritev.najdi_tip_varovalke()
+                I_varovalke = meritev.najdi_I_varovalke()
+                t_varovalke = meritev.najdi_t_varovalke()
+                isc_faktor = meritev.najdi_Isc_faktor()
+                zln = meritev.najdi_Z_LN()
+                ipsc_ln = meritev.najdi_Ipsc_LN()
+                ipsc_lpe = meritev.najdi_Ipsc_LPE()
+                dU = meritev.najdi_dU()
+                zlpe = meritev.najdi_Z_LPE()
+                komentar = meritev.najdi_komentar()
+
+                st_vnesenih_meritev += 1
+                array_ki_ga_zapisemo_v_csv = [
+                    st_vnesenih_meritev,
+                    ime,
+                    PRAZNO,
+                    PRAZNO,
+                    PRAZNO,
+                    glavna_izenac_povezava,
+                    PRAZNO,
+                    rlpe,
+                    tip_varovalke,
+                    I_varovalke,
+                    t_varovalke,
+                    f"{zlpe}/{ipsc_ln}",
+                    f"{zln}/{ipsc_lpe}/{dU}",
+                    PRAZNO,
+                    I_dN,
+                    PRAZNO,
+                    t1x,
+                    t5x,
+                    Uc,
+                    PRAZNO,
+                    komentar,
+                    vrsta_meritve,
+                    uln,
+                    maxRplusRminus,
+                    isc_faktor,
+                    ia_psc_navidezni_stolpec,
+                    pot,
+                ]
+                writer.writerow(array_ki_ga_zapisemo_v_csv)
+                csvfile.close()
+
         if vrsta_meritve in ["ZLOOP 4W", "Zline 4W"]:
             if vrsta_meritve == "ZLOOP 4W":
                 # print(meritev.najdi_Ipsc())
@@ -746,7 +803,9 @@ def zapisi_kocko_meritev_v_excel_stroji(
                         writer.writerow(array_ki_ga_zapisemo_v_csv)
                     else:
                         Un = int(meritev.najdi_Un().replace(" V", ""))
-                        Ipsc = float(meritev.najdi_Ia_Ipsc().replace(",", ".").replace(">", ""))
+                        Ipsc = float(
+                            meritev.najdi_Ia_Ipsc().replace(",", ".").replace(">", "")
+                        )
                         Z = (
                             "X"
                             if meritev.najdi_Z() == "X"

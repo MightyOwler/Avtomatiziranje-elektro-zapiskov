@@ -4,6 +4,7 @@ SEZNAM_VRST_MERITEV = [
     "AUTO TN",
     "Zloop",
     "Z LINE",
+    "Z auto",
     "RCD Auto",
     "R low 4",
     "Varistor",
