@@ -13,14 +13,6 @@ jsonfile = open("slovar_besed.json")
 SLOVAR = json.load(jsonfile)
 
 
-# meja_izolacijske_upornosti_stroji_riso_rdeca = float(
-#     input("Določi rdečo mejo izoacijske upornosti v MOhm")
-# )
-# meja_izolacijske_upornosti_stroji_riso_oranzna = float(
-#     input("Določi oranzna mejo izoacijske upornosti v MOhm")
-# )
-
-
 prevedi_v_anglescino = bool(
     input("Ali naj prevede v angleščino? Če ja, napiši karkoli, če ni, pusti prazno!")
 )
@@ -676,6 +668,7 @@ def zapisi_kocko_meritev_v_excel_stroji(
     t_varovalke_neprekinjenost,
     I_varovalke_neprekinjenost,
     tip_varovalke_neprekinjenost,
+    meja_izolacijske_upornosti_stroji_riso_rdeca,
 ):
     CSVFILE_ZLOOP = os.path.join("Csvji", "Stroji", "csv_za_excel_datoteko_ZLOOP.csv")
     CSVFILE_RISO = os.path.join("Csvji", "Stroji", "csv_za_excel_datoteko_R ISO.csv")
@@ -823,7 +816,25 @@ def zapisi_kocko_meritev_v_excel_stroji(
                     komentar = meritev.najdi_komentar()
                     riso = meritev.najdi_Riso()
 
-                    array_ki_ga_zapisemo_v_csv = [PRAZNO, PRAZNO, riso, komentar]
+                    krizec_kljukica = (
+                        "✗"
+                        if float(
+                            riso.replace(">", "").replace(",", ".").replace(" MΩ", "")
+                        )
+                        < meja_izolacijske_upornosti_stroji_riso_rdeca
+                        else "✓"
+                    )
+
+                    # TODO tukaj bo izračun
+
+                    array_ki_ga_zapisemo_v_csv = [
+                        PRAZNO,
+                        PRAZNO,
+                        PRAZNO,
+                        riso,
+                        krizec_kljukica,
+                        komentar,
+                    ]
                     writer.writerow(array_ki_ga_zapisemo_v_csv)
             csvfile.close()
 
@@ -873,7 +884,7 @@ def zapisi_kocko_meritev_v_excel_stroji(
                         tip_varovalke_neprekinjenost = meritev.najdi_tip_varovalke()
 
                     komentar = meritev.najdi_komentar()
-                    R = float(meritev.najdi_R().replace(",", "."))
+                    R = float(meritev.najdi_R().replace(",", ".").replace(">", ""))
 
                     trajanje = float(
                         meritev.najdi_trajanje().replace(" s", "").replace(",", ".")

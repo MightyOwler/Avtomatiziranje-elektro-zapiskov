@@ -53,6 +53,14 @@ if tip_varovalke_stroji_neprekinjenost not in [
 ]:
     sys.exit("Ta tip varovalke ne obstaja.")
 
+meja_izolacijske_upornosti_stroji_riso_rdeca = float(
+    input("Določi rdečo mejo izoacijske upornosti v MOhm")
+)
+meja_izolacijske_upornosti_stroji_riso_oranzna = float(
+    input("Določi oranzna mejo izoacijske upornosti v MOhm")
+)
+
+
 if trafo_postaja:
     print(Fore.GREEN + "--------------------------------------")
     print("|| Objekt ima svojo trafo postajo. || ")
@@ -432,6 +440,7 @@ match vrsta_stroja:
                 t_varovalke_neprekinjenost=t_varovalke_stroji_neprekinjenost,
                 I_varovalke_neprekinjenost=I_varovalke_stroji_neprekinjenost,
                 tip_varovalke_neprekinjenost=tip_varovalke_stroji_neprekinjenost,
+                meja_izolacijske_upornosti_stroji_riso_rdeca=meja_izolacijske_upornosti_stroji_riso_rdeca,
             )
 
         for pripona in VSE_PRIPONE_DATOTEK:
@@ -488,11 +497,16 @@ match vrsta_stroja:
                 excel_delovni_list.append(vrstica.split(";"))
 
                 # DISCHARGE TIME na roko
-                if pripona in ["R_ISO", "ZLOOP", "NEPREKINJENOST"]:
+                if pripona in ["R ISO", "ZLOOP", "NEPREKINJENOST"]:
                     napake = ""
                     if debug_mode:
                         print(pot_locena_na_elemente)
-                    str_napake = f'napake = preveri_meje_{pripona}(vrstica.split(";"))'
+                    if pripona == "R ISO":
+                        str_napake = f'napake = preveri_meje_R_ISO(vrstica.split(";"), meja_izolacijske_upornosti_stroji_riso_oranzna = meja_izolacijske_upornosti_stroji_riso_oranzna)'
+                    else:
+                        str_napake = (
+                            f'napake = preveri_meje_{pripona}(vrstica.split(";"))'
+                        )
                     exec(str_napake)
                     if napake:
                         for indeks, barva in napake.items():
