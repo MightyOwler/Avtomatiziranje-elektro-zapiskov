@@ -1096,6 +1096,67 @@ def zapisi_kocko_meritev_v_excel_stroji(
                             pot,
                         ]
                         writer.writerow(array_ki_ga_zapisemo_v_csv)
+
+                    if tip_varovalke_neprekinjenost in ["B", "C", "D", "K"]:
+                        excel_delovni_list = excel_delovna_datoteka["BCD"]
+                        prva_vrstica = 6
+                        zadnja_vrstica = 18
+
+                        # TODO ali to res dela
+
+                        if tip_varovalke_neprekinjenost == "K":
+                            stolpec_K = [
+                                excel_delovni_list.cell(row=i, column=8).value
+                                for i in range(prva_vrstica, zadnja_vrstica + 1)
+                            ]
+
+                            stolpec_K_drugi = [
+                                excel_delovni_list.cell(row=i, column=9).value
+                                for i in range(prva_vrstica, zadnja_vrstica + 1)
+                            ]
+
+                            tok_zascite = stolpec_K_drugi[
+                                stolpec_K.index(I_varovalke_neprekinjenost)
+                            ]
+
+                        else:
+                            slovar_tipa_varovalk_in_stolpcev = {
+                                "B": 2,
+                                "C": 4,
+                                "D": 6,
+                            }
+
+                            stolpec = slovar_tipa_varovalk_in_stolpcev[
+                                tip_varovalke_neprekinjenost
+                            ]
+
+                            stolpec_1 = [
+                                excel_delovni_list.cell(row=i, column=1).value
+                                for i in range(prva_vrstica, zadnja_vrstica + 1)
+                            ]
+
+                            stolpec_2 = [
+                                excel_delovni_list.cell(row=i, column=stolpec).value
+                                for i in range(prva_vrstica, zadnja_vrstica + 1)
+                            ]
+
+                            tok_zascite = stolpec_2[
+                                stolpec_1.index(int(I_varovalke_neprekinjenost))
+                            ]
+
+                        izracun = min((tok_zascite / napetost_dotika), 0.3)
+                        krizec_kljukica = "✓" if izracun > R else "✗"
+                        array_ki_ga_zapisemo_v_csv = [
+                            PRAZNO,
+                            komentar,
+                            i_out,
+                            R,
+                            PRAZNO,
+                            krizec_kljukica,
+                            trajanje,
+                            pot,
+                        ]
+                        writer.writerow(array_ki_ga_zapisemo_v_csv)
             csvfile.close()
 
 

@@ -44,17 +44,10 @@ if not I_varovalke_stroji_neprekinjenost:
     I_varovalke_stroji_neprekinjenost = 0.3
 
 tip_varovalke_stroji_neprekinjenost = str(
-    input("Določi tip varovalke, recimo med drugim gG, gL, NV, B, C, D.")
+    input("Določi tip varovalke, recimo gG, gL, NV, B, C, D, K")
 )
 
-if tip_varovalke_stroji_neprekinjenost not in [
-    "gG",
-    "gL",
-    "NV",
-    "B",
-    "C",
-    "D",
-]:
+if tip_varovalke_stroji_neprekinjenost not in ["gG", "gL", "NV", "B", "C", "D", "K"]:
     sys.exit("Ta tip varovalke ne obstaja.")
 
 meja_izolacijske_upornosti_stroji_riso_rdeca = float(
