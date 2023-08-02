@@ -16,28 +16,28 @@ def preberi_float_z_mesta_v_seznamu(seznam, mesto, pomozno_mesto=None):
         return float(seznam[mesto].replace(",", ".")) if seznam[mesto] != "X" else "X"
 
 
-def preveri_meje_R_ISO(seznam, trafo=True):
+def preveri_meje_R_ISO(seznam):
     # funkcija prejme seznam s 25 elementi, ter binarno vrendost trafo
 
     slovar_problematicnih_meritev = dict()
 
-    print(len(seznam))
-    print(seznam)
+    return slovar_problematicnih_meritev
 
 
-def preveri_meje_ZLOOP(seznam, trafo=True):
+def preveri_meje_ZLOOP(seznam):
     # funkcija prejme seznam s 25 elementi, ter binarno vrendost trafo
 
     slovar_problematicnih_meritev = dict()
 
-    print(len(seznam))
-    print(seznam)
+    return slovar_problematicnih_meritev
 
 
-def preveri_meje_NEPREKINJENOST(seznam, trafo=True):
+def preveri_meje_NEPREKINJENOST(seznam):
     # funkcija prejme seznam s 25 elementi, ter binarno vrendost trafo
 
     slovar_problematicnih_meritev = dict()
 
-    print(len(seznam))
-    print(seznam)
+    if seznam[5] == "✗":
+        slovar_problematicnih_meritev[3] = RDECA
+
+    return slovar_problematicnih_meritev

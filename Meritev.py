@@ -287,6 +287,14 @@ class Meritev:
     def najdi_Re(self):
         return self.najdi_element("Re:")
 
+    # neprekinjenost
+
+    def najdi_trajanje(self):
+        return self.najdi_element("Trajanje:")
+
+    def najdi_I_out(self):
+        return self.najdi_element("I out:")
+
 
 def pretvori_v_osnovne_enote(niz):
     """

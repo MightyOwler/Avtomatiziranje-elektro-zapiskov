@@ -7,6 +7,7 @@ from meje_stroji import *
 from meje_strelovodi import *
 import re
 import os
+import sys
 
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill, Font, Alignment
@@ -27,6 +28,30 @@ print(f"Tvoja odločitev {vrsta_stroja}")
 trafo_postaja = bool(
     input("Ali je trafo postaja? Če je, napiši karkoli, če ni, pusti prazno! ")
 )
+
+t_varovalke_stroji_neprekinjenost = float(
+    input(
+        "Določi t_varovalke za neprekinjenost. Izbiraš med 0.1, 0.2, 0.4, 5.0 sekund."
+    )
+)
+
+I_varovalke_stroji_neprekinjenost = float(
+    input("Določi I_varovalke za neprekinjenost v amperih.")
+)
+
+tip_varovalke_stroji_neprekinjenost = str(
+    input("Določi tip varovalke, recimo med drugim gG, gL, NV, B, C, D.")
+)
+
+if tip_varovalke_stroji_neprekinjenost not in [
+    "gG",
+    "gL",
+    "NV",
+    "B",
+    "C",
+    "D",
+]:
+    sys.exit("Ta tip varovalke ne obstaja.")
 
 if trafo_postaja:
     print(Fore.GREEN + "--------------------------------------")
@@ -401,7 +426,12 @@ match vrsta_stroja:
 
         for kocka in seznam_vseh_meritev:
             model.zapisi_kocko_meritev_v_excel_stroji(
-                kocka, seznam_vseh_meritev, slovar_kock_in_ustreznih_poti
+                kocka,
+                seznam_vseh_meritev,
+                slovar_kock_in_ustreznih_poti,
+                t_varovalke_neprekinjenost=t_varovalke_stroji_neprekinjenost,
+                I_varovalke_neprekinjenost=I_varovalke_stroji_neprekinjenost,
+                tip_varovalke_neprekinjenost=tip_varovalke_stroji_neprekinjenost,
             )
 
         for pripona in VSE_PRIPONE_DATOTEK:
@@ -462,7 +492,7 @@ match vrsta_stroja:
                     napake = ""
                     if debug_mode:
                         print(pot_locena_na_elemente)
-                    str_napake = f'napake = preveri_meje_{pripona}(vrstica.split(";"), trafo=trafo_postaja)'
+                    str_napake = f'napake = preveri_meje_{pripona}(vrstica.split(";"))'
                     exec(str_napake)
                     if napake:
                         for indeks, barva in napake.items():
