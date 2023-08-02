@@ -722,37 +722,56 @@ def zapisi_kocko_meritev_v_excel_stroji(
                     # dodaj specifične atribute
 
                     tip_varovalke = meritev.najdi_tip_varovalke()
-                    t_varovalke = float(
-                        meritev.najdi_t_varovalke().replace(" s", "").replace(",", ".")
+                    t_varovalke = (
+                        "X"
+                        if meritev.najdi_t_varovalke() == "X"
+                        else float(
+                            meritev.najdi_t_varovalke()
+                            .replace(" s", "")
+                            .replace(",", ".")
+                        )
                     )
-                    i_varovalke = float(
-                        meritev.najdi_I_varovalke().replace(" A", "").replace(",", ".")
+                    i_varovalke = (
+                        "X"
+                        if meritev.najdi_I_varovalke() == "X"
+                        else float(
+                            meritev.najdi_I_varovalke()
+                            .replace(" A", "")
+                            .replace(",", ".")
+                        )
                     )
 
-                    Un = int(meritev.najdi_Un().replace(" V", ""))
-                    Ipsc = meritev.najdi_Ia_Ipsc()
-                    Z = meritev.najdi_Z()
+                    if i_varovalke == "X":
+                        array_ki_ga_zapisemo_v_csv = ["X" for _ in range(11)] + [pot]
+                        writer.writerow(array_ki_ga_zapisemo_v_csv)
+                    else:
+                        Un = int(meritev.najdi_Un().replace(" V", ""))
+                        Ipsc = float(meritev.najdi_Ia_Ipsc().replace(",", ".").replace(">", ""))
+                        Z = (
+                            "X"
+                            if meritev.najdi_Z() == "X"
+                            else float(
+                                meritev.najdi_Z().replace(",", ".").replace(">", "")
+                            )
+                        )
 
-                    ##
+                        excel_delovna_datoteka = load_workbook(
+                            "Meje za meritve.xlsx", data_only=True
+                        )
 
-                    excel_delovna_datoteka = load_workbook(
-                        "Meje za meritve.xlsx", data_only=True
-                    )
-
-                    t_varovalke_je_ustrezen = False
-                    for vrednost in [0.1, 0.2, 0.4, 5.0]:
-                        if t_varovalke == vrednost:
-                            t_varovalke_je_ustrezen = True
-                            break
-
-                    if not t_varovalke_je_ustrezen:
-                        tok_zascite = "X"
-                        izracun = "X"
-
-                    if tip_varovalke in ["gG", "gL", "NV"]:
                         excel_delovni_list = excel_delovna_datoteka["gG"]
                         prva_vrstica = 6
                         zadnja_vrstica = 34
+
+                        t_varovalke_je_ustrezen = False
+                        for vrednost in [0.1, 0.2, 0.4, 5.0]:
+                            if t_varovalke == vrednost:
+                                t_varovalke_je_ustrezen = True
+                                break
+
+                        if not t_varovalke_je_ustrezen:
+                            tok_zascite = "X"
+                            izracun = "X"
 
                         slovar_t_varovalk_in_stolpcev = {
                             0.1: 1,
@@ -760,49 +779,105 @@ def zapisi_kocko_meritev_v_excel_stroji(
                             0.4: 7,
                             5.0: 10,
                         }
-                        stolpec = slovar_t_varovalk_in_stolpcev[t_varovalke]
+                        if t_varovalke_neprekinjenost in slovar_t_varovalk_in_stolpcev:
+                            stolpec = slovar_t_varovalk_in_stolpcev[
+                                t_varovalke_neprekinjenost
+                            ]
+                        else:
+                            print("Nemogoče trajanje")
 
                         if t_varovalke == 0.1:
                             zadnja_vrstica = 30
 
-                        stolpec_1 = [
+                        stolpec_0 = [
                             excel_delovni_list.cell(row=i, column=stolpec).value
                             for i in range(prva_vrstica, zadnja_vrstica + 1)
                         ]
 
-                        if i_varovalke not in stolpec_1:
-                            tok_zascite = "X"
-                            izracun = "X"
-                        else:
-                            tok_zascite = excel_delovni_list.cell(
-                                row=stolpec_1.index(i_varovalke) + 6, column=stolpec + 1
-                            ).value
-                            izracun = 2 / 3 * (Un / tok_zascite)
+                        tok_zascite = excel_delovni_list.cell(
+                            row=stolpec_0.index(i_varovalke) + 6, column=stolpec + 1
+                        ).value
+                        izracun = 2 / 3 * (Un / tok_zascite)
 
-                    if tip_varovalke in ["B", "D", "C"]:
-                        excel_delovni_list = excel_delovna_datoteka["BCD"]
-
-                        prva_vrstica = 6
-                        zadnja_vrstica = 17
-
-                        slovar_tipov_varovalk_in_stolpcev = {"B": 2, "C": 4, "D": 6}
-                        stolpec = slovar_tipov_varovalk_in_stolpcev[tip_varovalke]
+                        excel_delovni_list = excel_delovna_datoteka["ZLOOP"]
+                        prva_vrstica = 2
+                        zadnja_vrstica = 13
 
                         stolpec_1 = [
                             excel_delovni_list.cell(row=i, column=1).value
                             for i in range(prva_vrstica, zadnja_vrstica + 1)
                         ]
 
-                        if i_varovalke not in stolpec_1:
+                        stolpec_2 = [
+                            excel_delovni_list.cell(row=i, column=2).value
+                            for i in range(prva_vrstica, zadnja_vrstica + 1)
+                        ]
+
+                        stolpec_3 = [
+                            excel_delovni_list.cell(row=i, column=3).value
+                            for i in range(prva_vrstica, zadnja_vrstica + 1)
+                        ]
+
+                        # to se načeloma ne bi smelo zgoditi
+                        if i_varovalke not in stolpec_3:
                             tok_zascite = "X"
                             izracun = "X"
                         else:
-                            vrednost_vrst = {"B": 1, "C": 3, "D": 5}
-                            tok_zascite = excel_delovni_list.cell(
-                                row=stolpec_1.index(i_varovalke) + 6,
-                                column=stolpec + vrednost_vrst[tip_varovalke],
-                            ).value
-                            izracun = 2 / 3 * (Un / tok_zascite)
+                            idx = stolpec_3.index(i_varovalke)
+                            Z_meja = stolpec_1[idx]
+                            min_vodnik = stolpec_2[idx]
+
+                            slovar_tipov_varovalk_in_stolpcev = {
+                                "NV": 4,
+                                "gG": 4,
+                                "gL": 4,
+                                "B": 6,
+                                "C": 7,
+                                "D": 8,
+                            }
+
+                            if tip_varovalke not in slovar_tipov_varovalk_in_stolpcev:
+                                max_meter = "X"
+
+                            if t_varovalke not in [0.4, 5.0]:
+                                max_meter = "X"
+                            dodaten_zamik_stolpca = 1 if t_varovalke == 0.4 else 0
+
+                            stolpec_metra = [
+                                excel_delovni_list.cell(
+                                    row=i,
+                                    column=slovar_tipov_varovalk_in_stolpcev[
+                                        tip_varovalke
+                                    ]
+                                    + dodaten_zamik_stolpca,
+                                ).value
+                                for i in range(prva_vrstica, zadnja_vrstica + 1)
+                            ]
+
+                            max_meter = stolpec_metra[idx]
+                            oknok = (
+                                "✓"
+                                if (
+                                    (int(Z_meja) + 25) / 1000 > Z and tok_zascite < Ipsc
+                                )
+                                else "✗"
+                            )
+
+                            array_ki_ga_zapisemo_v_csv = [
+                                PRAZNO,
+                                komentar,
+                                t_varovalke,
+                                Un,
+                                tok_zascite,
+                                str(izracun).replace(".", ","),
+                                f"{Ipsc}/{str(Z)}".replace(".", ","),
+                                oknok,
+                                min_vodnik,
+                                max_meter,
+                                Z_meja,
+                                pot,
+                            ]
+                            writer.writerow(array_ki_ga_zapisemo_v_csv)
             csvfile.close()
 
     if slovar_vrst_meritev["R iso"] + slovar_vrst_meritev["R IZO"] > 0:
@@ -817,12 +892,18 @@ def zapisi_kocko_meritev_v_excel_stroji(
                     riso = meritev.najdi_Riso()
 
                     krizec_kljukica = (
-                        "✗"
-                        if float(
-                            riso.replace(">", "").replace(",", ".").replace(" MΩ", "")
+                        "X"
+                        if riso == "X"
+                        else (
+                            "✗"
+                            if float(
+                                riso.replace(">", "")
+                                .replace(",", ".")
+                                .replace(" MΩ", "")
+                            )
+                            < meja_izolacijske_upornosti_stroji_riso_rdeca
+                            else "✓"
                         )
-                        < meja_izolacijske_upornosti_stroji_riso_rdeca
-                        else "✓"
                     )
 
                     # TODO tukaj bo izračun
@@ -1120,8 +1201,7 @@ def najdi_po_vrsti_urejen_seznam_datumov(vse_besedilo):
         if re.search(r"\d{2}\.\d{2}\.\d{4}", i):
             # vsi datumi so pravilne oblike (zraven so zapisane odvečne ničle),
             # zato je upravičeno tole
-            string_datuma = i[9:]
-            # print(string_datuma)
+            string_datuma = re.search(r"\d{2}\.\d{2}\.\d{4}", i).group()
             datum = datetime.strptime(string_datuma, "%d.%m.%Y")
             seznam_stringov_z_datumi.append(datum)
     return [

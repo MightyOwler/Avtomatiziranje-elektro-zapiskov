@@ -5,6 +5,7 @@ from colorama import Fore
 from meje_instalacije import *
 from meje_stroji import *
 from meje_strelovodi import *
+from meje_omare import *
 import re
 import os
 import sys
@@ -38,6 +39,9 @@ t_varovalke_stroji_neprekinjenost = float(
 I_varovalke_stroji_neprekinjenost = float(
     input("Določi I_varovalke za neprekinjenost v amperih.")
 )
+
+if not I_varovalke_stroji_neprekinjenost:
+    I_varovalke_stroji_neprekinjenost = 0.3
 
 tip_varovalke_stroji_neprekinjenost = str(
     input("Določi tip varovalke, recimo med drugim gG, gL, NV, B, C, D.")
@@ -284,6 +288,19 @@ match vrsta_stroja:
                     )
             excel_delovni_list.append(vrstica.split(";"))
             st_vrstic += 1
+
+            napake = ""
+            str_napake = f'napake = preveri_meje_omare(vrstica.split(";"))'
+            if debug_mode:  # Zelo uporabno pri debugganju.
+                print(pot_locena_na_elemente)
+            exec(str_napake)
+            if napake:
+                for indeks, barva in napake.items():
+                    excel_delovni_list.cell(
+                        i + visina_templata + len(seznam_sekcij) + 1, indeks + 1
+                    ).fill = PatternFill(
+                        start_color=barva, end_color=barva, fill_type="solid"
+                    )
 
         excel_delovna_datoteka.save(
             os.path.join(
