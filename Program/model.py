@@ -5,7 +5,6 @@ from Meritev import pretvori_v_osnovne_enote, SEZNAM_VRST_MERITEV
 from poti_do_datotek import *
 from openpyxl import load_workbook
 import json
-import os
 
 RUMENO_BEZ = "F5C77E"
 
@@ -778,7 +777,7 @@ def zapisi_kocko_meritev_v_excel_stroji(
 
                     if i_varovalke == "X":
                         array_ki_ga_zapisemo_v_csv = ["X" for _ in range(11)] + [pot]
-                        writer.writerow(array_ki_ga_zapisemo_v_csv)join("..", 
+                        writer.writerow(array_ki_ga_zapisemo_v_csv)
                     else:
                         Un = int(meritev.najdi_Un().replace(" V", ""))
                         Ipsc = float(

@@ -1,4 +1,5 @@
 from openpyxl import load_workbook
+from model import MEJE_ZA_MERITVE
 
 RDECA = "FF0000"
 ORANZNA = "FFA500"
@@ -72,7 +73,7 @@ def preveri_meje_osnovne(seznam, trafo=True):
             elif riso < 2:
                 slovar_problematicnih_meritev[7] = ORANZNA
 
-    excel_delovna_datoteka = load_workbook("Meje za meritve.xlsx", data_only=True)
+    excel_delovna_datoteka = load_workbook(MEJE_ZA_MERITVE, data_only=True)
 
     # Označimo z rdečo neobstoječe čase varovalk
 

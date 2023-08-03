@@ -248,7 +248,7 @@ match vrsta_stroja:
         for pripona in VSE_PRIPONE_DATOTEK:
             with open(
                 os.path.join(
-                    "Csvji", "Instalacije", f"csv_za_excel_datoteko_{pripona}.csv"
+                    "..", "Csvji", "Instalacije", f"csv_za_excel_datoteko_{pripona}.csv"
                 ),
                 "w",
                 encoding="utf-8",
@@ -258,12 +258,15 @@ match vrsta_stroja:
 
             excel_delovna_datoteka = load_workbook(
                 os.path.join(
-                    "Templati", "Instalacije", f"template_za_{pripona}_meritve.xlsx"
+                    "..",
+                    "Templati",
+                    "Instalacije",
+                    f"template_za_{pripona}_meritve.xlsx",
                 )
             )
             excel_delovna_datoteka.save(
                 os.path.join(
-                    "Porocila", "Instalacije", f"excel_datoteka_{pripona}.xlsx"
+                    "..", "Porocila", "Instalacije", f"excel_datoteka_{pripona}.xlsx"
                 )
             )
             excel_delovna_datoteka.close()
@@ -276,7 +279,7 @@ match vrsta_stroja:
         for pripona in VSE_PRIPONE_DATOTEK:
             with open(
                 os.path.join(
-                    "Csvji", "Instalacije", f"csv_za_excel_datoteko_{pripona}.csv"
+                    "..", "Csvji", "Instalacije", f"csv_za_excel_datoteko_{pripona}.csv"
                 ),
                 "r",
                 encoding="utf-8",
@@ -286,7 +289,7 @@ match vrsta_stroja:
 
             excel_delovna_datoteka = load_workbook(
                 os.path.join(
-                    "Porocila", "Instalacije", f"excel_datoteka_{pripona}.xlsx"
+                    "..", "Porocila", "Instalacije", f"excel_datoteka_{pripona}.xlsx"
                 )
             )
             excel_delovni_list = excel_delovna_datoteka.active
@@ -348,7 +351,7 @@ match vrsta_stroja:
 
             excel_delovna_datoteka.save(
                 os.path.join(
-                    "Porocila", "Instalacije", f"excel_datoteka_{pripona}.xlsx"
+                    "..", "Porocila", "Instalacije", f"excel_datoteka_{pripona}.xlsx"
                 )
             )
 
@@ -362,7 +365,9 @@ match vrsta_stroja:
         VSE_PRIPONE_DATOTEK = ["ZLOOP", "R ISO", "DISCHARGE TIME", "NEPREKINJENOST"]
         for pripona in VSE_PRIPONE_DATOTEK:
             with open(
-                os.path.join("Csvji", "Stroji", f"csv_za_excel_datoteko_{pripona}.csv"),
+                os.path.join(
+                    "..", "Csvji", "Stroji", f"csv_za_excel_datoteko_{pripona}.csv"
+                ),
                 "w",
                 encoding="utf-8",
                 newline="",
@@ -371,11 +376,13 @@ match vrsta_stroja:
 
             excel_delovna_datoteka = load_workbook(
                 os.path.join(
-                    "Templati", "Stroji", f"template_za_{pripona}_meritve.xlsx"
+                    "..", "Templati", "Stroji", f"template_za_{pripona}_meritve.xlsx"
                 )
             )
             excel_delovna_datoteka.save(
-                os.path.join("Porocila", "Stroji", f"excel_datoteka_{pripona}.xlsx")
+                os.path.join(
+                    "..", "Porocila", "Stroji", f"excel_datoteka_{pripona}.xlsx"
+                )
             )
             excel_delovna_datoteka.close()
 
@@ -394,7 +401,9 @@ match vrsta_stroja:
 
         for pripona in VSE_PRIPONE_DATOTEK:
             with open(
-                os.path.join("Csvji", "Stroji", f"csv_za_excel_datoteko_{pripona}.csv"),
+                os.path.join(
+                    "..", "Csvji", "Stroji", f"csv_za_excel_datoteko_{pripona}.csv"
+                ),
                 "r",
                 encoding="utf-8",
                 newline="",
@@ -402,7 +411,9 @@ match vrsta_stroja:
                 vrstice = csvfile.readlines()
 
             excel_delovna_datoteka = load_workbook(
-                os.path.join("Porocila", "Stroji", f"excel_datoteka_{pripona}.xlsx")
+                os.path.join(
+                    "..", "Porocila", "Stroji", f"excel_datoteka_{pripona}.xlsx"
+                )
             )
 
             excel_delovni_list = excel_delovna_datoteka.active
@@ -468,7 +479,9 @@ match vrsta_stroja:
                             )
 
                 excel_delovna_datoteka.save(
-                    os.path.join("Porocila", "Stroji", f"excel_datoteka_{pripona}.xlsx")
+                    os.path.join(
+                        "..", "Porocila", "Stroji", f"excel_datoteka_{pripona}.xlsx"
+                    )
                 )
 
             print("-----------------------------------------------------------------")
