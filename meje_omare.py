@@ -6,7 +6,7 @@ MODRA = "99FFFF"
 
 
 def preveri_meje_omare(seznam):
-    # funkcija prejme seznam s 25 elementi, ter binarno vrendost trafo
+    # funkcija prejme seznam s 3 elementi (pot je 4), ter binarno vrendost trafo
 
     slovar_problematicnih_meritev = dict()
 

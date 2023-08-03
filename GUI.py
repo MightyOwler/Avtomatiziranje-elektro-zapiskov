@@ -1,8 +1,6 @@
 import tkinter as tk
 from tkinter import simpledialog
 
-result = None  # Define result at the global scope
-
 
 class CustomDialogUstrezenListGledeNaTip(simpledialog.Dialog):
     def __init__(self, parent, lst, **kwargs):
@@ -276,17 +274,8 @@ option_var.set(options[0])
 option_menu = tk.OptionMenu(root, option_var, *options)
 option_menu.pack()
 
-button_submit = tk.Button(root, text="Submit", command=vnesi_vrsto_meritev)
+button_submit = tk.Button(root, text="V redu", command=vnesi_vrsto_meritev)
 button_submit.pack()
 
 # Start the main event loop
 root.mainloop()
-
-# Print the result after the main loop
-print("Results after main loop:")
-if result:
-    boolean_value, float_value = result
-    print("Boolean value:", boolean_value)
-    print("Float value:", float_value)
-else:
-    print("No result.")

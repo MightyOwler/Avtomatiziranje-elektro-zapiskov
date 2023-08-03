@@ -13,6 +13,71 @@ jsonfile = open("slovar_besed.json")
 SLOVAR = json.load(jsonfile)
 
 
+# CSV DATOTEKE -------------------------
+
+
+CSVFILE_INSTALACIJE_RLOW4 = os.path.join(
+    "Csvji", "Instalacije", "csv_za_excel_datoteko_RLOW4.csv"
+)
+CSVFILE_INSTALACIJE_VARISTOR = os.path.join(
+    "Csvji", "Instalacije", "csv_za_excel_datoteko_VARISTOR.csv"
+)
+CSVFILE_INSTALACIJE_OSNOVNE = os.path.join(
+    "Csvji", "Instalacije", "csv_za_excel_datoteko_osnovne.csv"
+)
+CSVFILE_INSTALACIJE_RCD = os.path.join(
+    "Csvji", "Instalacije", "csv_za_excel_datoteko_RCD.csv"
+)
+
+CSVFILE_STROJI_ZLOOP = os.path.join(
+    "Csvji", "Stroji", "csv_za_excel_datoteko_ZLOOP.csv"
+)
+CSVFILE_STROJI_RISO = os.path.join("Csvji", "Stroji", "csv_za_excel_datoteko_R ISO.csv")
+CSVFILE_STROJI_DISCHARGE_TIME = os.path.join(
+    "Csvji", "Stroji", "csv_za_excel_datoteko_DISCHARGE TIME.csv"
+)
+CSVFILE_STROJI_NEPREKINJENOST = os.path.join(
+    "Csvji", "Stroji", "csv_za_excel_datoteko_NEPREKINJENOST.csv"
+)
+
+CSVFILE_ELEKTRICNE_OMARE = os.path.join(
+    "Csvji", "ElektricneOmare", "csv_za_excel_datoteko_elektricne_omare.csv"
+)
+
+CSVFILE_STRELOVODI = os.path.join(
+    "Csvji", "Strelovodi", "csv_za_excel_datoteko_strelovodi.csv"
+)
+
+
+# TEMPLATI ZA EXCEL DATOTEKE ------------------
+
+TEMPLATE_STRELOVODI = os.path.join(
+    "Templati",
+    "Strelovodi",
+    f"template_za_strelovodi_meritve.xlsx",
+)
+
+TEMPLATE_ELEKTRICNE_OMARE = os.path.join(
+    "Templati",
+    "ElektricneOmare",
+    f"template_za_elektricne_omare_meritve.xlsx",
+)
+
+
+# EXCEL DATOTEKE ------------------------
+
+EXCELFILE_ELEKTRICNE_OMARE = os.path.join(
+    "Porocila", "ElektricneOmare", f"excel_datoteka_elektricne_omare.xlsx"
+)
+
+EXCELFILE_STRELOVODI = os.path.join(
+    "Porocila", "Strelovodi", f"excel_datoteka_strelovodi.xlsx"
+)
+
+
+# ---------------
+
+
 def prevedi_s_slovarjem(string, prevedi_v_anglescino):
     if prevedi_v_anglescino:
         for beseda in SLOVAR:
@@ -56,17 +121,6 @@ def zapisi_kocko_meritev_v_excel_instalacije(
 
     Args: kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti
     """
-
-    CSVFILE_RLOW4 = os.path.join(
-        "Csvji", "Instalacije", "csv_za_excel_datoteko_RLOW4.csv"
-    )
-    CSVFILE_VARISTOR = os.path.join(
-        "Csvji", "Instalacije", "csv_za_excel_datoteko_VARISTOR.csv"
-    )
-    CSVFILE_OSNOVNE = os.path.join(
-        "Csvji", "Instalacije", "csv_za_excel_datoteko_osnovne.csv"
-    )
-    CSVFILE_RCD = os.path.join("Csvji", "Instalacije", "csv_za_excel_datoteko_RCD.csv")
 
     global st_vnesenih_meritev
     global st_vnesenih_meritev_RCD
@@ -148,7 +202,9 @@ def zapisi_kocko_meritev_v_excel_instalacije(
         kocka = nova_kocka
 
     if slovar_vrst_meritev["R low 4"] > 0:
-        with open(CSVFILE_RLOW4, "a", encoding="utf-8", newline="") as csvfile:
+        with open(
+            CSVFILE_INSTALACIJE_RLOW4, "a", encoding="utf-8", newline=""
+        ) as csvfile:
             writer = csv.writer(
                 csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
             )
@@ -275,7 +331,7 @@ def zapisi_kocko_meritev_v_excel_instalacije(
 
         if vrsta_meritve == "Varistor":
             with open(
-                CSVFILE_VARISTOR,
+                CSVFILE_INSTALACIJE_VARISTOR,
                 "a",
                 encoding="utf-8",
                 newline="",
@@ -306,7 +362,7 @@ def zapisi_kocko_meritev_v_excel_instalacije(
 
         if vrsta_meritve == "AUTO TN":
             with open(
-                CSVFILE_OSNOVNE,
+                CSVFILE_INSTALACIJE_OSNOVNE,
                 "a",
                 encoding="utf-8",
                 newline="",
@@ -365,7 +421,7 @@ def zapisi_kocko_meritev_v_excel_instalacije(
 
         if vrsta_meritve == "Z auto":
             with open(
-                CSVFILE_OSNOVNE,
+                CSVFILE_INSTALACIJE_OSNOVNE,
                 "a",
                 encoding="utf-8",
                 newline="",
@@ -436,7 +492,7 @@ def zapisi_kocko_meritev_v_excel_instalacije(
 
     if "ZLOOP 4W" in vrste_meritev_v_kocki or "ZLINE 4W" in vrste_meritev_v_kocki:
         with open(
-            CSVFILE_OSNOVNE,
+            CSVFILE_INSTALACIJE_OSNOVNE,
             "a",
             encoding="utf-8",
             newline="",
@@ -549,7 +605,7 @@ def zapisi_kocko_meritev_v_excel_instalacije(
         else:
             for i in range(3):
                 with open(
-                    CSVFILE_OSNOVNE,
+                    CSVFILE_INSTALACIJE_OSNOVNE,
                     "a",
                     encoding="utf-8",
                     newline="",
@@ -636,7 +692,7 @@ def zapisi_kocko_meritev_v_excel_instalacije(
         vrsta_meritve = meritev.doloci_vrsto_meritve()
         if vrsta_meritve == "RCD Auto":
             with open(
-                CSVFILE_RCD,
+                CSVFILE_INSTALACIJE_RCD,
                 "a",
                 encoding="utf-8",
                 newline="",
@@ -721,15 +777,6 @@ def zapisi_kocko_meritev_v_excel_stroji(
     prevedi_v_anglescino,
     napetost_dotika,
 ):
-    CSVFILE_ZLOOP = os.path.join("Csvji", "Stroji", "csv_za_excel_datoteko_ZLOOP.csv")
-    CSVFILE_RISO = os.path.join("Csvji", "Stroji", "csv_za_excel_datoteko_R ISO.csv")
-    CSVFILE_DISCHARGE_TIME = os.path.join(
-        "Csvji", "Stroji", "csv_za_excel_datoteko_DISCHARGE TIME.csv"
-    )
-    CSVFILE_NEPREKINJENOST = os.path.join(
-        "Csvji", "Stroji", "csv_za_excel_datoteko_NEPREKINJENOST.csv"
-    )
-
     komentar = ""
     ime = "X"
 
@@ -761,7 +808,7 @@ def zapisi_kocko_meritev_v_excel_stroji(
     # Kako razvejiva tukaj meritve?
 
     if slovar_vrst_meritev["Zloop"] > 0:
-        with open(CSVFILE_ZLOOP, "a", encoding="utf-8", newline="") as csvfile:
+        with open(CSVFILE_STROJI_ZLOOP, "a", encoding="utf-8", newline="") as csvfile:
             writer = csv.writer(
                 csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
             )
@@ -936,7 +983,7 @@ def zapisi_kocko_meritev_v_excel_stroji(
             csvfile.close()
 
     if slovar_vrst_meritev["R iso"] + slovar_vrst_meritev["R IZO"] > 0:
-        with open(CSVFILE_RISO, "a", encoding="utf-8", newline="") as csvfile:
+        with open(CSVFILE_STROJI_RISO, "a", encoding="utf-8", newline="") as csvfile:
             writer = csv.writer(
                 csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
             )
@@ -978,7 +1025,9 @@ def zapisi_kocko_meritev_v_excel_stroji(
         slovar_vrst_meritev["Discharge time"] + slovar_vrst_meritev["Čas praznjenja"]
         > 0
     ):
-        with open(CSVFILE_DISCHARGE_TIME, "a", encoding="utf-8", newline="") as csvfile:
+        with open(
+            CSVFILE_STROJI_DISCHARGE_TIME, "a", encoding="utf-8", newline=""
+        ) as csvfile:
             writer = csv.writer(
                 csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
             )
@@ -1006,7 +1055,9 @@ def zapisi_kocko_meritev_v_excel_stroji(
             csvfile.close()
 
     if slovar_vrst_meritev["Neprekinjenost"] > 0 + slovar_vrst_meritev["R low 4"]:
-        with open(CSVFILE_NEPREKINJENOST, "a", encoding="utf-8", newline="") as csvfile:
+        with open(
+            CSVFILE_STROJI_NEPREKINJENOST, "a", encoding="utf-8", newline=""
+        ) as csvfile:
             writer = csv.writer(
                 csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
             )
@@ -1159,10 +1210,6 @@ def zapisi_kocko_meritev_v_excel_stroji(
 def zapisi_kocko_meritev_v_excel_elektricne_omare(
     kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti, prevedi_v_anglescino
 ):
-    CSVFILE_ELEKTRICNE_OMARE = os.path.join(
-        "Csvji", "ElektricneOmare", "csv_za_excel_datoteko_elektricne_omare.csv"
-    )
-
     komentar = ""
 
     pot = (
@@ -1217,10 +1264,6 @@ def zapisi_kocko_meritev_v_excel_elektricne_omare(
 def zapisi_kocko_meritev_v_excel_strelovodi(
     kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti
 ):
-    CSVFILE_STRELOVODE = os.path.join(
-        "Csvji", "Strelovodi", "csv_za_excel_datoteko_strelovodi.csv"
-    )
-
     komentar = ""
 
     pot = (
@@ -1247,7 +1290,7 @@ def zapisi_kocko_meritev_v_excel_strelovodi(
     }
 
     if slovar_vrst_meritev["R low 4"] > 0:
-        with open(CSVFILE_STRELOVODE, "a", encoding="utf-8", newline="") as csvfile:
+        with open(CSVFILE_STRELOVODI, "a", encoding="utf-8", newline="") as csvfile:
             writer = csv.writer(
                 csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
             )
@@ -1280,7 +1323,7 @@ def zapisi_kocko_meritev_v_excel_strelovodi(
         csvfile.close()
 
     if slovar_vrst_meritev["Ozemljitvena upornost"] > 0:
-        with open(CSVFILE_STRELOVODE, "a", encoding="utf-8", newline="") as csvfile:
+        with open(CSVFILE_STRELOVODI, "a", encoding="utf-8", newline="") as csvfile:
             writer = csv.writer(
                 csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
             )

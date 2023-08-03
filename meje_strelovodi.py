@@ -6,7 +6,7 @@ MODRA = "99FFFF"
 
 
 def preveri_meje_strelovodi(seznam, trafo=True):
-    # funkcija prejme seznam s 25 elementi, ter binarno vrendost trafo
+    # funkcija prejme seznam s 3 elementi, ter binarno vrendost trafo
 
     slovar_problematicnih_meritev = dict()
     R = "X" if seznam[2] == "X" else float(seznam[2].replace(">", "").replace(",", "."))

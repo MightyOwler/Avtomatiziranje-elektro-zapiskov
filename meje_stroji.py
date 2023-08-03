@@ -6,7 +6,7 @@ MODRA = "99FFFF"
 
 
 def preveri_meje_R_ISO(seznam, meja_izolacijske_upornosti_stroji_riso_oranzna=100):
-    # funkcija prejme seznam s 25 elementi, ter binarno vrendost trafo
+    # funkcija prejme seznam s 5 elementi, ter binarno vrendost trafo
 
     slovar_problematicnih_meritev = dict()
 
@@ -66,7 +66,7 @@ def preveri_meje_ZLOOP(seznam):
 
 
 def preveri_meje_NEPREKINJENOST(seznam):
-    # funkcija prejme seznam s 25 elementi, ter binarno vrendost trafo
+    # funkcija prejme seznam s 6 elementi, ter binarno vrendost trafo
 
     slovar_problematicnih_meritev = dict()
 
