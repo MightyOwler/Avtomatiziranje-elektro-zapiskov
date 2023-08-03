@@ -8,6 +8,7 @@ from meje_strelovodi import *
 from meje_omare import *
 import re
 import os
+from poti_do_datotek import *
 
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill, Font, Alignment
@@ -158,7 +159,7 @@ match vrsta_stroja:
             csvfile.close()
 
         excel_delovna_datoteka = load_workbook(TEMPLATE_ELEKTRICNE_OMARE)
-        excel_delovna_datoteka.save()
+        excel_delovna_datoteka.save(EXCELFILE_ELEKTRICNE_OMARE)
         excel_delovna_datoteka.close()
 
         for kocka in seznam_vseh_meritev:
@@ -166,7 +167,7 @@ match vrsta_stroja:
                 kocka,
                 seznam_vseh_meritev,
                 slovar_kock_in_ustreznih_poti,
-                prevedi_v_anglescino=prevedi_v_anglescino,
+                prevedi_v_anglescino,
             )
 
         with open(
