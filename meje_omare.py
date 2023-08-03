@@ -10,14 +10,14 @@ def preveri_meje_omare(seznam):
 
     slovar_problematicnih_meritev = dict()
 
-    if seznam[3] == "X":
-        slovar_problematicnih_meritev[3] = MODRA
+    if seznam[1] == "X":
+        slovar_problematicnih_meritev[1] = MODRA
     else:
-        if float(seznam[3].replace(">", "").replace(",", ".")) > 1 and 10 > float(
-            seznam[3].replace(">", "").replace(",", ".")
+        if float(seznam[1].replace(">", "").replace(",", ".")) > 1 and 10 > float(
+            seznam[1].replace(">", "").replace(",", ".")
         ):
-            slovar_problematicnih_meritev[3] = ORANZNA
-        elif float(seznam[3].replace(">", "").replace(",", ".")) >= 10:
-            slovar_problematicnih_meritev[3] = RDECA
+            slovar_problematicnih_meritev[1] = ORANZNA
+        elif float(seznam[1].replace(">", "").replace(",", ".")) >= 10:
+            slovar_problematicnih_meritev[1] = RDECA
 
     return slovar_problematicnih_meritev

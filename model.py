@@ -13,15 +13,7 @@ jsonfile = open("slovar_besed.json")
 SLOVAR = json.load(jsonfile)
 
 
-prevedi_v_anglescino = bool(
-    input("Ali naj prevede v angleščino? Če ja, napiši karkoli, če ni, pusti prazno!")
-)
-
-# 0.1
-napetost_dotika = int(input("Navedi števlo voltov, na izbiro imaš 15, 25, 50."))
-
-
-def prevedi_s_slovarjem(string):
+def prevedi_s_slovarjem(string, prevedi_v_anglescino):
     if prevedi_v_anglescino:
         for beseda in SLOVAR:
             string = string.replace(beseda, SLOVAR[beseda])
@@ -726,6 +718,8 @@ def zapisi_kocko_meritev_v_excel_stroji(
     I_varovalke_neprekinjenost,
     tip_varovalke_neprekinjenost,
     meja_izolacijske_upornosti_stroji_riso_rdeca,
+    prevedi_v_anglescino,
+    napetost_dotika,
 ):
     CSVFILE_ZLOOP = os.path.join("Csvji", "Stroji", "csv_za_excel_datoteko_ZLOOP.csv")
     CSVFILE_RISO = os.path.join("Csvji", "Stroji", "csv_za_excel_datoteko_R ISO.csv")
@@ -774,7 +768,9 @@ def zapisi_kocko_meritev_v_excel_stroji(
 
             for meritev in kocka:
                 if meritev.doloci_vrsto_meritve() == "Zloop":
-                    komentar = prevedi_s_slovarjem(meritev.najdi_komentar())
+                    komentar = prevedi_s_slovarjem(
+                        meritev.najdi_komentar(), prevedi_v_anglescino
+                    )
 
                     # dodaj specifične atribute
 
@@ -1161,7 +1157,7 @@ def zapisi_kocko_meritev_v_excel_stroji(
 
 
 def zapisi_kocko_meritev_v_excel_elektricne_omare(
-    kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti
+    kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti, prevedi_v_anglescino
 ):
     CSVFILE_ELEKTRICNE_OMARE = os.path.join(
         "Csvji", "ElektricneOmare", "csv_za_excel_datoteko_elektricne_omare.csv"
@@ -1200,7 +1196,9 @@ def zapisi_kocko_meritev_v_excel_elektricne_omare(
                 csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
             )
             for meritev in kocka:
-                komentar = prevedi_s_slovarjem(meritev.najdi_komentar())
+                komentar = prevedi_s_slovarjem(
+                    meritev.najdi_komentar(), prevedi_v_anglescino=prevedi_v_anglescino
+                )
                 R = meritev.najdi_R()
                 if R == "X":
                     oknok = "X"

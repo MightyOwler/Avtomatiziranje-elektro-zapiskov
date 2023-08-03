@@ -13,60 +13,66 @@ import sys
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill, Font, Alignment
 
+from poskus_GUI import *
+
 
 # Če hočeš vklopiti debugganje, daš debug_mode na True
 debug_mode = True
 
 # obstaja 7 osnovnih vrst meritev: AUTO TN, Zloop mΩ, Z LINE, RCD Auto, R low 4, Varistor, R iso, R IZO, ZLOOP 4W, Zline 4W
 
-slovar_strojev = {1: "elektricna omara", 2: "inštalacija", 3: "stroj", 4: "strelovod"}
+# slovar_strojev = {1: "električna omara", 2: "inštalacija", 3: "stroj", 4: "strelovod"}
 
-vrsta_stroja = slovar_strojev.get(
-    int(input("1: elektricna omara, 2: inštalacija, 3: stroj, 4: strelovod\n"))
-)
-print(f"Tvoja odločitev {vrsta_stroja}")
+# prevedi_v_anglescino = bool(
+#     input("Ali naj prevede v angleščino? Če ja, napiši karkoli, če ni, pusti prazno!")
+# )
 
-trafo_postaja = bool(
-    input("Ali je trafo postaja? Če je, napiši karkoli, če ni, pusti prazno! ")
-)
+# vrsta_stroja = slovar_strojev.get(
+#     int(input("1: električna omara, 2: inštalacija, 3: stroj, 4: strelovod\n"))
+# )
+# print(f"Tvoja odločitev {vrsta_stroja}")
 
-t_varovalke_stroji_neprekinjenost = float(
-    input(
-        "Določi t_varovalke za neprekinjenost. Izbiraš med 0.1, 0.2, 0.4, 5.0 sekund."
-    )
-)
+# trafo_postaja = bool(
+#     input("Ali je trafo postaja? Če je, napiši karkoli, če ni, pusti prazno! ")
+# )
 
-I_varovalke_stroji_neprekinjenost = float(
-    input("Določi I_varovalke za neprekinjenost v amperih.")
-)
+# t_varovalke_stroji_neprekinjenost = float(
+#     input(
+#         "Določi t_varovalke za neprekinjenost. Izbiraš med 0.1, 0.2, 0.4, 5.0 sekund."
+#     )
+# )
 
-if not I_varovalke_stroji_neprekinjenost:
-    I_varovalke_stroji_neprekinjenost = 0.3
+# I_varovalke_stroji_neprekinjenost = float(
+#     input("Določi I_varovalke za neprekinjenost v amperih.")
+# )
 
-tip_varovalke_stroji_neprekinjenost = str(
-    input("Določi tip varovalke, recimo gG, gL, NV, B, C, D, K")
-)
+# if not I_varovalke_stroji_neprekinjenost:
+#     I_varovalke_stroji_neprekinjenost = 0.3
 
-if tip_varovalke_stroji_neprekinjenost not in ["gG", "gL", "NV", "B", "C", "D", "K"]:
-    sys.exit("Ta tip varovalke ne obstaja.")
+# tip_varovalke_stroji_neprekinjenost = str(
+#     input("Določi tip varovalke, recimo gG, gL, NV, B, C, D, K")
+# )
 
-meja_izolacijske_upornosti_stroji_riso_rdeca = float(
-    input("Določi rdečo mejo izoacijske upornosti v MOhm")
-)
-meja_izolacijske_upornosti_stroji_riso_oranzna = float(
-    input("Določi oranzna mejo izoacijske upornosti v MOhm")
-)
+# if tip_varovalke_stroji_neprekinjenost not in ["gG", "gL", "NV", "B", "C", "D", "K"]:
+#     sys.exit("Ta tip varovalke ne obstaja.")
+
+# meja_izolacijske_upornosti_stroji_riso_rdeca = float(
+#     input("Določi rdečo mejo izoacijske upornosti v MOhm")
+# )
+# meja_izolacijske_upornosti_stroji_riso_oranzna = float(
+#     input("Določi oranzna mejo izoacijske upornosti v MOhm")
+# )
 
 
-if trafo_postaja:
-    print(Fore.GREEN + "--------------------------------------")
-    print("|| Objekt ima svojo trafo postajo. || ")
-    print("--------------------------------------" + Fore.WHITE)
+# if trafo_postaja:
+#     print(Fore.GREEN + "--------------------------------------")
+#     print("|| Objekt ima svojo trafo postajo. || ")
+#     print("--------------------------------------" + Fore.WHITE)
 
-else:
-    print(Fore.RED + "--------------------------------------")
-    print("|| Objekt nima svoje trafo postaje. || ")
-    print("--------------------------------------" + Fore.WHITE)
+# else:
+#     print(Fore.RED + "--------------------------------------")
+#     print("|| Objekt nima svoje trafo postaje. || ")
+#     print("--------------------------------------" + Fore.WHITE)
 
 SEZNAM_VRST_MERITEV = model.SEZNAM_VRST_MERITEV
 
@@ -190,7 +196,7 @@ print(
 # tukaj zapiše v csv
 
 match vrsta_stroja:
-    case "elektricna omara":
+    case "električna omara":
         with open(
             os.path.join(
                 "Csvji",
@@ -219,7 +225,10 @@ match vrsta_stroja:
 
         for kocka in seznam_vseh_meritev:
             model.zapisi_kocko_meritev_v_excel_elektricne_omare(
-                kocka, seznam_vseh_meritev, slovar_kock_in_ustreznih_poti
+                kocka,
+                seznam_vseh_meritev,
+                slovar_kock_in_ustreznih_poti,
+                prevedi_v_anglescino=prevedi_v_anglescino,
             )
 
         with open(
@@ -451,6 +460,8 @@ match vrsta_stroja:
                 I_varovalke_neprekinjenost=I_varovalke_stroji_neprekinjenost,
                 tip_varovalke_neprekinjenost=tip_varovalke_stroji_neprekinjenost,
                 meja_izolacijske_upornosti_stroji_riso_rdeca=meja_izolacijske_upornosti_stroji_riso_rdeca,
+                prevedi_v_anglescino=prevedi_v_anglescino,
+                napetost_dotika = napetost_dotika
             )
 
         for pripona in VSE_PRIPONE_DATOTEK:
