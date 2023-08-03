@@ -4,6 +4,7 @@ Projekt za Aljaža, program za avtomatično generiranje datoteke s podatki iz me
 ## Uporaba:
 + najprej je treba ustvariti datoteko ``Podatki_z_merjenj.txt`` ter prazni mapi ``Porocila`` in ``Csvji``
 + iz terminala poženeš datoteko ``branje_podatkov.py`` z ukazom ``python branje_podatkov.py``
++ ko poženeš program, izberi ustrezne nastavitve (glede na opravljene meritve)
 
 ### Naloge za Aljaža
-+ zapiši si **vse** vrste meritev, ki jih morava dodati. Po možnosti na kak list papirja ali datoteko. Pri tem _natančno_ poglej, kaj hočeš, da program izpiše v excel datoteko
++ išči buge na konkretnih meritvah

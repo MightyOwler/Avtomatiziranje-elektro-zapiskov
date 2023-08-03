@@ -6,8 +6,9 @@ from poti_do_datotek import *
 from openpyxl import load_workbook
 import json
 
+RUMENO_BEZ = "F5C77E"
 
-# V slovarju so na levi strani slovenske besede, na desni pa algeške.
+# V slovarju so na levi strani slovenske besede, na desni pa angleške.
 
 jsonfile = open("slovar_besed.json")
 SLOVAR = json.load(jsonfile)
@@ -29,6 +30,7 @@ st_vnesenih_meritev = 0
 st_vnesenih_meritev_RCD = 0
 
 
+# Poanta je, da mora ostati v milisekundah, ne sme se pretovoriti.
 def pretvori_string_milisekund_v_ustrezen_format(string):
     return string.replace(",", ".").replace(" ms", "").replace(">", "")
 
@@ -158,7 +160,6 @@ def zapisi_kocko_meritev_v_excel_instalacije(
                         maxRplusRminus = ">1999"
                     else:
                         R_pozitivno_int = (
-                            # TODO ali se res ne da lepše manipulirati s temi številkami?
                             meritev.najdi_R_pozitivno()
                             .replace(",", ".")
                             .replace(" Ω", "")
@@ -206,6 +207,7 @@ def zapisi_kocko_meritev_v_excel_instalacije(
         if slovar_vrst_meritev["RCD Auto"] > 1:
             print("Napaka: Imamo 2 ali več RCD Auto meritvi v eni kocki!")
 
+        # To je napisano na daljši način zaradi preglednosti.
         for idx, vrednost_meritve in enumerate(seznam_Rjev_za_rlow4_meritve):
             if idx == seznam_Rjev_za_rlow4_meritve.index(rlow4_meritev_z_minimalno):
                 # Glavno izenačitveno povezavo potrebujemo samo pri eni meritvi
@@ -353,6 +355,8 @@ def zapisi_kocko_meritev_v_excel_instalacije(
                 writer.writerow(array_ki_ga_zapisemo_v_csv)
                 csvfile.close()
 
+        # Sočasno odpravljamo tudi Z auto
+
         if vrsta_meritve == "Z auto":
             with open(
                 CSVFILE_INSTALACIJE_OSNOVNE,
@@ -363,8 +367,6 @@ def zapisi_kocko_meritev_v_excel_instalacije(
                 writer = csv.writer(
                     csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
                 )
-
-                # TODO popravi če ne dela
 
                 tip_varovalke = meritev.najdi_tip_varovalke()
                 I_varovalke = meritev.najdi_I_varovalke()
@@ -739,8 +741,6 @@ def zapisi_kocko_meritev_v_excel_stroji(
         i: vrste_meritev_v_kocki.count(i) for i in SEZNAM_VRST_MERITEV
     }
 
-    # Kako razvejiva tukaj meritve?
-
     if slovar_vrst_meritev["Zloop"] > 0:
         with open(CSVFILE_STROJI_ZLOOP, "a", encoding="utf-8", newline="") as csvfile:
             writer = csv.writer(
@@ -752,8 +752,6 @@ def zapisi_kocko_meritev_v_excel_stroji(
                     komentar = prevedi_s_slovarjem(
                         meritev.najdi_komentar(), prevedi_v_anglescino
                     )
-
-                    # dodaj specifične atribute
 
                     tip_varovalke = meritev.najdi_tip_varovalke()
                     t_varovalke = (
@@ -942,8 +940,6 @@ def zapisi_kocko_meritev_v_excel_stroji(
                         )
                     )
 
-                    # TODO tukaj bo izračun
-
                     array_ki_ga_zapisemo_v_csv = [
                         PRAZNO,
                         PRAZNO,
@@ -1024,8 +1020,6 @@ def zapisi_kocko_meritev_v_excel_stroji(
                         tok_zascite = "X"
                         izracun = "X"
 
-                    # TODO dodaj tok zaščite s pomočjo tabele
-
                     excel_delovna_datoteka = load_workbook(
                         "Meje za meritve.xlsx", data_only=True
                     )
@@ -1082,8 +1076,6 @@ def zapisi_kocko_meritev_v_excel_stroji(
                         excel_delovni_list = excel_delovna_datoteka["BCD"]
                         prva_vrstica = 6
                         zadnja_vrstica = 18
-
-                        # TODO ali to res dela
 
                         if tip_varovalke_neprekinjenost == "K":
                             stolpec_K = [
@@ -1297,6 +1289,8 @@ def najdi_po_vrsti_urejen_seznam_datumov(vse_besedilo):
     ]
 
 
+# Pot se obnaša nekoliko drugače kot ostale komponente, zato je izven
+# Tole se morda da izboljšati z regexom
 def najdi_pot_izven_razreda_Meritev(besedilo):
     idx = besedilo.find("Pot:")
     string_ki_ga_obdelujemo = besedilo[idx:]

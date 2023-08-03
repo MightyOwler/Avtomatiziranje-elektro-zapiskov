@@ -16,7 +16,6 @@ from openpyxl.styles import PatternFill, Font, Alignment
 # Ko se importira GUI, se avtomatično izvede vprašalnik
 from GUI import *
 
-
 # Če hočeš vklopiti debugganje, daš debug_mode na True
 debug_mode = True
 
@@ -217,7 +216,7 @@ match vrsta_stroja:
                     )
                     top_cell.font = Font(b=True)
                     top_cell.fill = PatternFill(
-                        start_color="F5C77E", end_color="F5C77E", fill_type="solid"
+                        start_color=RUMENO_BEZ, end_color=RUMENO_BEZ, fill_type="solid"
                     )
             excel_delovni_list.append(vrstica.split(";"))
             st_vrstic += 1
@@ -326,7 +325,9 @@ match vrsta_stroja:
                         )
                         top_cell.font = Font(b=True)
                         top_cell.fill = PatternFill(
-                            start_color="F5C77E", end_color="F5C77E", fill_type="solid"
+                            start_color=RUMENO_BEZ,
+                            end_color=RUMENO_BEZ,
+                            fill_type="solid",
                         )
                 excel_delovni_list.append(vrstica.split(";"))
 
@@ -440,7 +441,9 @@ match vrsta_stroja:
                         )
                         top_cell.font = Font(b=True)
                         top_cell.fill = PatternFill(
-                            start_color="F5C77E", end_color="F5C77E", fill_type="solid"
+                            start_color=RUMENO_BEZ,
+                            end_color=RUMENO_BEZ,
+                            fill_type="solid",
                         )
                 excel_delovni_list.append(vrstica.split(";"))
 
@@ -537,7 +540,7 @@ match vrsta_stroja:
                     )
                     top_cell.font = Font(b=True)
                     top_cell.fill = PatternFill(
-                        start_color="F5C77E", end_color="F5C77E", fill_type="solid"
+                        start_color=RUMENO_BEZ, end_color=RUMENO_BEZ, fill_type="solid"
                     )
             excel_delovni_list.append(vrstica.split(";"))
 
