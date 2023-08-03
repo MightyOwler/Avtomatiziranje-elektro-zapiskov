@@ -104,13 +104,12 @@ def vrednoti_string(s):
     (to je konkretno pomembno pri RISO in RLOW4)
     """
 
-    # TODO ta funkcija lahko vrne string ali int!!
     if ">" in s:
         return 1000000000000
     if "X" in s:
         return 0
     else:
-        return pretvori_v_osnovne_enote(s.replace(",", "."))
+        return float(pretvori_v_osnovne_enote(s.replace(",", ".")).replace(",", "."))
 
 
 def zapisi_kocko_meritev_v_excel_instalacije(
@@ -266,7 +265,7 @@ def zapisi_kocko_meritev_v_excel_instalacije(
                     ]
                     writer.writerow(array_ki_ga_zapisemo_v_csv)
             csvfile.close()
-            seznam_Rjev_za_rlow4_meritve.sort(key=lambda x: float(vrednoti_string(x)))
+            seznam_Rjev_za_rlow4_meritve.sort(key=lambda x: vrednoti_string(x))
             rlow4_meritev_z_minimalno = seznam_Rjev_za_rlow4_meritve[0]
 
         if slovar_vrst_meritev["RCD Auto"] > 1:
@@ -1250,11 +1249,7 @@ def zapisi_kocko_meritev_v_excel_elektricne_omare(
                 if R == "X":
                     oknok = "X"
                 else:
-                    oknok = (
-                        "OK"
-                        if float(str(vrednoti_string(R)).replace(",", ".")) < 0.1
-                        else "NOK"
-                    )
+                    oknok = "OK" if vrednoti_string(R) < 0.1 else "NOK"
 
                 array_ki_ga_zapisemo_v_csv = [komentar, R, oknok, pot]
                 writer.writerow(array_ki_ga_zapisemo_v_csv)
@@ -1297,11 +1292,7 @@ def zapisi_kocko_meritev_v_excel_strelovodi(
             for meritev in kocka:
                 komentar = meritev.najdi_komentar()
                 R = meritev.najdi_R()
-                dane = (
-                    "DA"
-                    if float(str(vrednoti_string(R)).replace(",", ".")) < 10
-                    else "NE"
-                )
+                dane = "DA" if vrednoti_string(R) < 10 else "NE"
 
                 vzorec = r"MS\d+"
                 prva_vrstica = (

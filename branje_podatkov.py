@@ -8,7 +8,6 @@ from meje_strelovodi import *
 from meje_omare import *
 import re
 import os
-import sys
 
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill, Font, Alignment
