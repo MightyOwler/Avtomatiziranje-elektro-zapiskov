@@ -1003,7 +1003,8 @@ def zapisi_kocko_meritev_v_excel_stroji(
                         tip_varovalke_neprekinjenost = meritev.najdi_tip_varovalke()
 
                     komentar = meritev.najdi_komentar()
-                    R = float(meritev.najdi_R().replace(",", ".").replace(">", ""))
+                    R = ("X" if meritev.najdi_R() == "X" else float(meritev.najdi_R().replace(",", ".").replace(">", ""))
+                    )
 
                     trajanje = float(
                         meritev.najdi_trajanje().replace(" s", "").replace(",", ".")
@@ -1060,7 +1061,9 @@ def zapisi_kocko_meritev_v_excel_stroji(
                                 row=stolpec_1.index(i_out) + 6, column=stolpec + 1
                             ).value
                             izracun = min((tok_zascite / napetost_dotika), 0.3)
-                            krizec_kljukica = "✓" if izracun > R else "✗"
+                            krizec_kljukica = (
+                                "X" if R == "X" else ("✓" if izracun > R else "✗")
+                            )
 
                         array_ki_ga_zapisemo_v_csv = [
                             PRAZNO,
