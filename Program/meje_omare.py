@@ -21,9 +21,9 @@ def preveri_meje_omare(seznam):
             slovar_problematicnih_meritev[1] = RDECA
 
         R = float(seznam[1].replace(",", "."))
-        if R > 0.1 and R < 0.15:
-            slovar_problematicnih_meritev[1] == ORANZNA
+        if R >= 0.1 and R < 0.15:
+            slovar_problematicnih_meritev[1] = ORANZNA
         if R >= 0.15:
-            slovar_problematicnih_meritev[1] == RDECA
+            slovar_problematicnih_meritev[1] = RDECA
 
     return slovar_problematicnih_meritev
