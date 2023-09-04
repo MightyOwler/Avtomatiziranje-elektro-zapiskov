@@ -19,11 +19,11 @@ SLOVAR = json.load(jsonfile)
 def prevedi_s_slovarjem(string, prevedi_v_anglescino):
     if prevedi_v_anglescino:
         for beseda in SLOVAR:
-            string = string.replace(beseda, SLOVAR[beseda])
-            string = string.replace(beseda.upper(), SLOVAR[beseda].upper())
-        return string
+            string = string.replace(beseda, SLOVAR[beseda].lower())
+            string = string.replace(beseda.upper(), SLOVAR[beseda].lower())
+        return string.upper()
     else:
-        return string
+        return string.upper()
 
 
 PRAZNO = " "
@@ -1003,7 +1003,10 @@ def zapisi_kocko_meritev_v_excel_stroji(
                         tip_varovalke_neprekinjenost = meritev.najdi_tip_varovalke()
 
                     komentar = meritev.najdi_komentar()
-                    R = ("X" if meritev.najdi_R() == "X" else float(meritev.najdi_R().replace(",", ".").replace(">", ""))
+                    R = (
+                        "X"
+                        if meritev.najdi_R() == "X"
+                        else float(meritev.najdi_R().replace(",", ".").replace(">", ""))
                     )
 
                     trajanje = float(

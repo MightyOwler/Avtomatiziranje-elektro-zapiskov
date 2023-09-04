@@ -34,28 +34,11 @@ class CustomDialogElektricnaOmara(simpledialog.Dialog):
         self.v_anglescino = tk.BooleanVar()
         tk.Checkbutton(master, variable=self.v_anglescino).grid(row=0, column=1)
 
-        tk.Label(master, text="Vnesi spodnjo mejo izolacijske upornosti:").grid(row=1)
-        self.spodnja_meja = tk.Entry(master)
-        self.spodnja_meja.grid(row=1, column=1)
-
-        tk.Label(master, text="Vnesi zgornjo mejo izolacijske upornosti:").grid(row=2)
-        self.zgornja_meja = tk.Entry(master)
-        self.zgornja_meja.grid(row=2, column=1)
-
-        return self.v_anglescino, self.spodnja_meja, self.zgornja_meja
+        return self.v_anglescino
 
     def apply(self):
         try:
-            global meja_izolacijske_upornosti_stroji_riso_rdeca
-            global meja_izolacijske_upornosti_stroji_riso_oranzna
             global prevedi_v_anglescino
-
-            meja_izolacijske_upornosti_stroji_riso_rdeca = float(
-                self.spodnja_meja.get()
-            )
-            meja_izolacijske_upornosti_stroji_riso_oranzna = float(
-                self.zgornja_meja.get()
-            )
             prevedi_v_anglescino = bool(self.v_anglescino.get())
 
             root.destroy()
