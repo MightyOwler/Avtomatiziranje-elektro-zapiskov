@@ -19,7 +19,7 @@ from GUI import *
 # Če hočeš vklopiti debugganje, daš debug_mode na True
 debug_mode = True
 
-# obstaja 7 osnovnih vrst meritev: AUTO TN, Zloop mΩ, Z LINE, RCD Auto, R low 4, Varistor, R iso, R IZO, ZLOOP 4W, Zline 4W
+# obstaja 7 osnovnih vrst meritev: AUTO TN, Zloop mΩ, Z LINE, RCD Auto, R low 4, Varistor, R iso, R IZO, Z loop 4W, Z line 4W
 
 if "trafo_postaja" in locals() and trafo_postaja:
     print(Fore.GREEN + "--------------------------------------")
@@ -37,9 +37,9 @@ with open("Podatki_z_merjenj.txt", encoding="utf-8") as podatki:
         .replace(", (+)", ",(+)")
         .replace(", (-)", ",(-)")
         .replace(";", "-")
+        # .replace("Z loop 4W", "Zloop")
+        # .replace("Z line 4W", "Z LINE")
         .replace("\n", " ")
-        .replace("Z loop 4W", "ZLOOP 4W")
-        .replace("Z line 4W", "ZLINE 4W")
         .replace("Pot:", "🙈Pot:")
     )
 
