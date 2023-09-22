@@ -523,7 +523,7 @@ def zapisi_kocko_meritev_v_excel_instalacije(
                                 komentar,
                             ) = ("X" for _ in range(9))
                         else:
-                            uln = ustrezni_zloop[i].najdi_Uln()
+                            uln = ustrezni_zline_pravi[i].najdi_Uln() if dodaten4W else ustrezni_zline_pravi[i].najdi_Un()
                             ipsc_lpe = ustrezni_zloop[i].najdi_Ipsc_LPE()
                             zlpe = ustrezni_zloop[i].najdi_Z_LPE()
                             ia_psc_navidezni_stolpec = ustrezni_zloop[i].najdi_Ia_Ipsc()

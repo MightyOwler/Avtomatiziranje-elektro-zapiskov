@@ -4,6 +4,7 @@ from model import MEJE_ZA_MERITVE
 RDECA = "FF0000"
 ORANZNA = "FFA500"
 MODRA = "99FFFF"
+VIJOLICNA = "A257D4"
 
 
 def preberi_float_z_mesta_v_seznamu(seznam, mesto, pomozno_mesto=None):
@@ -49,6 +50,7 @@ def preveri_meje_osnovne(seznam, trafo=True):
     zl = preberi_float_z_mesta_v_seznamu(seznam, 12, pomozno_mesto=0)
     ik2 = preberi_float_z_mesta_v_seznamu(seznam, 12, pomozno_mesto=1)
     du = preberi_float_z_mesta_v_seznamu(seznam, 12, pomozno_mesto=2)
+    uln = preberi_float_z_mesta_v_seznamu(seznam, 22)
     if type(du) == float:
         du /= 100
 
@@ -74,6 +76,12 @@ def preveri_meje_osnovne(seznam, trafo=True):
                 slovar_problematicnih_meritev[7] = ORANZNA
 
     excel_delovna_datoteka = load_workbook(MEJE_ZA_MERITVE, data_only=True)
+
+    # Pobarvamo vrstico za napetost Zline, če je v okolici 400
+
+    if uln != "X":
+        if uln > 360:
+            slovar_problematicnih_meritev[22] = VIJOLICNA
 
     # Označimo z rdečo neobstoječe čase varovalk
 
