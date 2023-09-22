@@ -415,116 +415,15 @@ def zapisi_kocko_meritev_v_excel_instalacije(
                 writer.writerow(array_ki_ga_zapisemo_v_csv)
                 csvfile.close()
 
-        if vrsta_meritve in ["Z loop 4W", "Z line 4W"]:
-            if vrsta_meritve == "Z loop 4W":
-                # print(meritev.najdi_Ipsc())
-                if meritev.najdi_Ipsc() == "X":
-                    ustrezna_meritev_zloop4w = meritev
-                    ipsc_vrednosti_zloop4w = "X"
-                elif float(meritev.najdi_Ipsc()) < ipsc_vrednosti_zloop4w:
-                    ustrezna_meritev_zloop4w = meritev
-                    ipsc_vrednosti_zloop4w = float(meritev.najdi_Ipsc())
-            else:
-                if meritev.najdi_Ipsc() == "X":
-                    ustrezna_meritev_zline4w = meritev
-                    ipsc_vrednosti_zline4w = "X"
-                elif float(meritev.najdi_Ipsc()) < ipsc_vrednosti_zline4w:
-                    ustrezna_meritev_zline4w = meritev
-                    ipsc_vrednosti_zline4w = float(meritev.najdi_Ipsc())
-
-    # TODO napiši za tole
-    if "Z loop 4W" in vrste_meritev_v_kocki or "Z line 4W" in vrste_meritev_v_kocki:
-        print("Živijo")
-        with open(
-            CSVFILE_INSTALACIJE_OSNOVNE,
-            "a",
-            encoding="utf-8",
-            newline="",
-        ) as csvfile:
-            writer = csv.writer(
-                csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
-            )
-
-            if (
-                not ustrezna_meritev_zline4w
-                or ustrezna_meritev_zline4w.besedilo.count("p//") > 0
-            ):
-                ipsc_zline, z_zline = "X", "X"
-            else:
-                ipsc_zline = ustrezna_meritev_zline4w.najdi_Ipsc()
-                z_zline = ustrezna_meritev_zline4w.najdi_Z()
-
-            if (
-                not ustrezna_meritev_zloop4w
-                or ustrezna_meritev_zloop4w.besedilo.count("p//") > 0
-            ):
-                (
-                    ipsc_zloop,
-                    z_zloop,
-                    uln,
-                    ipsc_lpe,
-                    zlpe,
-                    ia_psc_navidezni_stolpec,
-                    tip_varovalke,
-                    I_varovalke,
-                    t_varovalke,
-                    isc_faktor,
-                    komentar,
-                ) = ("X" for _ in range(11))
-
-            else:
-                ipsc_zloop = ustrezna_meritev_zloop4w.najdi_Ipsc()
-                z_zloop = ustrezna_meritev_zloop4w.najdi_Z()
-                uln = ustrezna_meritev_zloop4w.najdi_Uln()
-                ipsc_lpe = ustrezna_meritev_zloop4w.najdi_Ipsc_LPE()
-                zlpe = ustrezna_meritev_zloop4w.najdi_Z_LPE()
-                ia_psc_navidezni_stolpec = ustrezna_meritev_zloop4w.najdi_Ia_Ipsc()
-                tip_varovalke = ustrezna_meritev_zloop4w.najdi_tip_varovalke()
-                I_varovalke = ustrezna_meritev_zloop4w.najdi_I_varovalke()
-                t_varovalke = ustrezna_meritev_zloop4w.najdi_t_varovalke()
-                isc_faktor = ustrezna_meritev_zloop4w.najdi_Isc_faktor()
-                vrsta_meritve = "ZLOOP 4W / ZLINE 4W"
-                komentar = ustrezna_meritev_zloop4w.najdi_komentar()
-
-                if not dU:
-                    dU = "X"
-
-                st_vnesenih_meritev += 1
-                array_ki_ga_zapisemo_v_csv = [
-                    st_vnesenih_meritev,
-                    ime,
-                    PRAZNO,
-                    PRAZNO,
-                    PRAZNO,
-                    glavna_izenac_povezava,
-                    PRAZNO,
-                    rlpe,
-                    tip_varovalke,
-                    I_varovalke,
-                    t_varovalke,
-                    f"{z_zloop}/{ipsc_zloop}",
-                    f"{z_zline}/{ipsc_zline}/{dU}",
-                    PRAZNO,
-                    I_dN,
-                    PRAZNO,
-                    t1x,
-                    t5x,
-                    Uc,
-                    PRAZNO,
-                    komentar,
-                    vrsta_meritve,
-                    uln,
-                    maxRplusRminus,
-                    isc_faktor,
-                    ia_psc_navidezni_stolpec,
-                    pot,
-                ]
-                writer.writerow(array_ki_ga_zapisemo_v_csv)
-                csvfile.close()
-
-    # nato odpravimo Zloop / Zine
-
-    if "Zloop" in vrste_meritev_v_kocki or "Z LINE" in vrste_meritev_v_kocki:
+    if (
+        "Zloop" in vrste_meritev_v_kocki
+        or "Z LINE" in vrste_meritev_v_kocki
+        or "Z loop 4W" in vrste_meritev_v_kocki
+        or "Z line 4W" in vrste_meritev_v_kocki
+    ):
+        dodaten4W = (
+            "Z loop 4W" in vrste_meritev_v_kocki or "Z line 4W" in vrste_meritev_v_kocki
+        )
         st_zline = 0
         st_zloop = 0
         ustrezni_zloop = []
@@ -532,16 +431,26 @@ def zapisi_kocko_meritev_v_excel_instalacije(
         ustrezni_zline_400 = []
         for meritev in kocka:
             vrsta_meritve = meritev.doloci_vrsto_meritve()
-            if vrsta_meritve == "Zloop":
+            if vrsta_meritve in ["Zloop", "Z loop 4W"]:
                 st_zloop += 1
                 ustrezni_zloop.append(meritev)
 
-            if vrsta_meritve == "Z LINE":
+            if vrsta_meritve in ["Z LINE", "Z line 4W"]:
                 st_zline += 1
-                if "230" == meritev.najdi_Un():
-                    ustrezni_zline_230.append(meritev)
+                if dodaten4W:
+                    if (
+                        meritev.najdi_Uln() != "X"
+                        and float(meritev.najdi_Uln()) > 200
+                        and float(meritev.najdi_Uln()) < 270
+                    ):
+                        ustrezni_zline_230.append(meritev)
+                    else:
+                        ustrezni_zline_400.append(meritev)
                 else:
-                    ustrezni_zline_400.append(meritev)
+                    if "230" == meritev.najdi_Un():
+                        ustrezni_zline_230.append(meritev)
+                    else:
+                        ustrezni_zline_400.append(meritev)
 
                 # if "400" == meritev.najdi_Un():
                 #     ustrezni_zline_3.append(meritev)
@@ -559,6 +468,7 @@ def zapisi_kocko_meritev_v_excel_instalacije(
             print("Dolžina zline", len(ustrezni_zline_400))
 
         else:
+            ustrezni_zline_pravi = []
             if ustrezni_zline_230:
                 ustrezni_zline_pravi = ustrezni_zline_230
                 while len(ustrezni_zline_230) > len(ustrezni_zloop):
@@ -587,19 +497,84 @@ def zapisi_kocko_meritev_v_excel_instalacije(
                         quoting=csv.QUOTE_MINIMAL,
                     )
 
-                    if ustrezni_zline_pravi[i].besedilo.count("p//") > 0:
-                        ipsc_zline, z_zline = "X", "X"
-                    else:
-                        ipsc_zline = ustrezni_zline_pravi[i].najdi_Ipsc()
-                        z_zline = ustrezni_zline_pravi[i].najdi_Z()
+                    if ustrezni_zline_pravi:
+                        if ustrezni_zline_pravi[i].besedilo.count("p//") > 0:
+                            ipsc_zline, z_zline = "X", "X"
+                        else:
+                            ipsc_zline = ustrezni_zline_pravi[i].najdi_Ipsc()
+                            z_zline = ustrezni_zline_pravi[i].najdi_Z()
 
-                    if ustrezni_zloop[i].besedilo.count("p//") > 0:
-                        ipsc_zloop, z_zloop = "X", "X"
-                    else:
-                        ipsc_zloop = ustrezni_zloop[i].najdi_Ipsc()
-                        z_zloop = ustrezni_zloop[i].najdi_Z()
+                        if ustrezni_zloop[i].besedilo.count("p//") > 0:
+                            ipsc_zloop, z_zloop = "X", "X"
+                        else:
+                            ipsc_zloop = ustrezni_zloop[i].najdi_Ipsc()
+                            z_zloop = ustrezni_zloop[i].najdi_Z()
 
-                    if ustrezni_zloop[i].besedilo.count("p//") > 0:
+                        if ustrezni_zloop[i].besedilo.count("p//") > 0:
+                            (
+                                uln,
+                                ipsc_lpe,
+                                zlpe,
+                                ia_psc_navidezni_stolpec,
+                                tip_varovalke,
+                                I_varovalke,
+                                t_varovalke,
+                                isc_faktor,
+                                komentar,
+                            ) = ("X" for _ in range(9))
+                        else:
+                            uln = ustrezni_zloop[i].najdi_Uln()
+                            ipsc_lpe = ustrezni_zloop[i].najdi_Ipsc_LPE()
+                            zlpe = ustrezni_zloop[i].najdi_Z_LPE()
+                            ia_psc_navidezni_stolpec = ustrezni_zloop[i].najdi_Ia_Ipsc()
+                            tip_varovalke = ustrezni_zloop[i].najdi_tip_varovalke()
+                            I_varovalke = ustrezni_zloop[i].najdi_I_varovalke()
+                            t_varovalke = ustrezni_zloop[i].najdi_t_varovalke()
+                            isc_faktor = ustrezni_zloop[i].najdi_Isc_faktor()
+                            vrsta_meritve = (
+                                "ZLOOP / ZLINE"
+                                if not dodaten4W
+                                else "ZLOOP 4W / ZLINE 4W"
+                            )
+                            komentar = ustrezni_zloop[i].najdi_komentar()
+
+                            if not dU:
+                                dU = "X"
+
+                            st_vnesenih_meritev += 1
+                            array_ki_ga_zapisemo_v_csv = [
+                                st_vnesenih_meritev,
+                                ime,
+                                PRAZNO,
+                                PRAZNO,
+                                PRAZNO,
+                                glavna_izenac_povezava,
+                                PRAZNO,
+                                rlpe,
+                                tip_varovalke,
+                                I_varovalke,
+                                t_varovalke,
+                                f"{z_zloop}/{ipsc_zloop}",
+                                f"{z_zline}/{ipsc_zline}/{dU}",
+                                PRAZNO,
+                                I_dN,
+                                PRAZNO,
+                                t1x,
+                                t5x,
+                                Uc,
+                                PRAZNO,
+                                komentar,
+                                vrsta_meritve,
+                                uln,
+                                maxRplusRminus,
+                                isc_faktor,
+                                ia_psc_navidezni_stolpec,
+                                pot,
+                            ]
+                            writer.writerow(array_ki_ga_zapisemo_v_csv)
+                            csvfile.close()
+
+                    else:
                         (
                             uln,
                             ipsc_lpe,
@@ -611,53 +586,6 @@ def zapisi_kocko_meritev_v_excel_instalacije(
                             isc_faktor,
                             komentar,
                         ) = ("X" for _ in range(9))
-                    else:
-                        uln = ustrezni_zloop[i].najdi_Uln()
-                        ipsc_lpe = ustrezni_zloop[i].najdi_Ipsc_LPE()
-                        zlpe = ustrezni_zloop[i].najdi_Z_LPE()
-                        ia_psc_navidezni_stolpec = ustrezni_zloop[i].najdi_Ia_Ipsc()
-                        tip_varovalke = ustrezni_zloop[i].najdi_tip_varovalke()
-                        I_varovalke = ustrezni_zloop[i].najdi_I_varovalke()
-                        t_varovalke = ustrezni_zloop[i].najdi_t_varovalke()
-                        isc_faktor = ustrezni_zloop[i].najdi_Isc_faktor()
-                        vrsta_meritve = "ZLOOP / ZLINE"
-                        komentar = ustrezni_zloop[i].najdi_komentar()
-
-                        if not dU:
-                            dU = "X"
-
-                        st_vnesenih_meritev += 1
-                        array_ki_ga_zapisemo_v_csv = [
-                            st_vnesenih_meritev,
-                            ime,
-                            PRAZNO,
-                            PRAZNO,
-                            PRAZNO,
-                            glavna_izenac_povezava,
-                            PRAZNO,
-                            rlpe,
-                            tip_varovalke,
-                            I_varovalke,
-                            t_varovalke,
-                            f"{z_zloop}/{ipsc_zloop}",
-                            f"{z_zline}/{ipsc_zline}/{dU}",
-                            PRAZNO,
-                            I_dN,
-                            PRAZNO,
-                            t1x,
-                            t5x,
-                            Uc,
-                            PRAZNO,
-                            komentar,
-                            vrsta_meritve,
-                            uln,
-                            maxRplusRminus,
-                            isc_faktor,
-                            ia_psc_navidezni_stolpec,
-                            pot,
-                        ]
-                        writer.writerow(array_ki_ga_zapisemo_v_csv)
-                        csvfile.close()
 
     for meritev in kocka:
         vrsta_meritve = meritev.doloci_vrsto_meritve()
