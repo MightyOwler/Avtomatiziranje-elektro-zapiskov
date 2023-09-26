@@ -51,6 +51,40 @@ def vrednoti_string(s):
         return float(pretvori_v_osnovne_enote(s.replace(",", ".")).replace(",", "."))
 
 
+def pridobi_potne_elemente(kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti):
+    """
+    Vrne ustrezne potne elemente znotraj posameznih funkcij
+    """
+    komentar = ""
+    ime = "X"
+    pot = (
+        slovar_kock_in_ustreznih_poti[loceno_besedilo.index(kocka)]
+        .replace("\n", " ")
+        .strip()
+    )
+    pot_locena_na_elemente = pot.replace("\n", " ").strip().split("//")
+    for element in pot_locena_na_elemente:
+        if "Imenovanje: " in element.strip():
+            ime = element.replace("Imenovanje: ", "")
+            if "Circuit F" in ime:
+                ime = ime.replace("Circuit ", "")
+            elif re.search(r"Circuit\d", ime):
+                ime = ime.replace("Circuit", "F")
+
+    vrste_meritev_v_kocki = [meritev.doloci_vrsto_meritve() for meritev in kocka]
+    slovar_vrst_meritev = {
+        i: vrste_meritev_v_kocki.count(i) for i in SEZNAM_VRST_MERITEV
+    }
+    return (
+        komentar,
+        pot,
+        pot_locena_na_elemente,
+        ime,
+        vrste_meritev_v_kocki,
+        slovar_vrst_meritev,
+    )
+
+
 def zapisi_kocko_meritev_v_excel_instalacije(
     kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti
 ):
@@ -63,12 +97,6 @@ def zapisi_kocko_meritev_v_excel_instalacije(
     global st_vnesenih_meritev
     global st_vnesenih_meritev_RCD
 
-    ipsc_vrednosti_zloop4w = 10**18
-    ipsc_vrednosti_zline4w = 10**18
-    ustrezna_meritev_zloop4w = None
-    ustrezna_meritev_zline4w = None
-
-    komentar = ""
     (
         uln,
         zln,
@@ -88,34 +116,18 @@ def zapisi_kocko_meritev_v_excel_instalacije(
         I_varovalke,
         t_varovalke,
         isc_faktor,
+    ) = ("X" for _ in range(18))
+
+    # Treba je pridobiti pot, pot ločeno na elemente, ime ter vrste meritev v kocki in slovar vrst meritev
+
+    (
+        komentar,
+        pot,
+        pot_locena_na_elemente,
         ime,
-    ) = ("X" for _ in range(19))
-
-    pot = (
-        slovar_kock_in_ustreznih_poti[loceno_besedilo.index(kocka)]
-        .replace("\n", " ")
-        .strip()
-    )
-    pot_locena_na_elemente = pot.replace("\n", " ").strip().split("//")
-    for element in pot_locena_na_elemente:
-        if "Imenovanje: " in element.strip():
-            ime = element.replace("Imenovanje: ", "")
-            if "Circuit F" in ime:
-                ime = ime.replace("Circuit ", "")
-            elif re.search(r"Circuit\d", ime):
-                ime = ime.replace("Circuit", "F")
-    if not ime:
-        ime = "X"
-
-    # Za vsak slučaj preverimo, ali pot ne obstaja
-    if pot is None:
-        pot = "X"
-        print("Napaka: Ni poti v slovarju poti", slovar_kock_in_ustreznih_poti)
-
-    vrste_meritev_v_kocki = [meritev.doloci_vrsto_meritve() for meritev in kocka]
-    slovar_vrst_meritev = {
-        i: vrste_meritev_v_kocki.count(i) for i in SEZNAM_VRST_MERITEV
-    }
+        vrste_meritev_v_kocki,
+        slovar_vrst_meritev,
+    ) = pridobi_potne_elemente(kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti)
 
     # Najprej pogleda za R iso
 
@@ -297,7 +309,6 @@ def zapisi_kocko_meritev_v_excel_instalacije(
 
     for meritev in kocka:
         vrsta_meritve = meritev.doloci_vrsto_meritve()
-        print(vrsta_meritve)
 
         if vrsta_meritve == "AUTO TN":
             with open(
@@ -680,33 +691,14 @@ def zapisi_kocko_meritev_v_excel_stroji(
     prevedi_v_anglescino,
     napetost_dotika,
 ):
-    komentar = ""
-    ime = "X"
-
-    pot = (
-        slovar_kock_in_ustreznih_poti[loceno_besedilo.index(kocka)]
-        .replace("\n", " ")
-        .strip()
-    )
-    pot_locena_na_elemente = pot.replace("\n", " ").strip().split("//")
-    for element in pot_locena_na_elemente:
-        if "Imenovanje: " in element.strip():
-            ime = element.replace("Imenovanje: ", "")
-            if "Circuit F" in ime:
-                ime = ime.replace("Circuit ", "")
-            elif re.search(r"Circuit\d", ime):
-                ime = ime.replace("Circuit", "F")
-    if not ime:
-        ime = "X"
-
-    if pot is None:
-        pot = "X"
-        print("Napaka: Ni poti v slovarju poti", slovar_kock_in_ustreznih_poti)
-
-    vrste_meritev_v_kocki = [meritev.doloci_vrsto_meritve() for meritev in kocka]
-    slovar_vrst_meritev = {
-        i: vrste_meritev_v_kocki.count(i) for i in SEZNAM_VRST_MERITEV
-    }
+    (
+        komentar,
+        pot,
+        pot_locena_na_elemente,
+        ime,
+        vrste_meritev_v_kocki,
+        slovar_vrst_meritev,
+    ) = pridobi_potne_elemente(kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti)
 
     if slovar_vrst_meritev["Zloop"] > 0:
         with open(CSVFILE_STROJI_ZLOOP, "a", encoding="utf-8", newline="") as csvfile:
@@ -1109,30 +1101,14 @@ def zapisi_kocko_meritev_v_excel_stroji(
 def zapisi_kocko_meritev_v_excel_elektricne_omare(
     kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti, prevedi_v_anglescino
 ):
-    komentar = ""
-
-    pot = (
-        slovar_kock_in_ustreznih_poti[loceno_besedilo.index(kocka)]
-        .replace("\n", " ")
-        .strip()
-    )
-    pot_locena_na_elemente = pot.replace("\n", " ").strip().split("//")
-    for element in pot_locena_na_elemente:
-        if "Imenovanje: " in element.strip():
-            ime = element.replace("Imenovanje: ", "")
-            if "Circuit F" in ime:
-                ime = ime.replace("Circuit ", "")
-            elif re.search(r"Circuit\d", ime):
-                ime = ime.replace("Circuit", "F")
-
-    if pot is None:
-        pot = "X"
-        print("Napaka: Ni poti v slovarju poti", slovar_kock_in_ustreznih_poti)
-
-    vrste_meritev_v_kocki = [meritev.doloci_vrsto_meritve() for meritev in kocka]
-    slovar_vrst_meritev = {
-        i: vrste_meritev_v_kocki.count(i) for i in SEZNAM_VRST_MERITEV
-    }
+    (
+        komentar,
+        pot,
+        pot_locena_na_elemente,
+        ime,
+        vrste_meritev_v_kocki,
+        slovar_vrst_meritev,
+    ) = pridobi_potne_elemente(kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti)
 
     if slovar_vrst_meritev["R low 4"] + slovar_vrst_meritev["Neprekinjenost"] > 0:
         with open(
@@ -1159,30 +1135,15 @@ def zapisi_kocko_meritev_v_excel_elektricne_omare(
 def zapisi_kocko_meritev_v_excel_strelovodi(
     kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti
 ):
-    komentar = ""
-
-    pot = (
-        slovar_kock_in_ustreznih_poti[loceno_besedilo.index(kocka)]
-        .replace("\n", " ")
-        .strip()
-    )
-    pot_locena_na_elemente = pot.replace("\n", " ").strip().split("//")
-    for element in pot_locena_na_elemente:
-        if "Imenovanje: " in element.strip():
-            ime = element.replace("Imenovanje: ", "")
-            if "Circuit F" in ime:
-                ime = ime.replace("Circuit ", "")
-            elif re.search(r"Circuit\d", ime):
-                ime = ime.replace("Circuit", "F")
-
-    if pot is None:
-        pot = "X"
-        print("Napaka: Ni poti v slovarju poti", slovar_kock_in_ustreznih_poti)
-
-    vrste_meritev_v_kocki = [meritev.doloci_vrsto_meritve() for meritev in kocka]
-    slovar_vrst_meritev = {
-        i: vrste_meritev_v_kocki.count(i) for i in SEZNAM_VRST_MERITEV
-    }
+    # Tukaj je že samo po sebi veliko neporabljenih elementov
+    (
+        komentar,
+        pot,
+        pot_locena_na_elemente,
+        ime,
+        vrste_meritev_v_kocki,
+        slovar_vrst_meritev,
+    ) = pridobi_potne_elemente(kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti)
 
     if slovar_vrst_meritev["R low 4"] > 0:
         with open(CSVFILE_STRELOVODI, "a", encoding="utf-8", newline="") as csvfile:

@@ -28,8 +28,6 @@ class Meritev:
     def __init__(self, besedilo_meritve):
         self.besedilo = besedilo_meritve
         loceno_besedilo_po_vejicah = besedilo_meritve.split(", ")
-
-        # odstranil sem .replace("Pot:", "Pot: "), tako da lahko da bo kje kaj narobe #TODO PREVERI!
         self.besedilo_po_elementih = [i.strip() for i in loceno_besedilo_po_vejicah]
 
         self.vrsta_meritve = self.doloci_vrsto_meritve
