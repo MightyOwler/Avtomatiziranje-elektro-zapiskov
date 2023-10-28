@@ -26,6 +26,15 @@ def prevedi_s_slovarjem(string, prevedi_v_anglescino):
         return string.upper()
 
 
+def oklesti_komentar(komentar, nezazeljeni_string):
+    """
+    Od neke pojavitve stringa dalje vse zbriše
+    """
+    if nezazeljeni_string in komentar:
+        komentar = komentar[0 : komentar.index(nezazeljeni_string)]
+    return komentar
+
+
 PRAZNO = " "
 
 st_vnesenih_meritev = 0
@@ -1109,6 +1118,11 @@ def zapisi_kocko_meritev_v_excel_elektricne_omare(
         vrste_meritev_v_kocki,
         slovar_vrst_meritev,
     ) = pridobi_potne_elemente(kocka, loceno_besedilo, slovar_kock_in_ustreznih_poti)
+
+    if "Page" in komentar:
+        komentar = komentar[0 : komentar.index("Page")]
+
+    komentar = oklesti_komentar(komentar, "Page")
 
     if slovar_vrst_meritev["R low 4"] + slovar_vrst_meritev["Neprekinjenost"] > 0:
         with open(
