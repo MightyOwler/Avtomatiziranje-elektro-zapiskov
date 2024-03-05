@@ -95,7 +95,7 @@ def preveri_meje_osnovne(seznam, trafo=True):
         slovar_problematicnih_meritev[10] = RDECA
         stolpec = 1
 
-    if tip_varovalke in ["gG", "NV", "gL"]:
+    if t_varovalke_je_ustrezen and tip_varovalke in ["gG", "NV", "gL"]:
         excel_delovni_list = excel_delovna_datoteka["gG"]
         prva_vrstica = 6
         zadnja_vrstica = 34
@@ -125,7 +125,7 @@ def preveri_meje_osnovne(seznam, trafo=True):
         else:
             indeks_ujemajoce_varovalke = stolpec_1.index(i_varovalke)
 
-    if tip_varovalke in ["B", "D", "C"]:
+    if t_varovalke_je_ustrezen and tip_varovalke in ["B", "D", "C"]:
         excel_delovni_list = excel_delovna_datoteka["BCD"]
 
         prva_vrstica = 6
