@@ -1092,7 +1092,8 @@ def zapisi_kocko_meritev_v_excel_stroji(
                             ]
 
                         izracun = min((tok_zascite / napetost_dotika), 0.3)
-                        krizec_kljukica = "✓" if izracun > R else "✗"
+                        print(type(R), R)
+                        krizec_kljukica = "✓" if R != "X" and izracun > R else "✗"
                         array_ki_ga_zapisemo_v_csv = [
                             PRAZNO,
                             komentar,
