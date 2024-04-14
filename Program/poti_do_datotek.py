@@ -29,6 +29,10 @@ CSVFILE_STROJI_NEPREKINJENOST = os.path.join(
     "..", "Csvji", "Stroji", "csv_za_excel_datoteko_NEPREKINJENOST.csv"
 )
 
+CSVFILE_STROJI_RLOW4 = os.path.join(
+    "..", "Csvji", "Stroji", "csv_za_excel_datoteko_RLOW4.csv"
+)
+
 CSVFILE_ELEKTRICNE_OMARE = os.path.join(
     "..", "Csvji", "ElektricneOmare", "csv_za_excel_datoteko_elektricne_omare.csv"
 )

@@ -359,7 +359,13 @@ match vrsta_stroja:
     # ---------------------------------------------------------------------------------------------------------------------------
 
     case "stroj":
-        VSE_PRIPONE_DATOTEK = ["ZLOOP", "R ISO", "DISCHARGE TIME", "NEPREKINJENOST"]
+        VSE_PRIPONE_DATOTEK = [
+            "ZLOOP",
+            "R ISO",
+            "DISCHARGE TIME",
+            "NEPREKINJENOST",
+            "RLOW4",
+        ]
         for pripona in VSE_PRIPONE_DATOTEK:
             with open(
                 os.path.join(

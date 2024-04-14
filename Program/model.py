@@ -219,7 +219,6 @@ def zapisi_kocko_meritev_v_excel_instalacije(
                         R,
                         maxRplusRminus,
                         komentar,
-                        vrsta_meritve,
                         pot,
                     ]
                     writer.writerow(array_ki_ga_zapisemo_v_csv)
@@ -952,7 +951,7 @@ def zapisi_kocko_meritev_v_excel_stroji(
                     writer.writerow(array_ki_ga_zapisemo_v_csv)
             csvfile.close()
 
-    if slovar_vrst_meritev["Neprekinjenost"] > 0 + slovar_vrst_meritev["R low 4"]:
+    if slovar_vrst_meritev["Neprekinjenost"] > 0:
         with open(
             CSVFILE_STROJI_NEPREKINJENOST, "a", encoding="utf-8", newline=""
         ) as csvfile:
@@ -960,13 +959,15 @@ def zapisi_kocko_meritev_v_excel_stroji(
                 csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
             )
 
+            # To se da verjetno nekoliko olepšati, ker se od 14. 4. 2024 gleda Neprekinjenost in R low 4 ločeno.
+
             for meritev in kocka:
-                if meritev.doloci_vrsto_meritve() in ["Neprekinjenost", "R low"]:
-                    if meritev.doloci_vrsto_meritve() == "R low":
-                        # R low v resnici vsebuje vse te atribute
-                        t_varovalke_neprekinjenost = meritev.najdi_t_varovalke()
-                        I_varovalke_neprekinjenost = meritev.najdi_I_varovalke()
-                        tip_varovalke_neprekinjenost = meritev.najdi_tip_varovalke()
+                if meritev.doloci_vrsto_meritve() in ["Neprekinjenost"]:
+                    # if meritev.doloci_vrsto_meritve() == "R low 4":
+                    #     # R low v resnici vsebuje vse te atribute
+                    #     t_varovalke_neprekinjenost = meritev.najdi_t_varovalke()
+                    #     I_varovalke_neprekinjenost = meritev.najdi_I_varovalke()
+                    #     tip_varovalke_neprekinjenost = meritev.najdi_tip_varovalke()
 
                     komentar = meritev.najdi_komentar()
                     R = (
@@ -975,11 +976,19 @@ def zapisi_kocko_meritev_v_excel_stroji(
                         else float(meritev.najdi_R().replace(",", ".").replace(">", ""))
                     )
 
-                    trajanje = float(
-                        meritev.najdi_trajanje().replace(" s", "").replace(",", ".")
+                    trajanje = (
+                        "X"
+                        if meritev.najdi_trajanje() == "X"
+                        else float(
+                            meritev.najdi_trajanje().replace(" s", "").replace(",", ".")
+                        )
                     )
-                    i_out = float(
-                        meritev.najdi_I_out().replace(" A", "").replace(",", ".")
+                    i_out = (
+                        "X"
+                        if meritev.najdi_I_out() == "X"
+                        else float(
+                            meritev.najdi_I_out().replace(" A", "").replace(",", ".")
+                        )
                     )
 
                     t_varovalke_je_ustrezen = False
@@ -1106,6 +1115,72 @@ def zapisi_kocko_meritev_v_excel_stroji(
                         ]
                         writer.writerow(array_ki_ga_zapisemo_v_csv)
             csvfile.close()
+
+    if slovar_vrst_meritev["R low 4"] > 0:
+        with open(CSVFILE_STROJI_RLOW4, "a", encoding="utf-8", newline="") as csvfile:
+            writer = csv.writer(
+                csvfile, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL
+            )
+            # To sem pustil, ker bo morda kdaj uporabno?
+
+            # seznam_Rjev_za_rlow4_meritve = []
+
+            # Spodnji loop se da močno izboljšati, veliko stvari je nekoliko nenavadnih
+
+            for meritev in kocka:
+                if meritev.doloci_vrsto_meritve() == "R low 4":
+                    komentar = meritev.najdi_komentar()
+                    # seznam_Rjev_za_rlow4_meritve.append(meritev.najdi_R())
+                    if (
+                        # >1999 je zgornja meja, nastavljena na napravi
+                        ">1999" in meritev.najdi_R_pozitivno()
+                        or ">1999" in meritev.najdi_R_negativno()
+                    ):
+                        maxRplusRminus = ">1999"
+                    else:
+                        R_pozitivno_int = (
+                            meritev.najdi_R_pozitivno()
+                            .replace(",", ".")
+                            .replace(" Ω", "")
+                            .replace(">", "")
+                        )
+                        if R_pozitivno_int != "X":
+                            R_pozitivno_int = float(R_pozitivno_int)
+
+                        R_negativno_int = (
+                            meritev.najdi_R_negativno()
+                            .replace(",", ".")
+                            .replace(" Ω", "")
+                            .replace(">", "")
+                        )
+                        if R_negativno_int != "X":
+                            R_negativno_int = float(R_negativno_int)
+
+                        # Pri kateri velikosti spremenimo v int?
+                        if R_negativno_int == "X" or R_pozitivno_int == "X":
+                            maxRplusRminus = "X"
+                        else:
+                            if max(R_negativno_int, R_pozitivno_int) >= 100:
+                                maxRplusRminus = (
+                                    f"{int(max(R_negativno_int, R_pozitivno_int))}"
+                                )
+                            else:
+                                maxRplusRminus = (
+                                    f"{max(R_negativno_int, R_pozitivno_int)}"
+                                )
+                    R = meritev.najdi_R()
+                    array_ki_ga_zapisemo_v_csv = [
+                        ime,
+                        R,
+                        maxRplusRminus,
+                        komentar,
+                        pot,
+                    ]
+                    writer.writerow(array_ki_ga_zapisemo_v_csv)
+            csvfile.close()
+            # Tole dvoje izgleda precej neuporabno
+            # seznam_Rjev_za_rlow4_meritve.sort(key=lambda x: vrednoti_string(x))
+            # rlow4_meritev_z_minimalno = seznam_Rjev_za_rlow4_meritve[0]
 
 
 def zapisi_kocko_meritev_v_excel_elektricne_omare(
